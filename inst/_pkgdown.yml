@@ -1,0 +1,20 @@
+url: https://ecoquants.github.io/offhabr/
+reference:
+- title: "AquaMaps"
+  contents:
+  - has_concept("aquamaps")
+- title: "Analyze"
+  contents:
+  - has_concept("analyze")
+- title: "Visualize"
+  contents:
+  - has_concept("visualize")
+- title: "Database"
+  contents:
+  - has_concept("db")
+- title: "Data"
+  contents:
+  - has_concept("data")
+- title: "Other"
+  contents:
+  - lacks_concepts(c("db", "aquamaps", "read", "analyze", "visualize", "data"))
