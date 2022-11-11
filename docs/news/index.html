@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">offhabr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
       </span>
     </div>
 
@@ -48,9 +48,14 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="0.2.0" id="offhabr-020">offhabr 0.2.0<a class="anchor" aria-label="anchor" href="#offhabr-020"></a></h2>
+<ul><li>Migrated entire AquaMaps DB into dedicated <code>aquamaps</code> postgres database (+ <code><a href="../reference/am_pg_con.html">am_pg_con()</a></code>; for calculating range size of each species) and used cross-database querying to extract subset of cells and species within <code>oh_zones</code> to into <code>offhab</code> postgres database with <code>am_*</code> prefix (see <code>data-raw/aquamaps_db.R</code>).</li>
+<li>Cleaned up field names to be all lower-case, added table <code>am_meta</code> into database.</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="0.1.0" id="offhabr-010">offhabr 0.1.0<a class="anchor" aria-label="anchor" href="#offhabr-010"></a></h2>
 <ul><li>Added a <code>NEWS.md</code> file to track changes to the package.</li>
-<li>init pkg w/ prepped spatial data bounds &amp; db con containing functions: <code><a href="../reference/get_am_cells_grd.html">get_am_cells_grd()</a></code>, <code><a href="../reference/oh_pg_con.html">oh_pg_con()</a></code>; datasets: <code>am_cells_ply</code>, <code>boem_blocks</code>, <code>oh_zones</code>
+<li>Created initial R package with prepped spatial data bounds &amp; db con containing functions: <code><a href="../reference/get_am_cells_grd.html">get_am_cells_grd()</a></code>, <code><a href="../reference/oh_pg_con.html">oh_pg_con()</a></code>; datasets: <code>am_cells_ply</code>, <code>boem_blocks</code>, <code>oh_zones</code>
 </li>
 </ul></div>
   </div>

@@ -1,6 +1,6 @@
 tbl_am,tbl_pg
-hcaf_r,am_cells
-hcaf_species_native,am_spp_cells
-hspen_r,am_spp_prefs
-occurrencecells_r,am_spp_occs
-speciesoccursum_r,am_spp
+hcaf_r,cells
+hcaf_species_native,spp_cells
+hspen_r,spp_prefs
+occurrencecells_r,spp_occs
+speciesoccursum_r,spp

@@ -1,39 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/404.html</loc>
+    <loc>https://ecoquants.github.io/offhabr/404.html</loc>
   </url>
   <url>
-    <loc>/LICENSE-text.html</loc>
+    <loc>https://ecoquants.github.io/offhabr/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>/LICENSE.html</loc>
+    <loc>https://ecoquants.github.io/offhabr/LICENSE.html</loc>
   </url>
   <url>
-    <loc>/authors.html</loc>
+    <loc>https://ecoquants.github.io/offhabr/authors.html</loc>
   </url>
   <url>
-    <loc>/index.html</loc>
+    <loc>https://ecoquants.github.io/offhabr/index.html</loc>
   </url>
   <url>
-    <loc>/reference/am_cells_ply.html</loc>
+    <loc>https://ecoquants.github.io/offhabr/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/boem_blocks.html</loc>
+    <loc>https://ecoquants.github.io/offhabr/reference/am_cells_ply.html</loc>
   </url>
   <url>
-    <loc>/reference/get_am_cells_grd.html</loc>
+    <loc>https://ecoquants.github.io/offhabr/reference/am_pg_con.html</loc>
   </url>
   <url>
-    <loc>/reference/hello.html</loc>
+    <loc>https://ecoquants.github.io/offhabr/reference/boem_blocks.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>https://ecoquants.github.io/offhabr/reference/get_am_cells_grd.html</loc>
   </url>
   <url>
-    <loc>/reference/oh_pg_con.html</loc>
+    <loc>https://ecoquants.github.io/offhabr/reference/hello.html</loc>
   </url>
   <url>
-    <loc>/reference/oh_zones.html</loc>
+    <loc>https://ecoquants.github.io/offhabr/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/oh_pg_con.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/oh_zones.html</loc>
   </url>
 </urlset>

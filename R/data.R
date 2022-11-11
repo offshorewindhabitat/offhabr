@@ -6,10 +6,10 @@
 #' \describe{
 #'   \item{cell_id}{unique cell identifier (integer), the rownumber for the unique combination of `zone_key` and `hcaf_id`}
 #'   \item{zone_key}{name of zone from `oh_zones`, originally BOEM Planning Area `RESA_summa` column}
-#'   \item{hcaf_id}{half degree cell identifier (integer) from `am_cells_grd`}
-#'   \item{CsquareCode}{from AquaMaps hcaf}
-#'   \item{CenterLong}{from AquaMaps hcaf}
-#'   \item{CenterLat}{from AquaMaps hcaf}
+#'   \item{id}{half degree cell identifier (integer) from `am_cells_grd`}
+#'   \item{csquare_code}{from AquaMaps hcaf}
+#'   \item{center_long}{from AquaMaps hcaf}
+#'   \item{center_lat}{from AquaMaps hcaf}
 #'   \item{area_km2}{area of cell in square kilometers}
 #'   \item{geom}{geometry in geographic coordinate system (EPSG: 4326)}
 #' }
