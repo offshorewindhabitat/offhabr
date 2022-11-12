@@ -1,3 +1,7 @@
+# offhabr 0.3.0
+
+* \+ `am_cell_blocks` dataset from intersecting OffHab zone x AquaMaps cell x BOEM block; \+ corresponding raster with `get_am_cell_blocks_grd()`; \+ database helper function  `create_index()`
+
 # offhabr 0.2.0
 
 * Migrated entire AquaMaps DB into dedicated `aquamaps` postgres database (\+ `am_pg_con()`; for calculating range size of each species) and used cross-database querying to extract subset of cells and species within `oh_zones` to into `offhab` postgres database with `am_*` prefix (see `data-raw/aquamaps_db.R`).

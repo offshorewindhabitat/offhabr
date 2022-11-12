@@ -2,7 +2,7 @@
 % Please edit documentation in R/db.R
 \name{am_pg_con}
 \alias{am_pg_con}
-\title{Connect to AquaMaps Postgres Database}
+\title{Connect to AquaMaps Postgres database}
 \usage{
 am_pg_con()
 }
@@ -10,7 +10,7 @@ am_pg_con()
 a `DBI::dbConnect()` object
 }
 \description{
-Connect to AquaMaps Postgres Database
+Connect to AquaMaps Postgres database
 }
 \examples{
 \dontrun{

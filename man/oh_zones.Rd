@@ -3,7 +3,7 @@
 \docType{data}
 \name{oh_zones}
 \alias{oh_zones}
-\title{Offshore Habitat Zones (`oh_zones`)}
+\title{Offshore Habitat Zone polygons from BOEM Program Areas clipped to US EEZ}
 \format{
 A spatial features (`sf`) data frame with 10 rows and 5 columns:
 \describe{

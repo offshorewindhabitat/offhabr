@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">offhabr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0</span>
       </span>
     </div>
 
@@ -48,51 +48,55 @@
 
     <table class="ref-index"><colgroup><col class="alias"><col class="title"></colgroup><tbody><tr><th colspan="2">
           <h2 id="aquamaps">AquaMaps <a href="#aquamaps" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p>
+          <p class="section-desc"></p><p>functions specific to AquaMaps</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="get_am_cells_grd.html">get_am_cells_grd()</a></code> </p>
+          <p><code><a href="get_am_cell_blocks_grd.html">get_am_cell_blocks_grd()</a></code> </p>
         </td>
-        <td><p>Get AquaMaps cell grid</p></td>
+        <td><p>AquaMaps cell raster contained by BOEM blocks</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_am_cell_zones_grd.html">get_am_cell_zones_grd()</a></code> </p>
+        </td>
+        <td><p>AquaMaps cell raster contained by OffHab zones</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="analyze">Analyze <a href="#analyze" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr></tbody><tbody></tbody><tbody><tr><th colspan="2">
-          <h2 id="visualize">Visualize <a href="#visualize" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr></tbody><tbody></tbody><tbody><tr><th colspan="2">
           <h2 id="database">Database <a href="#database" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p>
+          <p class="section-desc"></p><p>functions specific to databases</p>
         </th>
       </tr></tbody><tbody><tr><td>
           <p><code><a href="am_pg_con.html">am_pg_con()</a></code> </p>
         </td>
-        <td><p>Connect to AquaMaps Postgres Database</p></td>
+        <td><p>Connect to AquaMaps Postgres database</p></td>
+      </tr><tr><td>
+          <p><code><a href="create_index.html">create_index()</a></code> </p>
+        </td>
+        <td><p>Create index in database</p></td>
       </tr><tr><td>
           <p><code><a href="oh_pg_con.html">oh_pg_con()</a></code> </p>
         </td>
-        <td><p>Connect to OffHab Postgres Database</p></td>
+        <td><p>Connect to OffHab Postgres database</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="data">Data <a href="#data" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p>
+          <p class="section-desc"></p><p>available datasets</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="am_cells_ply.html">am_cells_ply</a></code> </p>
+          <p><code><a href="am_cell_blocks.html">am_cell_blocks</a></code> </p>
         </td>
-        <td><p>AquaMaps cells polygon Habitat Zones (`am_cells_ply`)</p></td>
+        <td><p>AquaMaps cell polygons intersecting OffHab zones and BOEM blocks</p></td>
+      </tr><tr><td>
+          <p><code><a href="am_cell_zones.html">am_cell_zones</a></code> </p>
+        </td>
+        <td><p>AquaMaps cell polygons intersecting OffHab zones</p></td>
       </tr><tr><td>
           <p><code><a href="boem_blocks.html">boem_blocks</a></code> </p>
         </td>
-        <td><p>BOEM Wind Energy Area Blocks (`boem_blocks`)</p></td>
+        <td><p>BOEM Wind Energy Area Block polygons</p></td>
       </tr><tr><td>
           <p><code><a href="oh_zones.html">oh_zones</a></code> </p>
         </td>
-        <td><p>Offshore Habitat Zones (`oh_zones`)</p></td>
+        <td><p>Offshore Habitat Zone polygons from BOEM Program Areas clipped to US EEZ</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="other">Other <a href="#other" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p>
+          <p class="section-desc"></p><p>check for other functions or datasets not captured by above categories</p>
         </th>
       </tr></tbody><tbody></tbody></table></div>
 

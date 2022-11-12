@@ -1,20 +1,30 @@
 url: https://ecoquants.github.io/offhabr/
 reference:
 - title: "AquaMaps"
+  desc: functions specific to AquaMaps
   contents:
   - has_concept("aquamaps")
-- title: "Analyze"
-  contents:
-  - has_concept("analyze")
-- title: "Visualize"
-  contents:
-  - has_concept("visualize")
+# - title: "Read"
+#   desc: functions reading data
+#   contents:
+#   - has_concept("read")
+# - title: "Analyze"
+#   desc: functions for analyzing data
+#   contents:
+#   - has_concept("analyze")
+# - title: "Visualize"
+#   desc: functions for visualizing data
+#   contents:
+#   - has_concept("visualize")
 - title: "Database"
+  desc: functions specific to databases
   contents:
   - has_concept("db")
 - title: "Data"
+  desc: available datasets
   contents:
   - has_concept("data")
 - title: "Other"
+  desc: check for other functions or datasets not captured by above categories
   contents:
-  - lacks_concepts(c("db", "aquamaps", "read", "analyze", "visualize", "data"))
+  - lacks_concepts(c("aquamaps", "read", "analyze", "visualize", "db", "data"))

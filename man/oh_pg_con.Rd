@@ -2,7 +2,7 @@
 % Please edit documentation in R/db.R
 \name{oh_pg_con}
 \alias{oh_pg_con}
-\title{Connect to OffHab Postgres Database}
+\title{Connect to OffHab Postgres database}
 \usage{
 oh_pg_con()
 }
@@ -10,7 +10,7 @@ oh_pg_con()
 a `DBI::dbConnect()` object
 }
 \description{
-Connect to OffHab Postgres Database
+Connect to OffHab Postgres database
 }
 \examples{
 \dontrun{

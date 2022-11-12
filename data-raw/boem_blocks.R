@@ -73,6 +73,7 @@ boem_blocks <- bind_rows(
   filter(
     plan_CATEGORY1 != "Gulf of Mexico Call Area") %>%
   mutate(
+    BLOCK_NUMBER = str_trim(BLOCK_NUMBER),
     block_key = glue("{PROTRACTION_NUMBER}_{BLOCK_NUMBER}"),
     area_km2  = st_area(geom) %>%
       set_units(km^2) %>%

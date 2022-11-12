@@ -19,6 +19,12 @@
     <loc>https://ecoquants.github.io/offhabr/news/index.html</loc>
   </url>
   <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/am_cell_blocks.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/am_cell_zones.html</loc>
+  </url>
+  <url>
     <loc>https://ecoquants.github.io/offhabr/reference/am_cells_ply.html</loc>
   </url>
   <url>
@@ -26,6 +32,15 @@
   </url>
   <url>
     <loc>https://ecoquants.github.io/offhabr/reference/boem_blocks.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/create_index.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/get_am_cell_blocks_grd.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/get_am_cell_zones_grd.html</loc>
   </url>
   <url>
     <loc>https://ecoquants.github.io/offhabr/reference/get_am_cells_grd.html</loc>

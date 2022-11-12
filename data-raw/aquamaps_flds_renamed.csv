@@ -1,3 +1,4 @@
 tbl_am,fld_old,fld_new
-hcaf_r,Slimit,SLimit
-speciesoccursum_r,FBname,FbName
+hcaf_r,Slimit,s_limit
+speciesoccursum_r,FBname,fb_name
+hcaf_r,ID,hcaf_id

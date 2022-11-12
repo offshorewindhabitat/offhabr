@@ -3,7 +3,7 @@
 \docType{data}
 \name{boem_blocks}
 \alias{boem_blocks}
-\title{BOEM Wind Energy Area Blocks (`boem_blocks`)}
+\title{BOEM Wind Energy Area Block polygons}
 \format{
 A spatial features (`sf`) data frame with 5,596 features and 24 fields:
 \describe{
@@ -48,7 +48,7 @@ A spatial features (`sf`) data frame with 5,596 features and 24 fields:
 boem_blocks
 }
 \description{
-BOEM Wind Energy Area Blocks
+BOEM Wind Energy Area Block polygons
 }
 \concept{data}
 \keyword{datasets}

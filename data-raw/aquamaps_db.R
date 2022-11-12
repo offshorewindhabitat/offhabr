@@ -1,4 +1,5 @@
 # transfer AquaMaps from sqlite to postgres database
+# run after am_cells.R
 
 # https://raquamaps.github.io/aquamapsdata/articles/intro.html#data-scope-and-content-1
 
@@ -23,14 +24,11 @@ oh_pg <- oh_pg_con()
 am_pg <- am_pg_con()
 
 # make databases spatial
-dbSendQuery(
-  oh_pg, "CREATE EXTENSION IF NOT EXISTS postgis;")
-dbSendQuery(
-  am_pg, "CREATE EXTENSION IF NOT EXISTS postgis;")
+dbSendQuery(oh_pg, "CREATE EXTENSION IF NOT EXISTS postgis;")
+dbSendQuery(am_pg, "CREATE EXTENSION IF NOT EXISTS postgis;")
 
 # enable cross-database querying
-dbSendQuery(
-  oh_pg, "CREATE EXTENSION IF NOT EXISTS postgres_fdw")
+dbSendQuery(oh_pg, "CREATE EXTENSION IF NOT EXISTS postgres_fdw")
 dbSendQuery(
   oh_pg,
   "CREATE SERVER aquamaps_server FOREIGN DATA WRAPPER postgres_fdw
@@ -38,9 +36,7 @@ dbSendQuery(
 dbSendQuery(
   oh_pg,
   "CREATE USER MAPPING FOR bbest SERVER aquamaps_server OPTIONS (user 'bbest')")
-dbSendQuery(
-  oh_pg,
-  "CREATE SCHEMA aquamaps")
+dbSendQuery(oh_pg, "CREATE SCHEMA aquamaps")
 # does NOT work:
 #   tbl(oh_pg, "aquamaps.cells")
 # does work:
@@ -145,21 +141,38 @@ am_m <- m %>%
 dbWriteTable(
   oh_pg, "am_meta", am_m, overwrite = T)
 
+# aquamaps.* create indexes
+create_index(am_pg,     "cells", "hcaf_id")
+create_index(am_pg,     "cells", "csquare_code")
+create_index(am_pg, "spp_cells", "csquare_code")
+
+# add hcaf_id
+dbSendQuery(
+  am_pg,
+  "ALTER TABLE spp_cells
+   ADD COLUMN IF NOT EXISTS hcaf_id INT4")
+# index creation here for large table is very SLOW (~ 30 min)
+dbSendQuery(
+  am_pg,
+  "UPDATE spp_cells sc
+   SET hcaf_id = c.hcaf_id
+   FROM cells c
+   WHERE sc.csquare_code = c.csquare_code")
+create_index(am_pg, "spp_cells", "center_long")
+create_index(am_pg, "spp_cells", "center_lat")
+create_index(am_pg, "spp_cells", "species_id")
+create_index(am_pg,       "spp", "species_id")
+create_index(am_pg, "spp_prefs", "species_id")
+
 # refresh cross-database schema
-dbSendQuery(
-  oh_pg,
-  "DROP SCHEMA IF EXISTS aquamaps CASCADE")
-dbSendQuery(
-  oh_pg,
-  "CREATE SCHEMA aquamaps")
-dbSendQuery(
-  oh_pg,
-  "IMPORT FOREIGN SCHEMA public from SERVER aquamaps_server into aquamaps")
+dbSendQuery(oh_pg, "DROP SCHEMA IF EXISTS aquamaps CASCADE")
+dbSendQuery(oh_pg, "CREATE SCHEMA aquamaps")
+dbSendQuery(oh_pg, "IMPORT FOREIGN SCHEMA public from SERVER aquamaps_server into aquamaps")
 
 # get reduced set of rows specific to OffHab study area
 #  for portablility (ie xfer to server) and speed (faster querying)
-csq_oh     <- unique(am_cells_ply$CsquareCode)
-csq_oh_sql <- paste(csq_oh, collapse = "','")
+ids_zon <- unique(am_cell_zones$hcaf_id)
+ids_sql <- paste(ids_zon, collapse = ",")
 
 # reduce am_spp_cells from 9.4G to 224M (per DBeaver)
 dbSendQuery(oh_pg, "DROP TABLE IF EXISTS am_spp_cells")
@@ -167,7 +180,7 @@ dbSendQuery(
   oh_pg,
   glue("CREATE TABLE am_spp_cells AS
    SELECT * FROM aquamaps.spp_cells
-   WHERE csquare_code IN ('{csq_oh_sql}')"))
+   WHERE hcaf_id IN ({ids_sql})"))
 dbSendQuery(oh_pg, "DROP TABLE IF EXISTS am_spp")
 dbSendQuery(
   oh_pg,
@@ -192,37 +205,18 @@ dbSendQuery(
 # NOTE: skipping aquamaps.spp_occs since occurrences used
 #   to model spp_cells not so relevant for now
 
-# cleanup storage to reflect new reduced size
-dbSendQuery(
-  oh_pg,
-  'VACUUM (FULL, ANALYZE)')
-dbSendQuery(
-  am_pg,
-  'VACUUM (FULL, ANALYZE)')
+# oh.am_* create indexes
+create_index(oh_pg,     "am_cells", "hcaf_id")
+create_index(oh_pg,     "am_cells", "csquare_code")
+create_index(oh_pg, "am_spp_cells", "hcaf_id")
+create_index(oh_pg, "am_spp_cells", "csquare_code")
+create_index(oh_pg, "am_spp_cells", "center_long")
+create_index(oh_pg, "am_spp_cells", "center_lat")
+create_index(oh_pg, "am_spp_cells", "species_id")
+create_index(oh_pg,       "am_spp", "species_id")
+create_index(oh_pg, "am_spp_prefs", "species_id")
+create_index(oh_pg, "am_spp_prefs", "species_id")
 
-# create indexes
-dbSendQuery(
-  oh_pg,
-  'CREATE INDEX IF NOT EXISTS am_spp_cells_CenterLong_idx ON am_spp_cells("CenterLong")')
-dbSendQuery(
-  oh_pg,
-  'CREATE INDEX IF NOT EXISTS am_spp_cells_CenterLat_idx ON am_spp_cells("CenterLat")')
-dbSendQuery(
-  oh_pg,
-  'CREATE INDEX IF NOT EXISTS am_spp_cells_CsquareCode_idx ON am_spp_cells("CsquareCode")')
-
-dbSendQuery(oh_pg, 'ALTER TABLE am_cells RENAME COLUMN "ID" TO hcaf_id')
-dbSendQuery(
-  oh_pg,
-  'CREATE INDEX IF NOT EXISTS am_cells_hcaf_id_idx ON am_cells("hcaf_id")')
-
-am_spp_cells <- tbl(oh_pg, "am_spp_cells") %>%
-  left_join(
-    tbl(oh_pg, "am_cells") %>%
-      select(CsquareCode, hcaf_id),
-    by = "CsquareCode") %>%
-  collect()
-dbWriteTable(oh_pg, "am_spp_cells", am_spp_cells, overwrite=T)
-dbSendQuery(
-  oh_pg,
-  'CREATE INDEX IF NOT EXISTS am_spp_cells_hcaf_id_idx ON am_spp_cells("hcaf_id")')
+# cleanup
+dbSendQuery(oh_pg, "VACUUM (FULL, ANALYZE)")
+dbSendQuery(am_pg, "VACUUM (FULL, ANALYZE)")

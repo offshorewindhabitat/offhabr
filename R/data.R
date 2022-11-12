@@ -1,12 +1,38 @@
-#' AquaMaps cells polygon Habitat Zones (`am_cells_ply`)
+# am_cell_blocks ----
+#' AquaMaps cell polygons intersecting OffHab zones and BOEM blocks
+#'
+#' Polygons from intersecting OffHab zone `oh_zones` x AquaMaps cell `am_cells` x BOEM block
+#' `boem_blocks`
+#'
+#' @format A spatial features (`sf`) data frame with 1189 features and 6 fields:
+#' \describe{
+#'   \item{zcb_id}{unique identifier (integer) for OffHab zone `oh_zones` x
+#'     AquaMaps cell `am_cells` x BOEM block `boem_blocks`}
+#'   \item{block_key}{unique block identifier (character), comprised of
+#'     \{PROTRACTION_NUMBER\}_\{BLOCK_NUMBER\}}
+#'   \item{block_type}{one of either "lease" or "plan" depending on data source}
+#'   \item{zone_key}{name of zone from `oh_zones`, originally BOEM Planning Area `RESA_summa` column}
+#'   \item{zc_id}{identifier (integer) for OffHab zone and AquaMaps cell}
+#'   \item{hcaf_id}{AquaMaps half degree cell identifier (integer) from `am_cells_grd`}
+#'   \item{csquare_code}{from AquaMaps hcaf}
+#'   \item{area_km2}{area of cell in square kilometers}
+#'   \item{geom}{geometry in geographic coordinate system (EPSG: 4326)}
+#' }
+#' @source [Geographic Mapping Data in Digital Format](https://www.data.boem.gov/Main/Mapping.aspx),
+#' [Marine Regions · United States Exclusive Economic Zone (EEZ)](https://marineregions.org/gazetteer.php?p=details&id=8456)
+#' @concept data
+"am_cell_blocks"
+
+# am_cell_zones ----
+#' AquaMaps cell polygons intersecting OffHab zones
 #'
 #' AquaMaps hcaf cells intersected with `oh_zones`.
 #'
 #' @format A spatial features (`sf`) data frame with 1189 features and 6 fields:
 #' \describe{
-#'   \item{cell_id}{unique cell identifier (integer), the rownumber for the unique combination of `zone_key` and `hcaf_id`}
+#'   \item{zc_id}{unique identifier (integer) for OffHab zone and AquaMaps cell}
 #'   \item{zone_key}{name of zone from `oh_zones`, originally BOEM Planning Area `RESA_summa` column}
-#'   \item{id}{half degree cell identifier (integer) from `am_cells_grd`}
+#'   \item{hcaf_id}{AquaMaps half degree cell identifier (integer) from `am_cells_grd`}
 #'   \item{csquare_code}{from AquaMaps hcaf}
 #'   \item{center_long}{from AquaMaps hcaf}
 #'   \item{center_lat}{from AquaMaps hcaf}
@@ -16,11 +42,12 @@
 #' @source [Geographic Mapping Data in Digital Format](https://www.data.boem.gov/Main/Mapping.aspx),
 #' [Marine Regions · United States Exclusive Economic Zone (EEZ)](https://marineregions.org/gazetteer.php?p=details&id=8456)
 #' @concept data
-"am_cells_ply"
+"am_cell_zones"
 
-#' BOEM Wind Energy Area Blocks (`boem_blocks`)
+# boem_blocks ----
+#' BOEM Wind Energy Area Block polygons
 #'
-#' BOEM Wind Energy Area Blocks
+#' BOEM Wind Energy Area Block polygons
 #'
 #' @format A spatial features (`sf`) data frame with 5,596 features and 24 fields:
 #' \describe{
@@ -61,8 +88,8 @@
 #' @concept data
 "boem_blocks"
 
-
-#' Offshore Habitat Zones (`oh_zones`)
+# oh_zones ----
+#' Offshore Habitat Zone polygons from BOEM Program Areas clipped to US EEZ
 #'
 #' Offshore habitat zones used for summary statistics and derived from BOEM
 #' 2019-2024 Draft Proposed Program Areas for the lower 48 (excluding Hawaii and
