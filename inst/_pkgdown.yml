@@ -12,10 +12,10 @@ reference:
 #   desc: functions for analyzing data
 #   contents:
 #   - has_concept("analyze")
-# - title: "Visualize"
-#   desc: functions for visualizing data
-#   contents:
-#   - has_concept("visualize")
+- title: "Visualize"
+  desc: functions for visualizing data
+  contents:
+  - has_concept("viz")
 - title: "Database"
   desc: functions specific to databases
   contents:
@@ -27,4 +27,4 @@ reference:
 - title: "Other"
   desc: check for other functions or datasets not captured by above categories
   contents:
-  - lacks_concepts(c("aquamaps", "read", "analyze", "visualize", "db", "data"))
+  - lacks_concepts(c("aquamaps", "read", "analyze", "viz", "db", "data"))

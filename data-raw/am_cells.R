@@ -45,7 +45,14 @@ am_cell_zones <- st_intersection(
   select(
     zc_id, zone_key,
     hcaf_id, csquare_code, center_long, center_lat,
-    area_km2, geom)
+    area_km2, geom) %>%
+  # get rid of 2 non-polygon slivers
+  mutate(
+    geom_type = st_geometry_type(geom)) %>%
+  filter(
+    geom_type != "GEOMETRYCOLLECTION") %>%
+  select(-geom_type)
+
 # unique by: 0.5 degree hcaf_id + zone_key
 # reduced: 1,159 features and 3 fields (with some repeats of hcaf_id b/c zone_key)
 # mapView(am_cell_zones, zcol = "zone_key")
