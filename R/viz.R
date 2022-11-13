@@ -66,7 +66,7 @@ oh_map_ply <- function(
     # get max delta above and below midpoint
     d <- max(abs(c(m - min(vals), max(vals) - m)))
     # set range
-    r <- c(m - d - 0.00001, m + d + - 0.00001)
+    r <- c(min(vals), m - d, m + d, max(vals))
 
     pal <- scales::col_numeric(col_pal, domain = r, reverse = T)
   }

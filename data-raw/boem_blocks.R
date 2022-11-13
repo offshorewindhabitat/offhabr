@@ -110,6 +110,3 @@ st_write(
 dbSendQuery(
   con,
   "CREATE INDEX IF NOT EXISTS boem_blocks_geom_idx ON boem_blocks USING GIST (geom);")
-
-
-

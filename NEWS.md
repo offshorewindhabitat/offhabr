@@ -1,6 +1,7 @@
 # offhabr 0.4.0
 
 * \+ `oh_map_ply()` to map polygons, possibly with divergent midpoint in the color scheme using `div_mid` argument.
+
 * \+ `oh_zones_s1k`: simplified version of `oh_zones` to 1 km for faster rendering of smaller output files
 
 # offhabr 0.3.0
