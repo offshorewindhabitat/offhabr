@@ -52,6 +52,12 @@
     <loc>https://ecoquants.github.io/offhabr/reference/index.html</loc>
   </url>
   <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/oh_add_ply.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/oh_map.html</loc>
+  </url>
+  <url>
     <loc>https://ecoquants.github.io/offhabr/reference/oh_map_ply.html</loc>
   </url>
   <url>
@@ -59,5 +65,8 @@
   </url>
   <url>
     <loc>https://ecoquants.github.io/offhabr/reference/oh_zones.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/oh_zones_s1k.html</loc>
   </url>
 </urlset>

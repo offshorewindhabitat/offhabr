@@ -1,3 +1,7 @@
+# offhabr 0.4.2
+
+* \+ `data-raw/taxa_worrms.R` for matching so far `am_spp.{genus} {species}` with "WoRMS - World Register of Marine Species" [MarineSpecies.org](https://www.marinespecies.org) using its API web service [marinespecies.org/rest](https://www.marinespecies.org/rest/) and the R package [worrms](https://docs.ropensci.org/worrms/articles/worrms.html).
+
 # offhabr 0.4.1
 
 * `oh_map_ply()` -> `oh_map()` + `oh_add_ply()` to accomodate adding multiple layers of polygons, eg blocks on top of zones.
