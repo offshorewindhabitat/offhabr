@@ -86,7 +86,6 @@ dbSendQuery(
   con,
   "CREATE INDEX IF NOT EXISTS oh_zones_geom_idx ON oh_zones USING GIST (geom);")
 
-
 # create simplified version for faster rendering of smaller output files
 oh_zones_s1k <- oh_zones %>%
   sf::st_simplify(T, 1000)

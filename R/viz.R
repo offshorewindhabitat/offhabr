@@ -1,8 +1,44 @@
-#' Map polygons
+#' Setup interactive map with OffHab defaults
 #'
-#' Make an interactive choropleth map, optionally with a color scheme that
+#' Make an interactive map with basemap
+#'
+#' @param base_map the basemap (see  `leaflet$providers`); default is
+#'   "CartoDB.Positron"
+#' @param base_opacity the opacity of the basemap; default is 0.5
+#'
+#' @return a `leaflet::leaflet()` map
+#' @import leaflet
+#' @export
+#' @concept viz
+#'
+#' @examples
+#' # basic map with defaults
+#' oh_map()
+#'
+#' # map zones by area with divergent color scheme around mean
+#' oh_map(
+#'   ply     = oh_zones_s1k,
+#'   fld_val = area_km2,
+#'   fld_id  = zone_name,
+#'   str_val = "area (km^2)",
+#'   str_id  = "Zone",
+#'   div_mid = mean(oh_zones$area_km2))
+oh_map <- function(
+    base_map = "CartoDB.Positron", base_opacity = 0.5){
+
+  leaflet::leaflet() %>%
+    leaflet::addProviderTiles(
+      leaflet::providers[[base_map]],
+      options = leaflet::providerTileOptions(
+        opacity = base_opacity))
+}
+
+#' Add polygons to map
+#'
+#' Add polygons to an interactive choropleth map, optionally with a color scheme that
 #' diverges around a midpoint value.
 #'
+#' @param map a `leaflet` map, eg from `oh_map()`
 #' @param ply a `sf` polygon data frame
 #' @param fld_val an unquoted field name (see `tidy-select`) for the column in
 #'   `ply` containing the value to map
@@ -29,7 +65,8 @@
 #'
 #' @examples
 #' # map zones by area
-#' oh_map_ply(
+#' oh_map() %>%
+#' oh_add_ply(
 #'   ply     = oh_zones_s1k,
 #'   fld_val = area_km2,
 #'   fld_id  = zone_name,
@@ -37,19 +74,20 @@
 #'   str_id  = "Zone")
 #'
 #' # map zones by area with divergent color scheme around mean
-#' oh_map_ply(
+#' oh_map() %>%
+#' oh_add_ply(
 #'   ply     = oh_zones_s1k,
 #'   fld_val = area_km2,
 #'   fld_id  = zone_name,
 #'   str_val = "area (km^2)",
 #'   str_id  = "Zone",
 #'   div_mid = mean(oh_zones$area_km2))
-oh_map_ply <- function(
-    ply, fld_val, fld_id, str_val, str_id,
+oh_add_ply <- function(
+    map, ply, fld_val, fld_id, str_val, str_id,
     div_mid = NULL,
     col_pal = "Spectral", fill_opacity = 0.6,
-    brdr_color = "gray", brdr_opacity = 0.9, brdr_weight = 1,
-    base_map = "CartoDB.Positron", base_opacity = 0.5){
+    brdr_color = "gray", brdr_opacity = 0.9, brdr_weight = 2,
+    add_legend = T){
 
   vals <- dplyr::pull(ply, {{fld_val}})
   ids  <- dplyr::pull(ply, {{fld_id}})
@@ -58,34 +96,36 @@ oh_map_ply <- function(
   if (is.null(m)){
     pal <- scales::col_numeric(col_pal, domain = vals, reverse = T)
   } else {
-    # check midpoint is between min and max of vals
-    stopifnot(all(
-      m > min(vals),
-      m < max(vals)))
+    v <- vals
+    # if midpoint is between min and max of vals
+    if (m < min(vals) | m > max(vals)){
+      message("Midpoint is outside range of values. Adding to range.")
+      v <- c(m, v)
+    }
 
     # get max delta above and below midpoint
-    d <- max(abs(c(m - min(vals), max(vals) - m)))
+    d <- max(abs(c(m - min(v), max(v) - m)))
     # set range
-    r <- c(min(vals), m - d, m + d, max(vals))
+    r <- c(min(v), m - d, m + d, max(v))
 
     pal <- scales::col_numeric(col_pal, domain = r, reverse = T)
   }
 
   popups <- glue::glue("{str_id}: <b>{ids}</b><br>{str_val}: {vals}")
 
-  leaflet::leaflet() %>%
-    leaflet::addProviderTiles(
-      leaflet::providers[[base_map]],
-      options = leaflet::providerTileOptions(
-        opacity = base_opacity)) %>%
+  map <- map %>%
     leaflet::addPolygons(
       data = ply,
       fillColor = pal(vals), fillOpacity = fill_opacity,
       color = brdr_color, opacity = brdr_opacity, weight = brdr_weight,
-      popup = popups) %>%
+      popup = popups)
+  if (add_legend)
+    map <- map %>%
     leaflet::addLegend(
       pal = pal,
-      values = range(vals),
+      values = range(v),
       title = str_val)
+  map
 }
+
 

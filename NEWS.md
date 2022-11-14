@@ -1,3 +1,7 @@
+# offhabr 0.4.1
+
+* `oh_map_ply()` -> `oh_map()` + `oh_add_ply()` to accomodate adding multiple layers of polygons, eg blocks on top of zones.
+
 # offhabr 0.4.0
 
 * \+ `oh_map_ply()` to map polygons, possibly with divergent midpoint in the color scheme using `div_mid` argument.
