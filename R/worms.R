@@ -1,4 +1,4 @@
-#' Match taxa to WoRMS aphia_id and update database
+#' Match taxa to WoRMS `aphia_id` and update database
 #'
 #' Match taxa in the provided field `fld` of the data frame `df` to the unique
 #' WoRMS identifier (`aphia_id`) and return `df` with prepended `aphia_id`
@@ -8,8 +8,8 @@
 #'
 #' Perform the match with the following order of precedence:
 #' 1. **Existing** match for in the database `taxa` table
-#' 1. **Exact** match in WoRMS REST API with `wm_rest()` with `operation="AphiaRecordsByMatchNames"`
-#' 1. **Fuzzy** match in WoRMS REST API with `wm_rest()` with `operation="AphiaRecordsByNames"`
+#' 1. **Exact** match in WoRMS REST API with `wm_rest()` having `operation="AphiaRecordsByMatchNames"`
+#' 1. **Fuzzy** match in WoRMS REST API with `wm_rest()` having `operation="AphiaRecordsByNames"`
 #'
 #' With all possible matches made, proceed to:
 #' 1. Prepend the input data frame `df` with the matched column `aphia_id`.
