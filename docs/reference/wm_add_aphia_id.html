@@ -21,7 +21,7 @@ fields tbl_str and fld_str."><!-- mathjax --><script src="https://cdnjs.cloudfla
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">offhabr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.1</span>
       </span>
     </div>
 
@@ -99,12 +99,12 @@ fields <code>tbl_str</code> and <code>fld_str</code>.</p>
 <li><p><strong>Exact</strong> match in WoRMS REST API with <code><a href="wm_rest.html">wm_rest()</a></code> with <code>operation="AphiaRecordsByMatchNames"</code></p></li>
 <li><p><strong>Fuzzy</strong> match in WoRMS REST API with <code><a href="wm_rest.html">wm_rest()</a></code> with <code>operation="AphiaRecordsByNames"</code></p></li>
 </ol><p>With all possible matches made, proceed to:</p><ol><li><p>Prepend the input data frame <code>df</code> with the matched column <code>aphia_id</code>.</p></li>
-<li><p>Populate <code>taxa</code> table in database with rows containing:</p></li>
-</ol><ul><li><p><code>tbl</code>: <code>tbl_str</code></p></li>
+<li><p>Populate <code>taxa</code> table in database with rows containing:</p><ul><li><p><code>tbl</code>: <code>tbl_str</code></p></li>
 <li><p><code>fld</code>: <code>fld_str</code></p></li>
 <li><p><code>taxa</code>: unique values of <code>fld</code></p></li>
 <li><p><code>aphia_id</code>: matching WoRMS identifier, possibly <code>NA</code> if no match found</p></li>
-</ul><ol><li><p>Fetch full WoRMS records for any new <code>taxa.aphia_id</code>s using
+</ul></li>
+<li><p>Fetch full WoRMS records for any new <code>taxa.aphia_id</code>s using
 <code><a href="wm_rest.html">wm_rest()</a></code> with <code>operation="AphiaRecordsByAphiaIDs"</code>, and append to <code>taxa_wm</code> table.</p></li>
 </ol></div>
 

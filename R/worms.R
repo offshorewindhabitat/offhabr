@@ -14,10 +14,10 @@
 #' With all possible matches made, proceed to:
 #' 1. Prepend the input data frame `df` with the matched column `aphia_id`.
 #' 1. Populate `taxa` table in database with rows containing:
-#'   * `tbl`: `tbl_str`
-#'   * `fld`: `fld_str`
-#'   * `taxa`: unique values of `fld`
-#'   * `aphia_id`: matching WoRMS identifier, possibly `NA` if no match found
+#'    * `tbl`: `tbl_str`
+#'    * `fld`: `fld_str`
+#'    * `taxa`: unique values of `fld`
+#'    * `aphia_id`: matching WoRMS identifier, possibly `NA` if no match found
 #' 1. Fetch full WoRMS records for any new `taxa.aphia_id`s using
 #' `wm_rest()` with `operation="AphiaRecordsByAphiaIDs"`, and append to `taxa_wm` table.
 #'

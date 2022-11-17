@@ -42,14 +42,12 @@ With all possible matches made, proceed to:
 \enumerate{
 \item Prepend the input data frame \code{df} with the matched column \code{aphia_id}.
 \item Populate \code{taxa} table in database with rows containing:
-}
 \itemize{
 \item \code{tbl}: \code{tbl_str}
 \item \code{fld}: \code{fld_str}
 \item \code{taxa}: unique values of \code{fld}
 \item \code{aphia_id}: matching WoRMS identifier, possibly \code{NA} if no match found
 }
-\enumerate{
 \item Fetch full WoRMS records for any new \code{taxa.aphia_id}s using
 \code{wm_rest()} with \code{operation="AphiaRecordsByAphiaIDs"}, and append to \code{taxa_wm} table.
 }
