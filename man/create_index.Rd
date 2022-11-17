@@ -4,16 +4,20 @@
 \alias{create_index}
 \title{Create index in database}
 \usage{
-create_index(con, tbl, fld, geom = F)
+create_index(con, tbl, flds, geom = F, unique = F, overwrite = F)
 }
 \arguments{
 \item{con}{database connection from `DBI::dbConnect()`, eg from `am_pg_con()`}
 
 \item{tbl}{table name as character}
 
-\item{fld}{field name as character}
+\item{flds}{character vector of fields in table used for index}
 
 \item{geom}{logical (default: FALSE) whether geometry field, so create GIST() index}
+
+\item{unique}{logical (default: FALSE) whether to impose a unique constraint, to prevent duplicates; default: FALSE}
+
+\item{overwrite}{logical (default: FALSE) whether to overwrite existing index}
 }
 \value{
 nothing

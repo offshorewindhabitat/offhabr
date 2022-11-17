@@ -129,3 +129,19 @@
 #' @concept data
 "oh_zones_s1k"
 
+# wm_rest_params ----
+#' Lookup table for maximum requests per WoRMS REST API used by `wm_rest()`
+#'
+#' A data frame describing the maximum number of simultaneous requests allowed
+#' by the [WoRMS REST API](https://www.marinespecies.org/rest/).
+#'
+#' @format A data frame with 3 rows and 3 columns:
+#' \describe{
+#'   \item{type}{helpful descriptor of type of operation}
+#'   \item{operation}{name of operation}
+#'   \item{max}{maximum number of simultaneous requests allowed}
+#' }
+#' @source [WoRMS REST API](https://www.marinespecies.org/rest/)
+#' @concept data
+"wm_rest_params"
+

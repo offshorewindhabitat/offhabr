@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">offhabr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0</span>
       </span>
     </div>
 
@@ -47,6 +47,11 @@
       <small>Source: <a href="https://github.com/ecoquants/offhabr/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.5.0" id="offhabr-050">offhabr 0.5.0<a class="anchor" aria-label="anchor" href="#offhabr-050"></a></h2>
+<ul><li><p>+ <code><a href="../reference/wm_add_aphia_id.html">wm_add_aphia_id()</a></code> to match and prepend <code>aphia_id</code> from WoRMS REST services using new <code><a href="../reference/wm_rest.html">wm_rest()</a></code> helper function, which uses new dataset <code>wm_rest_params</code></p></li>
+<li><p>+ dataset <code>sw_density</code> table into db (see <code>data-raw/swfsc_cce_becker_et_al_2020b.R</code> on Github): <a href="https://www.fisheries.noaa.gov/inport/item/64349" class="external-link">Predictive Models of Cetacean Densities in the California Current Ecosystem, 2020b | InPort</a>.</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.4.2" id="offhabr-042">offhabr 0.4.2<a class="anchor" aria-label="anchor" href="#offhabr-042"></a></h2>
 <ul><li>+ <code>data-raw/taxa_worrms.R</code> for matching so far <code>am_spp.{genus} {species}</code> with “WoRMS - World Register of Marine Species” <a href="https://www.marinespecies.org" class="external-link">MarineSpecies.org</a> using its API web service <a href="https://www.marinespecies.org/rest/" class="external-link">marinespecies.org/rest</a> and the R package <a href="https://docs.ropensci.org/worrms/articles/worrms.html" class="external-link">worrms</a>.</li>

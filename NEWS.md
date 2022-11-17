@@ -1,3 +1,9 @@
+# offhabr 0.5.0
+
+* \+ `wm_add_aphia_id()` to match and prepend `aphia_id` from WoRMS REST services using new `wm_rest()` helper function, which uses new dataset `wm_rest_params`
+
+* \+ dataset `sw_density` table into db (see `data-raw/swfsc_cce_becker_et_al_2020b.R` on Github): [Predictive Models of Cetacean Densities in the California Current Ecosystem, 2020b | InPort](https://www.fisheries.noaa.gov/inport/item/64349).
+
 # offhabr 0.4.2
 
 * \+ `data-raw/taxa_worrms.R` for matching so far `am_spp.{genus} {species}` with "WoRMS - World Register of Marine Species" [MarineSpecies.org](https://www.marinespecies.org) using its API web service [marinespecies.org/rest](https://www.marinespecies.org/rest/) and the R package [worrms](https://docs.ropensci.org/worrms/articles/worrms.html).

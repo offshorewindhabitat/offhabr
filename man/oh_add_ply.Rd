@@ -16,8 +16,9 @@ oh_add_ply(
   fill_opacity = 0.6,
   brdr_color = "gray",
   brdr_opacity = 0.9,
-  brdr_weight = 2,
-  add_legend = T
+  brdr_weight = 1,
+  add_legend = T,
+  ...
 )
 }
 \arguments{
@@ -49,10 +50,9 @@ setting as the midpoint of the color palette `col_pal`; default is `NULL`}
 
 \item{brdr_weight}{border weight; default is 1}
 
-\item{base_map}{the basemap (see  `leaflet$providers`); default is
-"CartoDB.Positron"}
+\item{add_legend}{logical of whether to add legend; default is TRUE}
 
-\item{base_opacity}{the opacity of the basemap; default is 0.5}
+\item{...}{additional arguments passed onto `leaflet::addPolygons()`}
 }
 \value{
 a `leaflet::leaflet()` map

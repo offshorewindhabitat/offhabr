@@ -18,7 +18,7 @@ diverges around a midpoint value."><!-- mathjax --><script src="https://cdnjs.cl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">offhabr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0</span>
       </span>
     </div>
 
@@ -67,8 +67,9 @@ diverges around a midpoint value.</p>
 <span>  fill_opacity <span class="op">=</span> <span class="fl">0.6</span>,</span>
 <span>  brdr_color <span class="op">=</span> <span class="st">"gray"</span>,</span>
 <span>  brdr_opacity <span class="op">=</span> <span class="fl">0.9</span>,</span>
-<span>  brdr_weight <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  add_legend <span class="op">=</span> <span class="cn">T</span></span>
+<span>  brdr_weight <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  add_legend <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -126,13 +127,12 @@ setting as the midpoint of the color palette `col_pal`; default is `NULL`</p></d
 <dd><p>border weight; default is 1</p></dd>
 
 
-<dt>base_map</dt>
-<dd><p>the basemap (see  `leaflet$providers`); default is
-"CartoDB.Positron"</p></dd>
+<dt>add_legend</dt>
+<dd><p>logical of whether to add legend; default is TRUE</p></dd>
 
 
-<dt>base_opacity</dt>
-<dd><p>the opacity of the basemap; default is 0.5</p></dd>
+<dt>...</dt>
+<dd><p>additional arguments passed onto `leaflet::addPolygons()`</p></dd>
 
 </dl></div>
     <div id="value">

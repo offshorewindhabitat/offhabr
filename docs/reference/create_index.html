@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">offhabr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0</span>
       </span>
     </div>
 
@@ -53,7 +53,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">create_index</span><span class="op">(</span><span class="va">con</span>, <span class="va">tbl</span>, <span class="va">fld</span>, geom <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">create_index</span><span class="op">(</span><span class="va">con</span>, <span class="va">tbl</span>, <span class="va">flds</span>, geom <span class="op">=</span> <span class="cn">F</span>, unique <span class="op">=</span> <span class="cn">F</span>, overwrite <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -66,12 +66,20 @@
 <dd><p>table name as character</p></dd>
 
 
-<dt>fld</dt>
-<dd><p>field name as character</p></dd>
+<dt>flds</dt>
+<dd><p>character vector of fields in table used for index</p></dd>
 
 
 <dt>geom</dt>
 <dd><p>logical (default: FALSE) whether geometry field, so create GIST() index</p></dd>
+
+
+<dt>unique</dt>
+<dd><p>logical (default: FALSE) whether to impose a unique constraint, to prevent duplicates; default: FALSE</p></dd>
+
+
+<dt>overwrite</dt>
+<dd><p>logical (default: FALSE) whether to overwrite existing index</p></dd>
 
 </dl></div>
     <div id="value">

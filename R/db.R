@@ -48,8 +48,10 @@ am_pg_con <- function(){
 #'
 #' @param con database connection from `DBI::dbConnect()`, eg from `am_pg_con()`
 #' @param tbl table name as character
-#' @param fld field name as character
+#' @param flds character vector of fields in table used for index
 #' @param geom logical (default: FALSE) whether geometry field, so create GIST() index
+#' @param unique logical (default: FALSE) whether to impose a unique constraint, to prevent duplicates; default: FALSE
+#' @param overwrite logical (default: FALSE) whether to overwrite existing index
 #'
 #' @return nothing
 #' @import glue DBI
@@ -62,12 +64,20 @@ am_pg_con <- function(){
 #' create_index(con, "am_cell_blocks", "geom", geom=T)
 #' create_index(con, "am_cell_blocks", "zcb_id")
 #' }
-create_index <- function(con, tbl, fld, geom=F){
+create_index <- function(con, tbl, flds, geom=F, unique=F, overwrite=F){
+  # tbl = "taxa"; flds = c("tbl_orig", "aphia_id"); unique = T; geom=F
+  stopifnot(!(geom == T & length(flds) != 1))
   sfx <- ifelse(
     geom,
-    glue::glue(" USING GIST ({fld})"),
-    glue::glue("({fld})"))
-  sql <- glue::glue("CREATE INDEX IF NOT EXISTS {tbl}_{fld}_idx ON {tbl}{sfx}")
+    glue::glue(" USING GIST ({flds})"),
+    glue::glue("({paste(flds, collapse=', ')})"))
+  idx <- glue("{tbl}_{paste(flds, collapse='_')}_idx")
+
+  if (overwrite)
+    dbSendQuery(con, glue("DROP INDEX IF EXISTS {idx}"))
+
+  sql <- glue::glue(
+    "CREATE {ifelse(unique, 'UNIQUE','')} INDEX IF NOT EXISTS {idx} ON {tbl}{sfx}")
   DBI::dbSendQuery(con, sql)
 }
 

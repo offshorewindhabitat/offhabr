@@ -30,7 +30,8 @@ oh_map <- function(
     leaflet::addProviderTiles(
       leaflet::providers[[base_map]],
       options = leaflet::providerTileOptions(
-        opacity = base_opacity))
+        opacity = base_opacity)) %>%
+    leaflet.extras::addFullscreenControl()
 }
 
 #' Add polygons to map
@@ -54,12 +55,12 @@ oh_map <- function(
 #' @param brdr_color border color; default is "gray"
 #' @param brdr_opacity border opacity; default is 0.9
 #' @param brdr_weight border weight; default is 1
-#' @param base_map the basemap (see  `leaflet$providers`); default is
-#'   "CartoDB.Positron"
-#' @param base_opacity the opacity of the basemap; default is 0.5
+#' @param add_legend logical of whether to add legend; default is TRUE
+#' @param ...  additional arguments passed onto `leaflet::addPolygons()`
 #'
 #' @return a `leaflet::leaflet()` map
-#' @import dplyr glue leaflet scales
+#' @import dplyr glue leaflet
+#' @importFrom scales col_numeric
 #' @export
 #' @concept viz
 #'
@@ -86,8 +87,9 @@ oh_add_ply <- function(
     map, ply, fld_val, fld_id, str_val, str_id,
     div_mid = NULL,
     col_pal = "Spectral", fill_opacity = 0.6,
-    brdr_color = "gray", brdr_opacity = 0.9, brdr_weight = 2,
-    add_legend = T){
+    brdr_color = "gray", brdr_opacity = 0.9, brdr_weight = 1,
+    add_legend = T,
+    ...){
 
   vals <- dplyr::pull(ply, {{fld_val}})
   ids  <- dplyr::pull(ply, {{fld_id}})
@@ -118,7 +120,8 @@ oh_add_ply <- function(
       data = ply,
       fillColor = pal(vals), fillOpacity = fill_opacity,
       color = brdr_color, opacity = brdr_opacity, weight = brdr_weight,
-      popup = popups)
+      popup = popups,
+      ...)
   if (add_legend)
     map <- map %>%
     leaflet::addLegend(
