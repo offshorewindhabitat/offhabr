@@ -2,7 +2,7 @@ Package: offhabr
 Type: Package
 Title: Offshore Habitat Analysis
 Description: Helpful functions and small datasets for offshore habitat analysis.
-Version: 0.5.0
+Version: 0.5.1
 Authors@R: c(
   person("Ben", "Best", email = "ben@ecoquants.com", 
     role = c("aut", "cre"), comment = c(ORCID = "0000-0002-2686-0784")))
@@ -14,6 +14,7 @@ Encoding: UTF-8
 LazyData: true
 Depends: 
     R (>= 2.10)
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Imports: 
     DBI,

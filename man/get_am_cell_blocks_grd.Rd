@@ -7,17 +7,17 @@
 get_am_cell_blocks_grd()
 }
 \value{
-A `terra` raster layer with 1 layer:
+A \code{terra} raster layer with 1 layer:
 \describe{
-  \item{hcaf_id}{half degree cell identifier (integer) from `am_cell_blocks`}
+\item{hcaf_id}{half degree cell identifier (integer) from \code{am_cell_blocks}}
 }
 }
 \description{
-Get raster with AquaMaps `hcaf_id` for cells contained by the BOEM blocks `boem_blocks`.
+Get raster with AquaMaps \code{hcaf_id} for cells contained by the BOEM blocks \code{boem_blocks}.
 }
 \details{
 Cannot simply load this as an available dataset into the R package since
-`terra::rast()` only loads a pointer to raster file, not its contents.
+\code{terra::rast()} only loads a pointer to raster file, not its contents.
 }
 \examples{
 am_cell_blocks_grd <- get_am_cell_blocks_grd()

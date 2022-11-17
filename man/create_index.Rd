@@ -7,7 +7,7 @@
 create_index(con, tbl, flds, geom = F, unique = F, overwrite = F)
 }
 \arguments{
-\item{con}{database connection from `DBI::dbConnect()`, eg from `am_pg_con()`}
+\item{con}{database connection from \code{DBI::dbConnect()}, eg from \code{am_pg_con()}}
 
 \item{tbl}{table name as character}
 

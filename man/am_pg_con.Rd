@@ -7,7 +7,7 @@
 am_pg_con()
 }
 \value{
-a `DBI::dbConnect()` object
+a \code{DBI::dbConnect()} object
 }
 \description{
 Connect to AquaMaps Postgres database

@@ -22,22 +22,22 @@ oh_add_ply(
 )
 }
 \arguments{
-\item{map}{a `leaflet` map, eg from `oh_map()`}
+\item{map}{a \code{leaflet} map, eg from \code{oh_map()}}
 
-\item{ply}{a `sf` polygon data frame}
+\item{ply}{a \code{sf} polygon data frame}
 
-\item{fld_val}{an unquoted field name (see `tidy-select`) for the column in
-`ply` containing the value to map}
+\item{fld_val}{an unquoted field name (see \code{tidy-select}) for the column in
+\code{ply} containing the value to map}
 
-\item{fld_id}{an unquoted field name (see `tidy-select`) for the column in
-`ply` containing the identifier to include in the popup}
+\item{fld_id}{an unquoted field name (see \code{tidy-select}) for the column in
+\code{ply} containing the identifier to include in the popup}
 
 \item{str_val}{the string name for the field value in the legend and popup}
 
 \item{str_id}{the string name for the identifier in the popup}
 
-\item{div_mid}{the divergent midpoint of the field value `fld_val` for
-setting as the midpoint of the color palette `col_pal`; default is `NULL`}
+\item{div_mid}{the divergent midpoint of the field value \code{fld_val} for
+setting as the midpoint of the color palette \code{col_pal}; default is \code{NULL}}
 
 \item{col_pal}{color palette for the polygon fill color; default is
 "Spectral"}
@@ -52,10 +52,10 @@ setting as the midpoint of the color palette `col_pal`; default is `NULL`}
 
 \item{add_legend}{logical of whether to add legend; default is TRUE}
 
-\item{...}{additional arguments passed onto `leaflet::addPolygons()`}
+\item{...}{additional arguments passed onto \code{leaflet::addPolygons()}}
 }
 \value{
-a `leaflet::leaflet()` map
+a \code{leaflet::leaflet()} map
 }
 \description{
 Add polygons to an interactive choropleth map, optionally with a color scheme that

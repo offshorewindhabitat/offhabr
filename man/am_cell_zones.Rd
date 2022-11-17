@@ -5,27 +5,27 @@
 \alias{am_cell_zones}
 \title{AquaMaps cell polygons intersecting OffHab zones}
 \format{
-A spatial features (`sf`) data frame with 1189 features and 6 fields:
+A spatial features (\code{sf}) data frame with 1189 features and 6 fields:
 \describe{
-  \item{zc_id}{unique identifier (integer) for OffHab zone and AquaMaps cell}
-  \item{zone_key}{name of zone from `oh_zones`, originally BOEM Planning Area `RESA_summa` column}
-  \item{hcaf_id}{AquaMaps half degree cell identifier (integer) from `am_cells_grd`}
-  \item{csquare_code}{from AquaMaps hcaf}
-  \item{center_long}{from AquaMaps hcaf}
-  \item{center_lat}{from AquaMaps hcaf}
-  \item{area_km2}{area of cell in square kilometers}
-  \item{geom}{geometry in geographic coordinate system (EPSG: 4326)}
+\item{zc_id}{unique identifier (integer) for OffHab zone and AquaMaps cell}
+\item{zone_key}{name of zone from \code{oh_zones}, originally BOEM Planning Area \code{RESA_summa} column}
+\item{hcaf_id}{AquaMaps half degree cell identifier (integer) from \code{am_cells_grd}}
+\item{csquare_code}{from AquaMaps hcaf}
+\item{center_long}{from AquaMaps hcaf}
+\item{center_lat}{from AquaMaps hcaf}
+\item{area_km2}{area of cell in square kilometers}
+\item{geom}{geometry in geographic coordinate system (EPSG: 4326)}
 }
 }
 \source{
-[Geographic Mapping Data in Digital Format](https://www.data.boem.gov/Main/Mapping.aspx),
-[Marine Regions · United States Exclusive Economic Zone (EEZ)](https://marineregions.org/gazetteer.php?p=details&id=8456)
+\href{https://www.data.boem.gov/Main/Mapping.aspx}{Geographic Mapping Data in Digital Format},
+\href{https://marineregions.org/gazetteer.php?p=details&id=8456}{Marine Regions · United States Exclusive Economic Zone (EEZ)}
 }
 \usage{
 am_cell_zones
 }
 \description{
-AquaMaps hcaf cells intersected with `oh_zones`.
+AquaMaps hcaf cells intersected with \code{oh_zones}.
 }
 \concept{data}
 \keyword{datasets}

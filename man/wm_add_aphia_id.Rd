@@ -14,17 +14,45 @@ wm_add_aphia_id(
 \arguments{
 \item{df}{data frame}
 
-\item{fld}{unquoted field name containing taxonomic field, eg `taxa`}
+\item{fld}{unquoted field name containing taxonomic field, eg \code{taxa}}
 
-\item{tbl_str}{the source table to be written into the database referenced in `taxa.tbl`}
+\item{tbl_str}{the source table to be written into the database referenced in \code{taxa.tbl}}
 
-\item{fld_str}{the source field to be written into the database referenced in `taxa.fld`}
+\item{fld_str}{the source field to be written into the database referenced in \code{taxa.fld}}
 }
 \value{
-the original data frame `df` with `aphia_id` column prepended
+the original data frame \code{df} with \code{aphia_id} column prepended
 }
 \description{
-And optionally append to taxa* tables in database
+Match taxa in the provided field \code{fld} of the data frame \code{df} to the unique
+WoRMS identifier (\code{aphia_id}) and return \code{df} with prepended \code{aphia_id}
+column. Update database tables \code{taxa_wm} with full WoRMS taxonomic records
+and metadata on uniquely matching taxa in database table \code{taxa} also using
+fields \code{tbl_str} and \code{fld_str}.
+}
+\details{
+Perform the match with the following order of precedence:
+\enumerate{
+\item \strong{Existing} match for in the database \code{taxa} table
+\item \strong{Exact} match in WoRMS REST API with \code{wm_rest()} with \code{operation="AphiaRecordsByMatchNames"}
+\item \strong{Fuzzy} match in WoRMS REST API with \code{wm_rest()} with \code{operation="AphiaRecordsByNames"}
+}
+
+With all possible matches made, proceed to:
+\enumerate{
+\item Prepend the input data frame \code{df} with the matched column \code{aphia_id}.
+\item Populate \code{taxa} table in database with rows containing:
+}
+\itemize{
+\item \code{tbl}: \code{tbl_str}
+\item \code{fld}: \code{fld_str}
+\item \code{taxa}: unique values of \code{fld}
+\item \code{aphia_id}: matching WoRMS identifier, possibly \code{NA} if no match found
+}
+\enumerate{
+\item Fetch full WoRMS records for any new \code{taxa.aphia_id}s using
+\code{wm_rest()} with \code{operation="AphiaRecordsByAphiaIDs"}, and append to \code{taxa_wm} table.
+}
 }
 \examples{
 \dontrun{

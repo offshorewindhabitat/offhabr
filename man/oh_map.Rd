@@ -7,13 +7,13 @@
 oh_map(base_map = "CartoDB.Positron", base_opacity = 0.5)
 }
 \arguments{
-\item{base_map}{the basemap (see  `leaflet$providers`); default is
+\item{base_map}{the basemap (see  \code{leaflet$providers}); default is
 "CartoDB.Positron"}
 
 \item{base_opacity}{the opacity of the basemap; default is 0.5}
 }
 \value{
-a `leaflet::leaflet()` map
+a \code{leaflet::leaflet()} map
 }
 \description{
 Make an interactive map with basemap

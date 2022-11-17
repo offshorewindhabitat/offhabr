@@ -58,94 +58,95 @@
 
     <div id="format">
     <h2>Format</h2>
-    <p>A spatial features (`sf`) data frame with 5,596 features and 24 fields:</p><dl><dt>block_key</dt>
+    <p>A spatial features (<code>sf</code>) data frame with 5,596 features and 24 fields:</p><dl><dt>block_key</dt>
 <dd><p>unique block identifier (character), comprised of
-    {PROTRACTION_NUMBER}_{BLOCK_NUMBER}</p></dd>
+{PROTRACTION_NUMBER}_{BLOCK_NUMBER}</p></dd>
 
-  <dt>block_type</dt>
+<dt>block_type</dt>
 <dd><p>one of either "lease" or "plan" depending on data source</p></dd>
 
-  <dt>zone_key</dt>
-<dd><p>unique zone from `oh_zones` containing the block</p></dd>
+<dt>zone_key</dt>
+<dd><p>unique zone from <code>oh_zones</code> containing the block</p></dd>
 
-  <dt>PROTRACTION_NUMBER</dt>
+<dt>PROTRACTION_NUMBER</dt>
 <dd><p>the BOEM area defined by the roughly
-     2° longitude by 1° latitude containing up to 1,200 blocks.
-     Computed using the International UTM Zone Numbering system, e.g.
-     NJ is North (N); Lat 36-40° (J); 18 is UTM zone 18; and 02 is the 2nd of
-     12 possible maps</p></dd>
+2° longitude by 1° latitude containing up to 1,200 blocks.
+Computed using the International UTM Zone Numbering system, e.g.
+NJ is North (N); Lat 36-40° (J); 18 is UTM zone 18; and 02 is the 2nd of
+12 possible maps</p></dd>
 
-  <dt>BLOCK_NUMBER</dt>
+<dt>BLOCK_NUMBER</dt>
 <dd><p>Each whole block is approximately 3 nautical miles (nm)
-    by 3 nm. For renewable energy purposes only, blocks can be leased
-     down to the 16th of a block.</p></dd>
+by 3 nm. For renewable energy purposes only, blocks can be leased
+down to the 16th of a block.</p></dd>
 
-  <dt>BLOCK_LABEL</dt>
+<dt>BLOCK_LABEL</dt>
 <dd></dd>
 
-  <dt>SUB_BLOCK</dt>
+<dt>SUB_BLOCK</dt>
 <dd></dd>
 
-  <dt>lease_LEASE_NUMBER</dt>
+<dt>lease_LEASE_NUMBER</dt>
 <dd></dd>
 
-  <dt>lease_LEASE_TYPE</dt>
+<dt>lease_LEASE_TYPE</dt>
 <dd></dd>
 
-  <dt>lease_RESOURCE</dt>
+<dt>lease_RESOURCE</dt>
 <dd></dd>
 
-  <dt>lease_COMPANY</dt>
+<dt>lease_COMPANY</dt>
 <dd></dd>
 
-  <dt>lease_LEASE_DATE</dt>
+<dt>lease_LEASE_DATE</dt>
 <dd></dd>
 
-  <dt>lease_LEASE_TERM</dt>
+<dt>lease_LEASE_TERM</dt>
 <dd></dd>
 
-  <dt>lease_PROJECT_EASEMENT</dt>
+<dt>lease_PROJECT_EASEMENT</dt>
 <dd></dd>
 
-  <dt>lease_STATE</dt>
+<dt>lease_STATE</dt>
 <dd></dd>
 
-  <dt>lease_PROTRACTION_NAME</dt>
+<dt>lease_PROTRACTION_NAME</dt>
 <dd></dd>
 
-  <dt>lease_LEASE_DOCUMENT1</dt>
+<dt>lease_LEASE_DOCUMENT1</dt>
 <dd></dd>
 
-  <dt>lease_LEASE_DOCUMENT2</dt>
+<dt>lease_LEASE_DOCUMENT2</dt>
 <dd></dd>
 
-  <dt>plan_ADDITIONAL_INFORMATION</dt>
+<dt>plan_ADDITIONAL_INFORMATION</dt>
 <dd></dd>
 
-  <dt>plan_CATEGORY1</dt>
+<dt>plan_CATEGORY1</dt>
 <dd></dd>
 
-  <dt>plan_CATEGORY2</dt>
+<dt>plan_CATEGORY2</dt>
 <dd></dd>
 
-  <dt>plan_URL1</dt>
+<dt>plan_URL1</dt>
 <dd></dd>
 
-  <dt>plan_URL2</dt>
+<dt>plan_URL2</dt>
 <dd></dd>
 
-  <dt>area_km2</dt>
+<dt>area_km2</dt>
 <dd><p>area of zone in square kilometers</p></dd>
 
-  <dt>geom</dt>
+<dt>geom</dt>
 <dd><p>geometry in geographic coordinate system (EPSG: 4326)</p></dd>
 
 
 </dl></div>
     <div id="source">
     <h2>Source</h2>
-    <p>* [Renewable Energy GIS Data | Bureau of Ocean Energy Management](https://www.boem.gov/renewable-energy/mapping-and-data/renewable-energy-gis-data)</p>
-    </div>
+    
+<ul><li><p><a href="https://www.boem.gov/renewable-energy/mapping-and-data/renewable-energy-gis-data" class="external-link">Renewable Energy GIS Data | Bureau of Ocean Energy Management</a></p></li>
+</ul></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

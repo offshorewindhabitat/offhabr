@@ -1,6 +1,25 @@
 #' Match taxa to WoRMS aphia_id and update database
 #'
-#' And optionally append to taxa* tables in database
+#' Match taxa in the provided field `fld` of the data frame `df` to the unique
+#' WoRMS identifier (`aphia_id`) and return `df` with prepended `aphia_id`
+#' column. Update database tables `taxa_wm` with full WoRMS taxonomic records
+#' and metadata on uniquely matching taxa in database table `taxa` also using
+#' fields `tbl_str` and `fld_str`.
+#'
+#' Perform the match with the following order of precedence:
+#' 1. **Existing** match for in the database `taxa` table
+#' 1. **Exact** match in WoRMS REST API with `wm_rest()` with `operation="AphiaRecordsByMatchNames"`
+#' 1. **Fuzzy** match in WoRMS REST API with `wm_rest()` with `operation="AphiaRecordsByNames"`
+#'
+#' With all possible matches made, proceed to:
+#' 1. Prepend the input data frame `df` with the matched column `aphia_id`.
+#' 1. Populate `taxa` table in database with rows containing:
+#'   * `tbl`: `tbl_str`
+#'   * `fld`: `fld_str`
+#'   * `taxa`: unique values of `fld`
+#'   * `aphia_id`: matching WoRMS identifier, possibly `NA` if no match found
+#' 1. Fetch full WoRMS records for any new `taxa.aphia_id`s using
+#' `wm_rest()` with `operation="AphiaRecordsByAphiaIDs"`, and append to `taxa_wm` table.
 #'
 #' @param df data frame
 #' @param fld unquoted field name containing taxonomic field, eg `taxa`
@@ -41,7 +60,7 @@ wm_add_aphia_id <- function(
     pull({{ fld }})
   taxas_0 <- taxas # debug
 
-  # match taxa already in db table taxa
+  # match taxa already in db table taxa ----
   message(glue("DB: matching {length(taxas)} in table taxa."))
   taxa_y <- tbl(con, "taxa") %>%
     filter(taxa %in% taxas) %>%
@@ -55,7 +74,7 @@ wm_add_aphia_id <- function(
       by = setNames("taxa", fld_str)) %>%
     relocate(aphia_id)
 
-  # look for exact names in WoRMS
+  # look for exact names in WoRMS ----
   taxas <- setdiff(taxas, taxa_y$taxa)
   if (length(taxas) > 0){
     message(glue("WoRMS: exact matching {length(taxas)} taxa."))
@@ -85,7 +104,7 @@ wm_add_aphia_id <- function(
     taxas <- setdiff(taxas, wm_e$taxa)
   }
 
-  # fuzzy match taxa in WoRMS
+  # fuzzy match taxa in WoRMS ----
   if (length(taxas) > 0){
     message(glue("WoRMS: fuzzy matching {length(taxas)} taxa."))
 
@@ -112,9 +131,7 @@ wm_add_aphia_id <- function(
       select(-valid_aphia_id)
   }
 
-  # append_db...
-
-  # taxa: origin table, field, taxa and WoRMS identifier (aphia_id)
+  # populate taxa table ----
   taxa <- df2 %>%
     st_drop_geometry() %>%
     group_by({{ fld }}, aphia_id) %>%
@@ -135,7 +152,7 @@ wm_add_aphia_id <- function(
   dbAppendTable(
     con, "taxa", taxa)
 
-  # get aphia_ids missing in taxa_wm
+  # get aphia_ids missing in taxa_wm and append ----
   aphias_x <- tbl(con, "taxa") %>%
     filter(
       tbl == !!tbl_str & fld == !!fld_str) %>%

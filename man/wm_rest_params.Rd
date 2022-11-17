@@ -3,24 +3,24 @@
 \docType{data}
 \name{wm_rest_params}
 \alias{wm_rest_params}
-\title{Lookup table for maximum requests per WoRMS REST API used by `wm_rest()`}
+\title{Lookup table for maximum requests per WoRMS REST API used by \code{wm_rest()}}
 \format{
 A data frame with 3 rows and 3 columns:
 \describe{
-  \item{type}{helpful descriptor of type of operation}
-  \item{operation}{name of operation}
-  \item{max}{maximum number of simultaneous requests allowed}
+\item{type}{helpful descriptor of type of operation}
+\item{operation}{name of operation}
+\item{max}{maximum number of simultaneous requests allowed}
 }
 }
 \source{
-[WoRMS REST API](https://www.marinespecies.org/rest/)
+\href{https://www.marinespecies.org/rest/}{WoRMS REST API}
 }
 \usage{
 wm_rest_params
 }
 \description{
 A data frame describing the maximum number of simultaneous requests allowed
-by the [WoRMS REST API](https://www.marinespecies.org/rest/).
+by the \href{https://www.marinespecies.org/rest/}{WoRMS REST API}.
 }
 \concept{data}
 \keyword{datasets}

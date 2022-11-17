@@ -1,3 +1,7 @@
+# offhabr 0.5.1
+
+* update documentation for `wm_add_aphia_id()` (now with `Roxygen: list(markdown = TRUE)` turned on)
+
 # offhabr 0.5.0
 
 * \+ `wm_add_aphia_id()` to match and prepend `aphia_id` from WoRMS REST services using new `wm_rest()` helper function, which uses new dataset `wm_rest_params`

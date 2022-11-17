@@ -18,7 +18,7 @@ wm_rest(
 
 \item{fld}{field in data frame to use with operation}
 
-\item{operation}{operation name of WoRMS REST API; One of operations listed at [marinespecies.org/rest](https://www.marinespecies.org/rest), like
+\item{operation}{operation name of WoRMS REST API; One of operations listed at \href{https://www.marinespecies.org/rest}{marinespecies.org/rest}, like
 "AphiaRecordsByMatchNames" (non-paging), "AphiaRecordsByNames" (paging) or "AphiaRecordsByAphiaIDs" (paging);
 default: "AphiaRecordsByMatchNames"}
 
@@ -27,15 +27,15 @@ default: "AphiaRecordsByMatchNames"}
 \item{...}{other query parameters to pass to operation}
 }
 \value{
-data frame of results from WoRMS API prepended with unique values from `fld`
+data frame of results from WoRMS API prepended with unique values from \code{fld}
 }
 \description{
 When trying to perform batch requests the WoRMS REST API unfortunately does
 not return the requested field so it is not obvious which taxa requested
-matches which response. Even when fetching records in batch by `aphia_id`
-functions in the `worrms` R package do not page requests based on the record
+matches which response. Even when fetching records in batch by \code{aphia_id}
+functions in the \code{worrms} R package do not page requests based on the record
 limits of the WoRMS REST API. Finally, it is much preferred to use the
-multiplexing capabilities of the latest `httr2` library to send multiple
+multiplexing capabilities of the latest \code{httr2} library to send multiple
 requests in parallel, versus each one sequentially.
 }
 \examples{
