@@ -2,7 +2,7 @@
 
 * \+ `wm_add_aphia_id()` to match and prepend `aphia_id` from WoRMS REST services using new `wm_rest()` helper function, which uses new dataset `wm_rest_params`
 
-* \+ dataset `sw_density` table into db (see `data-raw/swfsc_cce_becker_et_al_2020b.R` on Github): [Predictive Models of Cetacean Densities in the California Current Ecosystem, 2020b | InPort](https://www.fisheries.noaa.gov/inport/item/64349).
+* \+ dataset `sw_density` table into db (see `data-raw/sw_density.R` on Github): [Predictive Models of Cetacean Densities in the California Current Ecosystem, 2020b | InPort](https://www.fisheries.noaa.gov/inport/item/64349).
 
 # offhabr 0.4.2
 

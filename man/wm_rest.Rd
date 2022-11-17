@@ -50,3 +50,4 @@ wm_byid  <- wm_rest(tmp_test, aphia_id_0, "AphiaRecordsByAphiaIDs")
 wm_add_aphia_id(df_test, scientific, tbl_str = "tmp_test")
 }
 }
+\concept{worms}

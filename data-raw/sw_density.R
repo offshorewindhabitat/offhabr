@@ -1,5 +1,7 @@
 # SouthWest Fisheries Science Center Density Surface Models of Marine Mammals (Becker et al, 2020)
-
+#
+# [Predictive Models of Cetacean Densities in the California Current Ecosystem, 2020b | InPort](https://www.fisheries.noaa.gov/inport/item/64349)
+#
 #    aphia_id lyr                                      species_2                      n
 #       <int> <chr>                                    <chr>                      <int>
 #  1   137087 Minke_whale_summer_fall                  Balaenoptera acutorostrata 12257
@@ -25,8 +27,9 @@ load_all()
 gdb <- "/Users/bbest/My Drive/projects/offhab/data/noaa.maps.arcgis.com/swfsc_cce_becker_et_al_2020b.gdb"
 
 # read layers
+lyrs <- st_layers(gdb) %>% .$name
 sw_density <- tibble(
-  lyr = st_layers(gdb) %>% .$name) %>%
+  lyr = lyrs) %>%
   mutate(
     sf = map(lyr, ~ read_sf(gdb, layer = .))) %>%
   unnest(sf) %>%
@@ -42,6 +45,48 @@ sw_density <- sw_density %>%
 # write to database
 con <- oh_pg_con() # dbListTables(con)
 st_write(sw_density, con, "sw_density")
+
+# priority for taxa.aphia_id
+# density > RES > presence (expert)
+
+# dataset_zones
+# tbl | zone_key | pct_overlap
+tbl = "sw_density"
+area_km2
+
+
+tbl(con, "taxa") %>%
+  group_by(tbl) %>%
+
+# get dataset overlap with oh_zones
+sw_density_bnd <- sw_density %>%
+  filter(lyr == lyrs[1]) %>%
+  st_union()
+# mapview(sw_density_bnd)
+oh_x <- dbGetQuery(
+  con,
+  " "
+)
+
+"WITH
+       b AS (
+         SELECT block_key, block_type, zone_key, geom FROM boem_blocks), -- WHERE zone_key = 'cgm'
+       zc AS (
+         SELECT zc_id, hcaf_id, csquare_code, geom FROM am_cell_zones)   -- WHERE zone_key = 'cgm'
+     SELECT
+       block_key, block_type, zone_key,
+       zc_id, hcaf_id, csquare_code,
+       CASE
+         WHEN ST_CoveredBy(b.geom, zc.geom)
+         THEN b.geom
+         ELSE
+          ST_Multi(
+            ST_Intersection(b.geom, zc.geom))
+         END AS geom
+     FROM b
+       INNER JOIN zc
+       ON ST_INTERSECTS(b.geom, zc.geom)
+          AND Not ST_Touches(b.geom, zc.geom)"
 
 
 # extra... ----

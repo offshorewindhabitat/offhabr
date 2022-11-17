@@ -9,6 +9,7 @@
 #'
 #' @return the original data frame `df` with `aphia_id` column prepended
 #' @export
+#' @concept worms
 #'
 #' @examples
 #' \dontrun{
@@ -177,6 +178,7 @@ wm_add_aphia_id <- function(
 #' @return data frame of results from WoRMS API prepended with unique values from `fld`
 #' @import dplyr httr2 purrr tidyr
 #' @export
+#' @concept worms
 #'
 #' @examples
 #' \dontrun{

@@ -1,9 +1,13 @@
 url: https://ecoquants.github.io/offhabr/
 reference:
 - title: "AquaMaps"
-  desc: functions specific to AquaMaps
+  desc: functions specific to the [AquaMaps.org](https://www.aquamaps.org) dataset
   contents:
   - has_concept("aquamaps")
+- title: "WoRMS"
+  desc: functions specific to WoRMS (World Registry of Marine Species) at [MarineSpecies.org](https://www.marinespecies.org)
+  contents:
+  - has_concept("worms")
 # - title: "Read"
 #   desc: functions reading data
 #   contents:
