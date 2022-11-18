@@ -1,3 +1,7 @@
+# offhabr 0.5.2
+
+* \+ `zone_id` column to `oh_zones` and `block_id` column to `boem_blocks` for integer referencing with rasters
+
 # offhabr 0.5.1
 
 * update documentation for `wm_add_aphia_id()` (now with `Roxygen: list(markdown = TRUE)` turned on)

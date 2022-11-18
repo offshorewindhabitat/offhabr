@@ -78,13 +78,18 @@ usethis::use_data(oh_zones, overwrite = TRUE)
 devtools::load_all()
 con <- oh_pg_con()
 st_write(
-  oh_zones, con, "oh_zones",
-  layer_options = c(
-    # https://gdal.org/drivers/vector/pg.html#layer-creation-options
-    "OVERWRITE=yes", "LAUNDER=true"))
-dbSendQuery(
-  con,
-  "CREATE INDEX IF NOT EXISTS oh_zones_geom_idx ON oh_zones USING GIST (geom);")
+  oh_zones, con, "oh_zones", delete_layer=T)
+
+# add zone_id for referencing rasters ----
+oh_zones <- st_read(con, "oh_zones") %>%
+  arrange(zone_key) %>%
+  tibble::rowid_to_column("zone_id")
+st_write(
+  oh_zones, con, "oh_zones", delete_layer=T)
+create_index(con, "oh_zones", "geom", geom=T)
+create_index(con, "oh_zones", "zone_id", unique=T)
+create_index(con, "oh_zones", "zone_key", unique=T)
+usethis::use_data(oh_zones, overwrite = TRUE)
 
 # create simplified version for faster rendering of smaller output files
 oh_zones_s1k <- oh_zones %>%

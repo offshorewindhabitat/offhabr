@@ -51,8 +51,9 @@
 #'
 #' @format A spatial features (`sf`) data frame with 5,596 features and 24 fields:
 #' \describe{
+#'   \item{block_id}{unique block identifier (integer)}
 #'   \item{block_key}{unique block identifier (character), comprised of
-#'     \{PROTRACTION_NUMBER\}_\{BLOCK_NUMBER\}}
+#'     \{zone_key\}\{PROTRACTION_NUMBER\}_\{BLOCK_NUMBER\}}
 #'   \item{block_type}{one of either "lease" or "plan" depending on data source}
 #'   \item{zone_key}{unique zone from `oh_zones` containing the block}
 #'   \item{PROTRACTION_NUMBER}{the BOEM area defined by the roughly
@@ -97,6 +98,7 @@
 #'
 #' @format A spatial features (`sf`) data frame with 10 rows and 5 columns:
 #' \describe{
+#'   \item{block_id}{unique zone identifier (integer)}
 #'   \item{zone_key}{unique zone identifier (character), the lower-case of original BOEM Planning Area `MMS_PLAN_A` column}
 #'   \item{zone_name}{name of zone, originally BOEM Planning Area `RESA_summa` column}
 #'   \item{region}{oceanic region; one of: "Atlantic", "Gulf of Mexico" or "Pacific"}

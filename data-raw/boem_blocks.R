@@ -73,18 +73,21 @@ boem_blocks <- bind_rows(
   filter(
     plan_CATEGORY1 != "Gulf of Mexico Call Area") %>%
   mutate(
-    BLOCK_NUMBER = str_trim(BLOCK_NUMBER),
-    block_key = glue("{PROTRACTION_NUMBER}_{BLOCK_NUMBER}"),
+    BLOCK_NUMBER = str_trim(BLOCK_NUMBER)) %>%
+  st_join(
+    oh_zones %>%
+      select(zone_key, geom)) %>%
+  mutate(
+    block_key = glue("{zone_key}_{PROTRACTION_NUMBER}_{BLOCK_NUMBER}{SUB_BLOCK}"),
     area_km2  = st_area(geom) %>%
       set_units(km^2) %>%
       drop_units()) %>%
-  st_join(
-    oh_zones %>%
-      select(zone_key, geom))
+  arrange(block_key) %>%
+  tibble::rowid_to_column("block_id")
 # mapview(boem_blocks, zcol = "zone_key")
 
 boem_blocks <- boem_blocks %>%
-  relocate(block_key, block_type, zone_key) %>%
+  relocate(block_id, block_key, block_type, zone_key) %>%
   relocate(
     all_of(colnames(boem_blocks) %>% str_subset("^lease_")),
     .after = last_col()) %>%
@@ -93,20 +96,18 @@ boem_blocks <- boem_blocks %>%
     .after = last_col()) %>%
   relocate(
     area_km2, geom,
-    .after = last_col())
+    .after = last_col()) %>%
+  janitor::clean_names()
 # colnames(boem_blocks)
 
 # mapview(boem_blocks)
 usethis::use_data(boem_blocks, overwrite = TRUE)
 
 # write to pg db
-devtools::load_all()
 con <- oh_pg_con()
 st_write(
-  boem_blocks, con, "boem_blocks",
-  layer_options = c(
-    # https://gdal.org/drivers/vector/pg.html#layer-creation-options
-    "OVERWRITE=yes", "LAUNDER=true"))
-dbSendQuery(
-  con,
-  "CREATE INDEX IF NOT EXISTS boem_blocks_geom_idx ON boem_blocks USING GIST (geom);")
+  boem_blocks, con, "boem_blocks", delete_layer=T)
+create_index(con, "boem_blocks", "geom", geom=T)
+create_index(con, "boem_blocks", "block_id", unique=T)
+create_index(con, "boem_blocks", "block_key", unique=T)
+usethis::use_data(boem_blocks, overwrite = T)
