@@ -21,7 +21,7 @@ fields tbl_str and fld_str."><!-- mathjax --><script src="https://cdnjs.cloudfla
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">offhabr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
       </span>
     </div>
 
@@ -47,7 +47,7 @@ fields tbl_str and fld_str."><!-- mathjax --><script src="https://cdnjs.cloudfla
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Match taxa to WoRMS aphia_id and update database</h1>
+    <h1>Match taxa to WoRMS <code>aphia_id</code> and update database</h1>
     <small class="dont-index">Source: <a href="https://github.com/ecoquants/offhabr/blob/HEAD/R/worms.R" class="external-link"><code>R/worms.R</code></a></small>
     <div class="hidden name"><code>wm_add_aphia_id.Rd</code></div>
     </div>
@@ -96,8 +96,8 @@ fields <code>tbl_str</code> and <code>fld_str</code>.</p>
     <div id="details">
     <h2>Details</h2>
     <p>Perform the match with the following order of precedence:</p><ol><li><p><strong>Existing</strong> match for in the database <code>taxa</code> table</p></li>
-<li><p><strong>Exact</strong> match in WoRMS REST API with <code><a href="wm_rest.html">wm_rest()</a></code> with <code>operation="AphiaRecordsByMatchNames"</code></p></li>
-<li><p><strong>Fuzzy</strong> match in WoRMS REST API with <code><a href="wm_rest.html">wm_rest()</a></code> with <code>operation="AphiaRecordsByNames"</code></p></li>
+<li><p><strong>Exact</strong> match in WoRMS REST API with <code><a href="wm_rest.html">wm_rest()</a></code> having <code>operation="AphiaRecordsByMatchNames"</code></p></li>
+<li><p><strong>Fuzzy</strong> match in WoRMS REST API with <code><a href="wm_rest.html">wm_rest()</a></code> having <code>operation="AphiaRecordsByNames"</code></p></li>
 </ol><p>With all possible matches made, proceed to:</p><ol><li><p>Prepend the input data frame <code>df</code> with the matched column <code>aphia_id</code>.</p></li>
 <li><p>Populate <code>taxa</code> table in database with rows containing:</p><ul><li><p><code>tbl</code>: <code>tbl_str</code></p></li>
 <li><p><code>fld</code>: <code>fld_str</code></p></li>

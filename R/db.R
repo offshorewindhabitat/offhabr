@@ -10,15 +10,18 @@
 #' con <- oh_pg_con()
 #' DBI::dbListTables(con)
 #' }
-oh_pg_con <- function(){
+oh_pg_con <- function(autocommit=T){
   # brew services start postgresql
   # brew services stop postgresql
+
+  opts <- ifelse(autocommit, "", "-c synchronous_commit=off")
 
   DBI::dbConnect(
     RPostgres::Postgres(),
     dbname   = "offhab",
     host     = "localhost",
-    port     = 5432)
+    port     = 5432,
+    options  = opts)
 }
 
 #' Connect to AquaMaps Postgres database
@@ -40,6 +43,29 @@ am_pg_con <- function(){
   DBI::dbConnect(
     RPostgres::Postgres(),
     dbname   = "aquamaps",
+    host     = "localhost",
+    port     = 5432)
+}
+
+#' Connect to IUCN RedList Postgres database
+#'
+#' @return a `DBI::dbConnect()` object
+#' @import DBI
+#' @export
+#' @concept db
+#'
+#' @examples
+#' \dontrun{
+#' con <- rl_pg_con()
+#' DBI::dbListTables(con)
+#' }
+rl_pg_con <- function(){
+  # brew services start postgresql
+  # brew services stop postgresql
+
+  DBI::dbConnect(
+    RPostgres::Postgres(),
+    dbname   = "iucn",
     host     = "localhost",
     port     = 5432)
 }

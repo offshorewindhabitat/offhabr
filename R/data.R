@@ -98,7 +98,7 @@
 #'
 #' @format A spatial features (`sf`) data frame with 10 rows and 5 columns:
 #' \describe{
-#'   \item{block_id}{unique zone identifier (integer)}
+#'   \item{zone_id}{unique zone identifier (integer)}
 #'   \item{zone_key}{unique zone identifier (character), the lower-case of original BOEM Planning Area `MMS_PLAN_A` column}
 #'   \item{zone_name}{name of zone, originally BOEM Planning Area `RESA_summa` column}
 #'   \item{region}{oceanic region; one of: "Atlantic", "Gulf of Mexico" or "Pacific"}
@@ -120,6 +120,7 @@
 #'
 #' @format A spatial features (`sf`) data frame with 10 rows and 5 columns:
 #' \describe{
+#'   \item{zone_id}{unique zone identifier (integer)}
 #'   \item{zone_key}{unique zone identifier (character), the lower-case of original BOEM Planning Area `MMS_PLAN_A` column}
 #'   \item{zone_name}{name of zone, originally BOEM Planning Area `RESA_summa` column}
 #'   \item{region}{oceanic region; one of: "Atlantic", "Gulf of Mexico" or "Pacific"}

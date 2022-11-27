@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">offhabr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
       </span>
     </div>
 
@@ -47,6 +47,14 @@
       <small>Source: <a href="https://github.com/ecoquants/offhabr/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.6.0" id="offhabr-060">offhabr 0.6.0<a class="anchor" aria-label="anchor" href="#offhabr-060"></a></h2>
+<ul><li><p>+ <code><a href="../reference/oh_rast.html">oh_rast()</a></code> for fetching OffHab reference raster by <code>cell_id</code>, <code>zone_id</code> or all <code>NA</code> and optionally trimming to <code>zone_id</code></p></li>
+<li><p>fixed <code><a href="../reference/wm_add_aphia_id.html">wm_add_aphia_id()</a></code> which wasn’t properly including fuzzy matches and updated <code>wm_rest_params</code> with practical values to fetch all data (versus theoretical maxima which bonked when URL of request got too long)</p></li>
+<li><p>intersected AquaMaps with new OffHab reference raster in <code>data-raw/am_cells_ply.R</code></p></li>
+<li><p>imported marine <a href="https://www.iucnredlist.org/resources/spatial-data-download" class="external-link">IUCN range maps</a> into the OffHab database with <code>data-raw/rl_range.R</code> using new <code><a href="../reference/rl_pg_con.html">rl_pg_con()</a></code> to import the full set of data before clipping to the OffHab zones into the OffHab database (<code><a href="../reference/oh_pg_con.html">oh_pg_con()</a></code>).</p></li>
+<li><p>imported <a href="https://www.fisheries.noaa.gov/inport/item/64349" class="external-link">Predictive Models of Cetacean Densities in the California Current Ecosystem, 2020b | InPort</a> with <code>data-raw/sw_density.R</code></p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.5.2" id="offhabr-052">offhabr 0.5.2<a class="anchor" aria-label="anchor" href="#offhabr-052"></a></h2>
 <ul><li>+ <code>zone_id</code> column to <code>oh_zones</code> and <code>block_id</code> column to <code>boem_blocks</code> for integer referencing with rasters</li>

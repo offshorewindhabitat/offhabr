@@ -83,25 +83,27 @@ wm_add_aphia_id <- function(
       taxa = taxas) %>%
       wm_rest(taxa,operation = "AphiaRecordsByNames")
 
-    wm_e <- wm_e %>%
-      group_by(scientificname) %>%
-      arrange(status, desc(modified)) %>%
-      mutate(
-        i = row_number(modified)) %>%
-      filter(i == 1) %>%
-      select(taxa = scientificname, valid_aphia_id)
-    df2 <- df2 %>%
-      left_join(
-        wm_e,
-        by = setNames("taxa", fld_str)) %>%
-      mutate(
-        aphia_id = ifelse(
-          is.na(valid_aphia_id),
-          aphia_id,
-          valid_aphia_id)) %>%
-      select(-valid_aphia_id)
+    if ("scientificname" %in% colnames(wm_e)){
+      wm_e <- wm_e %>%
+        group_by(scientificname) %>%
+        arrange(status, desc(modified)) %>%
+        mutate(
+          i = row_number(modified)) %>%
+        filter(i == 1) %>%
+        select(taxa = scientificname, valid_aphia_id)
+      df2 <- df2 %>%
+        left_join(
+          wm_e,
+          by = setNames("taxa", fld_str)) %>%
+        mutate(
+          aphia_id = ifelse(
+            is.na(valid_aphia_id),
+            aphia_id,
+            valid_aphia_id)) %>%
+        select(-valid_aphia_id)
 
-    taxas <- setdiff(taxas, wm_e$taxa)
+      taxas <- setdiff(taxas, wm_e$taxa)
+    }
   }
 
   # fuzzy match taxa in WoRMS ----
@@ -112,23 +114,25 @@ wm_add_aphia_id <- function(
       taxa = taxas) %>%
       wm_rest(taxa, operation = "AphiaRecordsByMatchNames")
 
-    wm_f <- wm_f %>%
-      group_by(scientificname) %>%
-      arrange(status, desc(modified)) %>%
-      mutate(
-        i = row_number(modified)) %>%
-      filter(i == 1) %>%
-      select(taxa = scientificname, valid_aphia_id)
-    df2 <- df2 %>%
-      left_join(
-        wm_e,
-        by = setNames("taxa", fld_str)) %>%
-      mutate(
-        aphia_id = ifelse(
-          is.na(valid_aphia_id),
-          aphia_id,
-          valid_aphia_id)) %>%
-      select(-valid_aphia_id)
+    if ("scientificname" %in% colnames(wm_f)){
+      wm_f <- wm_f %>%
+        group_by(scientificname) %>%
+        arrange(status, desc(modified)) %>%
+        mutate(
+          i = row_number(modified)) %>%
+        filter(i == 1) %>%
+        select(taxa = scientificname, valid_aphia_id)
+      df2 <- df2 %>%
+        left_join(
+          wm_f,
+          by = setNames("taxa", fld_str)) %>%
+        mutate(
+          aphia_id = ifelse(
+            is.na(valid_aphia_id),
+            aphia_id,
+            valid_aphia_id)) %>%
+        select(-valid_aphia_id)
+    }
   }
 
   # populate taxa table ----
@@ -160,15 +164,16 @@ wm_add_aphia_id <- function(
       tbl(con, "taxa_wm"),
       by = "aphia_id") %>%
     select(taxa, aphia_id) %>%
-    collect()
+    collect() %>%
+    filter(!is.na(aphia_id))
 
   # fetch and append WoRMS records for missing aphia_ids
   if (nrow(aphias_x) > 0 ){
     message(glue("DB: appending {nrow(aphias_x)} records to table taxa_wm."))
     taxa_wm_x <- aphias_x %>%
-      wm_rest(aphia_id, operation = "AphiaRecordsByAphiaIDs")
-    dbAppendTable(
-      con, "taxa_wm", taxa_wm_x)
+      wm_rest(aphia_id, operation = "AphiaRecordsByAphiaIDs") %>%
+      filter(duplicated(aphia_id))
+    dbAppendTable(con, "taxa_wm", taxa_wm_x)
   }
 
   df2
@@ -237,10 +242,10 @@ wm_rest <- function(
 
   # helper function to transform response to data frame
   get_df <- function(resp, i=0){
-    # imap(resp, get_df) sets i for debugging problematic row
-    # message(glue("i: {i}"))
-    # if (i == 44)
-    #   browser()
+    if (inherits(resp, "error")){
+      message(glue("  DOH! resp error in get_df(resp, {i}), prob URL with {nchar(d$req[[i]]$url)} characters is too long"))
+      browser()
+    }
     if (resp$status_code == 204) # No Content
       return(NA)
 
@@ -272,10 +277,9 @@ wm_rest <- function(
       length(vals) %% nmax == 0,
       NULL,
       length(vals))
-    v_end  = ifelse(
-      length(vals) > nmax,
-      c(seq(nmax, length(vals), by=nmax), i_last),
-      length(vals))
+    v_end <- i_last
+    if (length(vals) > nmax)
+      v_end <- c(seq(nmax, length(vals), by=nmax), i_last)
     d <- tibble(
       i_beg = seq(1, length(vals), by=nmax),
       i_end = v_end)
@@ -285,8 +289,7 @@ wm_rest <- function(
       mutate(
         req = map2(
           i_beg, i_end,
-          ~get_req(vals = vals[.x:.y]))) %>%
-      select(-i_beg, -i_end)
+          ~get_req(vals = vals[.x:.y])))
 
     # calculate eta
     eta <- Sys.time() + as.difftime(nrow(d) * 1, units="secs")
@@ -313,7 +316,7 @@ wm_rest <- function(
   d <- d %>%
     mutate(
       resp = multi_req_perform(req),
-      df   = map(resp, get_df)) %>%
+      df   = imap(resp, get_df)) %>%
     select(-req, -resp) %>%
     unnest(df)
 
@@ -325,6 +328,9 @@ wm_rest <- function(
     flds_rnm <- setNames("val", fld_val)
     d <- d %>%
       rename(!!!flds_rnm)
+  } else {
+    d <- d %>%
+      select(-i_beg, -i_end)
   }
 
   d

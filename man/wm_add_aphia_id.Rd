@@ -2,7 +2,7 @@
 % Please edit documentation in R/worms.R
 \name{wm_add_aphia_id}
 \alias{wm_add_aphia_id}
-\title{Match taxa to WoRMS aphia_id and update database}
+\title{Match taxa to WoRMS \code{aphia_id} and update database}
 \usage{
 wm_add_aphia_id(
   df,
@@ -34,8 +34,8 @@ fields \code{tbl_str} and \code{fld_str}.
 Perform the match with the following order of precedence:
 \enumerate{
 \item \strong{Existing} match for in the database \code{taxa} table
-\item \strong{Exact} match in WoRMS REST API with \code{wm_rest()} with \code{operation="AphiaRecordsByMatchNames"}
-\item \strong{Fuzzy} match in WoRMS REST API with \code{wm_rest()} with \code{operation="AphiaRecordsByNames"}
+\item \strong{Exact} match in WoRMS REST API with \code{wm_rest()} having \code{operation="AphiaRecordsByMatchNames"}
+\item \strong{Fuzzy} match in WoRMS REST API with \code{wm_rest()} having \code{operation="AphiaRecordsByNames"}
 }
 
 With all possible matches made, proceed to:

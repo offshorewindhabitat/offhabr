@@ -29,14 +29,14 @@ z_tif  <- glue("{dir_g}/oh_zone.tif")
 # generate rasters in mercator projection ----
 
 # get gebco elevation
-r_e <- rast(g_gcs_tif)
+r_e <- rast(g_tif)
 
 # make cell identifier for geographic projection
 #  NOTE: must be datatype="INT4U", otherwise weird offset duplication
 r_c <- setValues(r_e, NA)
-cids <- cells(r_e)
-r_c[cids] <- cids
-names(r_c) <- "cid_gcs"
+cell_ids <- cells(r_e)
+r_c[cell_ids] <- cell_ids
+names(r_c) <- "cell_id_gcs"
 writeRaster(r_c, gc_tif, overwrite=T, datatype="INT4U")
 
 # zone and block rasters
@@ -53,12 +53,12 @@ r_near <- rast(list(r_c, r_b, r_z)) %>%
     leaflet:::epsg3857,
     method = "near")
 
-# write NA and cid (cell identifier) rasters in web Mercator projection
+# write NA and cell_id (cell identifier) rasters in web Mercator projection
 r_na <- setValues(r_bilinear, NA)
-cids <- cells(r_bilinear)
+cell_ids <- cells(r_bilinear)
 r_c <- r_na
-r_c[cids] <- cids
-names(r_c) <- "cid"
+r_c[cell_ids] <- cell_ids
+names(r_c) <- "cell_id"
 writeRaster(
   r_na, na_tif, overwrite=T,
   datatype="INT1U")
@@ -66,11 +66,11 @@ writeRaster(
   r_c, c_tif, overwrite=T,
   datatype="INT4U")
 
-# write all NA make cell identifier (cid) for Mercator projection
+# write all NA make cell identifier (cell_id) for Mercator projection
 r_c <- setValues(r_bilinear, NA)
-cids <- cells(r_bilinear)
-r_c[cids] <- cids
-names(r_c) <- "cid"
+cell_ids <- cells(r_bilinear)
+r_c[cell_ids] <- cell_ids
+names(r_c) <- "cell_id"
 writeRaster(
   r_c, c_tif, overwrite=T,
   datatype="INT4U")
@@ -78,11 +78,11 @@ writeRaster(
 # write other rasters to most efficient data type
 r_cbze <- rast(list(r_near, r_bilinear))
 r_cbze
-# names       :  cid_gcs, block_id, zone_id,        elev
+# names       :  cell_id_gcs, block_id, zone_id,        elev
 # min values  :     1039,        1,       1, -6366.20312
 # max values  : 90163648,     5596,      11,    37.35491
 r_cbze %>%
-  subset("cid_gcs") %>%
+  subset("cell_id_gcs") %>%
   writeRaster(
     cg_tif, overwrite = T,
     datatype = "INT4U")
@@ -112,15 +112,15 @@ f_cbze <- st_as_sf(p_cbze) %>%
   mutate(geom = geometry)
 st_geometry(f_cbze) <- "geom"
 f_cbze <- f_cbze %>% select(-geometry)
-# sum(duplicated(f_cbze$cid)) # 0
+# sum(duplicated(f_cbze$cell_id)) # 0
 
 # write to db ----
 con <- oh_pg_con()
 st_write(f_cbze, con, "oh_cells", delete_layer = T)
-create_index(con, "oh_cells", "cid", unique = T)
+create_index(con, "oh_cells", "cell_id", unique = T)
 create_index(con, "oh_cells", "block_id")
 create_index(con, "oh_cells", "zone_id")
-create_index(con, "oh_cells", "geometry", geom = T)
+create_index(con, "oh_cells", "geom", geom = T)
 
 # test ----
 r <- rast(na_tif)
@@ -130,9 +130,9 @@ zone_ids <- oh_zones %>%
   pull(zone_id)
 d <- tbl(con, "oh_cells") %>%
   filter(zone_id %in% zone_ids) %>%
-  select(cid, elev) %>%
+  select(cell_id, elev) %>%
   collect()
-r[d$cid] <- d$elev
+r[d$cell_id] <- d$elev
 r <- terra::trim(r) # 105,432,074 -> 3,967,920
 # mapview(r, maxpixels=ncell(r))
 # plot(r)

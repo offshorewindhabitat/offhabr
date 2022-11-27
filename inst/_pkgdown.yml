@@ -24,6 +24,10 @@ reference:
   desc: functions specific to databases
   contents:
   - has_concept("db")
+- title: "Raster"
+  desc: functions for handling rasters, especially of reference cells
+  contents:
+  - has_concept("rast")
 - title: "Data"
   desc: available datasets
   contents:
