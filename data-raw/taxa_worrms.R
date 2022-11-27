@@ -14,7 +14,8 @@ wm_rest_params <- tibble::tribble(
   # IUCN RL LOBSTERS.gpkg 12056 characters is too long
   # IUCN RL REEF_FORMING_CORALS_PART2_valids.gpkg get_df(resp, 1) 8823 characters is too long
   "sci_exact"  ,      "AphiaRecordsByNames",      100, "scientificnames[]",
-  "aphia_exact",   "AphiaRecordsByAphiaIDs",       50,        "aphiaids[]")
+  "aphia_exact",   "AphiaRecordsByAphiaIDs",       50,        "aphiaids[]",
+  "common_exact","AphiaRecordsByVernacular",       NA,                  NA)
 usethis::use_data(wm_rest_params, overwrite = T)
 
 

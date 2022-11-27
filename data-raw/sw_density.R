@@ -2,6 +2,10 @@
 #
 # [Predictive Models of Cetacean Densities in the California Current Ecosystem, 2020b | InPort](https://www.fisheries.noaa.gov/inport/item/64349)
 #
+#  The entire study area was divided into 0.1° cells (ranging from approximately 10km x 11km in the south to 7km x 11km in the north), and density, area, and abundance calculated for each.
+#
+#  Density value in animals/km^2; Source: From model
+#
 #    aphia_id lyr                                      species_2                      n
 #       <int> <chr>                                    <chr>                      <int>
 #  1   137087 Minke_whale_summer_fall                  Balaenoptera acutorostrata 12257
@@ -55,6 +59,7 @@ sw_density <- wm_add_aphia_id(sw_density, species_2)
 sw_density <- sw_density %>%
   rowid_to_column("row_id")
 
+con_oh <- oh_pg_con()
 tbl(con_oh, "oh_cells_ply") %>%
   group_by(tbl) %>%
   summarize(n = n()) %>%

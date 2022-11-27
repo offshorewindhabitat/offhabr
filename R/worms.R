@@ -81,7 +81,7 @@ wm_add_aphia_id <- function(
 
     wm_e <- tibble(
       taxa = taxas) %>%
-      wm_rest(taxa,operation = "AphiaRecordsByNames")
+      wm_rest(taxa, operation = "AphiaRecordsByNames")
 
     if ("scientificname" %in% colnames(wm_e)){
       wm_e <- wm_e %>%
@@ -191,9 +191,11 @@ wm_add_aphia_id <- function(
 #'
 #' @param df data frame to match
 #' @param fld field in data frame to use with operation
-#' @param operation operation name of WoRMS REST API; One of operations listed at [marinespecies.org/rest](https://www.marinespecies.org/rest), like
-#' "AphiaRecordsByMatchNames" (non-paging), "AphiaRecordsByNames" (paging) or "AphiaRecordsByAphiaIDs" (paging);
-#' default: "AphiaRecordsByMatchNames"
+#' @param operation operation name of WoRMS REST API; One of operations listed
+#'   at [marinespecies.org/rest](https://www.marinespecies.org/rest), like
+#'   "AphiaRecordsByMatchNames" (non-paging), "AphiaRecordsByVernacular" (paging),
+#'   "AphiaRecordsByNames" (paging), or "AphiaRecordsByAphiaIDs" (paging);
+#'   default: "AphiaRecordsByMatchNames"
 #' @param server URL of server REST endpoint; default: "https://www.marinespecies.org/rest"
 #' @param ... other query parameters to pass to operation
 #'
@@ -234,10 +236,18 @@ wm_rest <- function(
 
   # helper function to formulate request
   get_req <- function(vals){
-    q <- setNames(vals, rep(op$param, length(vals)))
-    request(server) %>%
-      req_url_path_append(operation) %>%
-      req_url_query(!!!q)
+
+    if (is.na(op$param)){
+      req <- request(server) %>%
+        req_url_path_append(operation) %>%
+        req_url_path_append(utils::URLencode(vals))
+    } else {
+      q <- setNames(vals, rep(op$param, length(vals)))
+      req <- request(server) %>%
+        req_url_path_append(operation) %>%
+        req_url_query(!!!q)
+    }
+    req
   }
 
   # helper function to transform response to data frame

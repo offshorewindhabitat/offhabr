@@ -1,3 +1,9 @@
+# offhabr 0.6.1
+
+- added [Habitat-based Marine Mammal Density Models for the U.S. Atlantic: Latest Versions](https://seamap.env.duke.edu/models/Duke/EC/) with `data-raw/du_density.R`
+
+- added `operation="AphiaRecordsByVernacular"` option to `wm_rest()` for searching common names.
+
 # offhabr 0.6.0
 
 -   \+ `oh_rast()` for fetching OffHab reference raster by `cell_id`, `zone_id` or all `NA` and optionally trimming to `zone_id`
