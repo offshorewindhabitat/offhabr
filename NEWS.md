@@ -1,3 +1,10 @@
+# offhabr 0.7.0
+
+- added searching for non-marine taxa with `wm_add_aphia_id()` and allowance for 
+extra query parameters with `wm_rest()`, e.g. `wm_rest(tbl, fld, operation = "AphiaRecordsByNames", marine_only = F)`
+
+- added "NCCOS Assessments Modeling At-Sea Density of Marine Birds" for [Atlantic](https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.nodc:0176682) and [Pacific](https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.nodc:0242882) with `data-raw/nc_density.R`
+
 # offhabr 0.6.1
 
 - added [Habitat-based Marine Mammal Density Models for the U.S. Atlantic: Latest Versions](https://seamap.env.duke.edu/models/Duke/EC/) with `data-raw/du_density.R`

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">offhabr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.0</span>
       </span>
     </div>
 
@@ -47,6 +47,16 @@
       <small>Source: <a href="https://github.com/ecoquants/offhabr/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.7.0" id="offhabr-070">offhabr 0.7.0<a class="anchor" aria-label="anchor" href="#offhabr-070"></a></h2>
+<ul><li><p>added searching for non-marine taxa with <code><a href="../reference/wm_add_aphia_id.html">wm_add_aphia_id()</a></code> and allowance for extra query parameters with <code><a href="../reference/wm_rest.html">wm_rest()</a></code>, e.g. <code>wm_rest(tbl, fld, operation = "AphiaRecordsByNames", marine_only = F)</code></p></li>
+<li><p>added “NCCOS Assessments Modeling At-Sea Density of Marine Birds” for <a href="https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.nodc:0176682" class="external-link">Atlantic</a> and <a href="https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.nodc:0242882" class="external-link">Pacific</a> with <code>data-raw/nc_density.R</code></p></li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.6.1" id="offhabr-061">offhabr 0.6.1<a class="anchor" aria-label="anchor" href="#offhabr-061"></a></h2>
+<ul><li><p>added <a href="https://seamap.env.duke.edu/models/Duke/EC/" class="external-link">Habitat-based Marine Mammal Density Models for the U.S. Atlantic: Latest Versions</a> with <code>data-raw/du_density.R</code></p></li>
+<li><p>added <code>operation="AphiaRecordsByVernacular"</code> option to <code><a href="../reference/wm_rest.html">wm_rest()</a></code> for searching common names.</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.6.0" id="offhabr-060">offhabr 0.6.0<a class="anchor" aria-label="anchor" href="#offhabr-060"></a></h2>
 <ul><li><p>+ <code><a href="../reference/oh_rast.html">oh_rast()</a></code> for fetching OffHab reference raster by <code>cell_id</code>, <code>zone_id</code> or all <code>NA</code> and optionally trimming to <code>zone_id</code></p></li>

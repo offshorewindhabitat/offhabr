@@ -23,7 +23,7 @@ requests in parallel, versus each one sequentially."><!-- mathjax --><script src
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">offhabr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.0</span>
       </span>
     </div>
 
@@ -86,8 +86,10 @@ requests in parallel, versus each one sequentially.</p>
 
 
 <dt>operation</dt>
-<dd><p>operation name of WoRMS REST API; One of operations listed at <a href="https://www.marinespecies.org/rest" class="external-link">marinespecies.org/rest</a>, like
-"AphiaRecordsByMatchNames" (non-paging), "AphiaRecordsByNames" (paging) or "AphiaRecordsByAphiaIDs" (paging);
+<dd><p>operation name of WoRMS REST API; One of operations listed
+at <a href="https://www.marinespecies.org/rest" class="external-link">marinespecies.org/rest</a>, like
+"AphiaRecordsByMatchNames" (non-paging), "AphiaRecordsByVernacular" (paging),
+"AphiaRecordsByNames" (paging), or "AphiaRecordsByAphiaIDs" (paging);
 default: "AphiaRecordsByMatchNames"</p></dd>
 
 
@@ -112,12 +114,14 @@ default: "AphiaRecordsByMatchNames"</p></dd>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="va">tmp_test</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tribble.html" class="external-link">tribble</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>        <span class="op">~</span><span class="va">common</span>,                   <span class="op">~</span><span class="va">scientific</span>, <span class="va">aphia_id_0</span>,</span></span>
-<span class="r-in"><span>  <span class="st">"Minke whale"</span>,  <span class="st">"Balaenoptera acutorostrata"</span>, <span class="fl">137087</span>,</span></span>
-<span class="r-in"><span>   <span class="st">"Blue whale"</span>,       <span class="st">"Balaenoptera musculus"</span>, <span class="fl">137090</span><span class="op">)</span></span></span>
+<span class="r-in"><span>           <span class="op">~</span><span class="va">common</span>,                     <span class="op">~</span><span class="va">scientific</span>, <span class="va">aphia_id_0</span>,</span></span>
+<span class="r-in"><span>     <span class="st">"Minke whale"</span>,     <span class="st">"Balaenoptera acutorostrata"</span>, <span class="fl">137087</span>,</span></span>
+<span class="r-in"><span>      <span class="st">"Blue whale"</span>,          <span class="st">"Balaenoptera musculus"</span>, <span class="fl">137090</span>,</span></span>
+<span class="r-in"><span><span class="st">"Bonaparte's Gull"</span>,   <span class="st">"Chroicocephalus philadelphia"</span>, <span class="fl">882954</span><span class="op">)</span> <span class="co"># 882954 invalid non-marine -&gt; valid marine 159076</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">wm_exact</span> <span class="op">&lt;-</span> <span class="fu">wm_rest</span><span class="op">(</span><span class="va">tmp_test</span>, <span class="va">scientific</span>, <span class="st">"AphiaRecordsByMatchNames"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wm_fuzzy</span> <span class="op">&lt;-</span> <span class="fu">wm_rest</span><span class="op">(</span><span class="va">tmp_test</span>, <span class="va">scientific</span>, <span class="st">"AphiaRecordsByNames"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">wm_byid</span>  <span class="op">&lt;-</span> <span class="fu">wm_rest</span><span class="op">(</span><span class="va">tmp_test</span>, <span class="va">aphia_id_0</span>, <span class="st">"AphiaRecordsByAphiaIDs"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wm_byid</span>  <span class="op">&lt;-</span> <span class="fu">wm_rest</span><span class="op">(</span><span class="va">tmp_test</span>, <span class="va">scientific</span>, <span class="st">"AphiaRecordsByNames"</span>, marine_only<span class="op">=</span><span class="cn">F</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="wm_add_aphia_id.html">wm_add_aphia_id</a></span><span class="op">(</span><span class="va">df_test</span>, <span class="va">scientific</span>, tbl_str <span class="op">=</span> <span class="st">"tmp_test"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>

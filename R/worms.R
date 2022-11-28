@@ -106,6 +106,38 @@ wm_add_aphia_id <- function(
     }
   }
 
+  # look for exact names in WoRMS, non-marine
+  #   like unaccepted seabirds 'Ardenna bulleri' (non-marine) -> 'Puffinus bulleri' (marine)
+  if (length(taxas) > 0){
+    message(glue("WoRMS: exact matching {length(taxas)} non-marine taxa."))
+
+    wm_n <- tibble(
+      taxa = taxas) %>%
+      wm_rest(taxa, operation = "AphiaRecordsByNames", marine_only = F)
+
+    if ("scientificname" %in% colnames(wm_n)){
+      wm_n <- wm_n %>%
+        group_by(scientificname) %>%
+        arrange(status, desc(modified)) %>%
+        mutate(
+          i = row_number(modified)) %>%
+        filter(i == 1) %>%
+        select(taxa = scientificname, valid_aphia_id)
+      df2 <- df2 %>%
+        left_join(
+          wm_n,
+          by = setNames("taxa", fld_str)) %>%
+        mutate(
+          aphia_id = ifelse(
+            is.na(valid_aphia_id),
+            aphia_id,
+            valid_aphia_id)) %>%
+        select(-valid_aphia_id)
+
+      taxas <- setdiff(taxas, wm_n$taxa)
+    }
+  }
+
   # fuzzy match taxa in WoRMS ----
   if (length(taxas) > 0){
     message(glue("WoRMS: fuzzy matching {length(taxas)} taxa."))
@@ -207,12 +239,14 @@ wm_add_aphia_id <- function(
 #' @examples
 #' \dontrun{
 #' tmp_test <- tibble::tribble(
-#'         ~common,                   ~scientific, aphia_id_0,
-#'   "Minke whale",  "Balaenoptera acutorostrata", 137087,
-#'    "Blue whale",       "Balaenoptera musculus", 137090)
+#'            ~common,                     ~scientific, aphia_id_0,
+#'      "Minke whale",     "Balaenoptera acutorostrata", 137087,
+#'       "Blue whale",          "Balaenoptera musculus", 137090,
+#' "Bonaparte's Gull",   "Chroicocephalus philadelphia", 882954) # 882954 invalid non-marine -> valid marine 159076
+#'
 #' wm_exact <- wm_rest(tmp_test, scientific, "AphiaRecordsByMatchNames")
 #' wm_fuzzy <- wm_rest(tmp_test, scientific, "AphiaRecordsByNames")
-#' wm_byid  <- wm_rest(tmp_test, aphia_id_0, "AphiaRecordsByAphiaIDs")
+#' wm_byid  <- wm_rest(tmp_test, scientific, "AphiaRecordsByNames", marine_only=F)
 #' wm_add_aphia_id(df_test, scientific, tbl_str = "tmp_test")
 #' }
 wm_rest <- function(
@@ -223,7 +257,8 @@ wm_rest <- function(
     ...){
   # operation="AphiaRecordsByNames"; server="https://www.marinespecies.org/rest"
 
-  fld_str   = deparse(substitute(fld))
+  fld_str <- deparse(substitute(fld))
+  q_extra <- list(...) %>% unlist(use.names=T)
 
   # get unique values from df.fld
   vals <- df %>%
@@ -236,18 +271,21 @@ wm_rest <- function(
 
   # helper function to formulate request
   get_req <- function(vals){
-
     if (is.na(op$param)){
+      q <- character(0)
       req <- request(server) %>%
         req_url_path_append(operation) %>%
         req_url_path_append(utils::URLencode(vals))
     } else {
       q <- setNames(vals, rep(op$param, length(vals)))
       req <- request(server) %>%
-        req_url_path_append(operation) %>%
+        req_url_path_append(operation)
+    }
+    q <- c(q, q_extra)
+    if (length(q) > 0){
+      req <- req %>%
         req_url_query(!!!q)
     }
-    req
   }
 
   # helper function to transform response to data frame

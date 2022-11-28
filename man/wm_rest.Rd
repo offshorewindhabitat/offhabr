@@ -18,8 +18,10 @@ wm_rest(
 
 \item{fld}{field in data frame to use with operation}
 
-\item{operation}{operation name of WoRMS REST API; One of operations listed at \href{https://www.marinespecies.org/rest}{marinespecies.org/rest}, like
-"AphiaRecordsByMatchNames" (non-paging), "AphiaRecordsByNames" (paging) or "AphiaRecordsByAphiaIDs" (paging);
+\item{operation}{operation name of WoRMS REST API; One of operations listed
+at \href{https://www.marinespecies.org/rest}{marinespecies.org/rest}, like
+"AphiaRecordsByMatchNames" (non-paging), "AphiaRecordsByVernacular" (paging),
+"AphiaRecordsByNames" (paging), or "AphiaRecordsByAphiaIDs" (paging);
 default: "AphiaRecordsByMatchNames"}
 
 \item{server}{URL of server REST endpoint; default: "https://www.marinespecies.org/rest"}
@@ -41,12 +43,14 @@ requests in parallel, versus each one sequentially.
 \examples{
 \dontrun{
 tmp_test <- tibble::tribble(
-        ~common,                   ~scientific, aphia_id_0,
-  "Minke whale",  "Balaenoptera acutorostrata", 137087,
-   "Blue whale",       "Balaenoptera musculus", 137090)
+           ~common,                     ~scientific, aphia_id_0,
+     "Minke whale",     "Balaenoptera acutorostrata", 137087,
+      "Blue whale",          "Balaenoptera musculus", 137090,
+"Bonaparte's Gull",   "Chroicocephalus philadelphia", 882954) # 882954 invalid non-marine -> valid marine 159076
+
 wm_exact <- wm_rest(tmp_test, scientific, "AphiaRecordsByMatchNames")
 wm_fuzzy <- wm_rest(tmp_test, scientific, "AphiaRecordsByNames")
-wm_byid  <- wm_rest(tmp_test, aphia_id_0, "AphiaRecordsByAphiaIDs")
+wm_byid  <- wm_rest(tmp_test, scientific, "AphiaRecordsByNames", marine_only=F)
 wm_add_aphia_id(df_test, scientific, tbl_str = "tmp_test")
 }
 }
