@@ -115,7 +115,7 @@ create_index(con, "gm_models", "mdl_id", unique = T)
 create_index(con, "gm_model_hexagons", "hexid", unique = T)
 create_index(con, "gm_model_hexagon_densities", c("mdl_id", "hexid"), unique = T)
 
-# *_ply x cell_id ----
+# hexid x cell_id ----
 tbl(con, "gm_model_hexagons")
 oh_cells_ply <- dbGetQuery(
   con,
@@ -138,3 +138,28 @@ oh_cells_ply <- dbGetQuery(
 oh_cells_ply
 dbSendQuery(con, "DELETE FROM oh_cells_ply WHERE tbl = 'gm_model_hexagons'")
 dbAppendTable(con, "oh_cells_ply", oh_cells_ply)
+
+# test model output ----
+con <- oh_pg_con()
+r_d <- tbl(con, "gm_models") %>%
+  filter(taxa_sci == "Ziphius") %>%
+  left_join(
+    tbl(con, "gm_model_hexagon_densities"),
+    by = "mdl_id") %>%
+  left_join(
+    tbl(con, "oh_cells_ply") %>%
+      filter(tbl == "gm_model_hexagons"),
+    by = c("hexid" = "ply_id")) %>%
+  select(cell_id, density) %>%
+  filter(            # 1,977,010 -> 1,959,979
+    !is.na(cell_id),
+    !is.na(density)) %>%
+  collect()
+
+library(terra)
+r <- oh_rast()
+r[r_d$cell_id] <- r_d$density
+tmp_tif <- tempfile(fileext = ".tif")
+r <- trim(r)
+plot(r)
+mapView(r, maxpixels=ncell(r))
