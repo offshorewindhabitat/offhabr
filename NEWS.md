@@ -1,3 +1,7 @@
+# offhabr 0.7.1
+
+- loaded [Cetacean and sea turtle spatial density model outputs ... in the Gulf of Mexico](https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.nodc:256800) into database with `data-raw/gm_models.R`
+
 # offhabr 0.7.0
 
 - added searching for non-marine taxa with `wm_add_aphia_id()` and allowance for 

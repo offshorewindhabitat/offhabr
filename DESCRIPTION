@@ -2,7 +2,7 @@ Package: offhabr
 Type: Package
 Title: Offshore Habitat Analysis
 Description: Helpful functions and small datasets for offshore habitat analysis.
-Version: 0.7.0
+Version: 0.7.1
 Authors@R: c(
   person("Ben", "Best", email = "ben@ecoquants.com", 
     role = c("aut", "cre"), comment = c(ORCID = "0000-0002-2686-0784")))
