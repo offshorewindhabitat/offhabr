@@ -1,3 +1,7 @@
+# offhabr 0.8.0
+
+- ported original[offhab-scripts: interpolate\_bottom-trawl.Rmd](https://github.com/ecoquants/offhab-scripts/blob/cd6b2e4ff667cd81d3399b2e9538dcf5494ac9c3/interpolate_bottom-trawl.Rmd?h=1) into `data-raw/oa_models.R` with `multidplyr` parallel processing to speed up raster generation of interpolated biomass survey points.
+
 # offhabr 0.7.1
 
 - loaded [Cetacean and sea turtle spatial density model outputs ... in the Gulf of Mexico](https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.nodc:256800) into database with `data-raw/gm_models.R`
