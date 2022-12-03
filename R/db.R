@@ -2,6 +2,7 @@
 #'
 #' @return a `DBI::dbConnect()` object
 #' @import DBI
+#' @importFrom RPostgres Postgres
 #' @export
 #' @concept db
 #'
@@ -78,6 +79,8 @@ rl_pg_con <- function(){
 #' @param geom logical (default: FALSE) whether geometry field, so create GIST() index
 #' @param unique logical (default: FALSE) whether to impose a unique constraint, to prevent duplicates; default: FALSE
 #' @param overwrite logical (default: FALSE) whether to overwrite existing index
+#' @param show logical (default: FALSE) whether to show SQL statement
+#' @param exec logical (default: TRUE) whether to execute SQL statement
 #'
 #' @return nothing
 #' @import glue DBI
@@ -90,7 +93,7 @@ rl_pg_con <- function(){
 #' create_index(con, "am_cell_blocks", "geom", geom=T)
 #' create_index(con, "am_cell_blocks", "zcb_id")
 #' }
-create_index <- function(con, tbl, flds, geom=F, unique=F, overwrite=F){
+create_index <- function(con, tbl, flds, geom=F, unique=F, overwrite=F, show=F, exec=T){
   # tbl = "taxa"; flds = c("tbl_orig", "aphia_id"); unique = T; geom=F
   stopifnot(!(geom == T & length(flds) != 1))
   sfx <- ifelse(
@@ -104,6 +107,9 @@ create_index <- function(con, tbl, flds, geom=F, unique=F, overwrite=F){
 
   sql <- glue::glue(
     "CREATE {ifelse(unique, 'UNIQUE','')} INDEX IF NOT EXISTS {idx} ON {tbl}{sfx}")
-  DBI::dbSendQuery(con, sql)
+  if (show)
+    message(sql)
+  if (exec)
+    DBI::dbSendQuery(con, sql)
 }
 

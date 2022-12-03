@@ -278,7 +278,7 @@ x <- tribble(
   "rl_range",       1,        2,
   "rl_range",       1,        1)
 dbWriteTable(con_oh, "oh_cells_ply_tmp", x)
-dbSendQuery(con_oh, "ALTER TABLE oh_cells_ply_tmp ADD COLUMN row_id SERIAL PRIMARY KEY")
+dbSendQuery(con_oh, "ALTER TABLE oh_cells_rast ADD COLUMN id SERIAL PRIMARY KEY")
 dbGetQuery(
   con_oh,
   "SELECT row_id,
