@@ -4,7 +4,16 @@
 \alias{create_index}
 \title{Create index in database}
 \usage{
-create_index(con, tbl, flds, geom = F, unique = F, overwrite = F)
+create_index(
+  con,
+  tbl,
+  flds,
+  geom = F,
+  unique = F,
+  overwrite = F,
+  show = F,
+  exec = T
+)
 }
 \arguments{
 \item{con}{database connection from \code{DBI::dbConnect()}, eg from \code{am_pg_con()}}
@@ -18,6 +27,10 @@ create_index(con, tbl, flds, geom = F, unique = F, overwrite = F)
 \item{unique}{logical (default: FALSE) whether to impose a unique constraint, to prevent duplicates; default: FALSE}
 
 \item{overwrite}{logical (default: FALSE) whether to overwrite existing index}
+
+\item{show}{logical (default: FALSE) whether to show SQL statement}
+
+\item{exec}{logical (default: TRUE) whether to execute SQL statement}
 }
 \value{
 nothing
