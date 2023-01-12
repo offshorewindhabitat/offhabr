@@ -59,8 +59,9 @@ oh_map <- function(
 #' @param ...  additional arguments passed onto `leaflet::addPolygons()`
 #'
 #' @return a `leaflet::leaflet()` map
-#' @import dplyr glue leaflet
+#' @import dplyr leaflet
 #' @importFrom scales col_numeric
+#' @importFrom glue glue
 #' @export
 #' @concept viz
 #'
@@ -97,6 +98,7 @@ oh_add_ply <- function(
   m <- div_mid
   if (is.null(m)){
     pal <- scales::col_numeric(col_pal, domain = vals, reverse = T)
+    v <- vals
   } else {
     v <- vals
     # if midpoint is between min and max of vals

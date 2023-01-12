@@ -2,12 +2,12 @@
 #' AquaMaps cell polygons intersecting OffHab zones and BOEM blocks
 #'
 #' Polygons from intersecting OffHab zone `oh_zones` x AquaMaps cell `am_cells` x BOEM block
-#' `boem_blocks`
+#' `blocks`
 #'
 #' @format A spatial features (`sf`) data frame with 1189 features and 6 fields:
 #' \describe{
 #'   \item{zcb_id}{unique identifier (integer) for OffHab zone `oh_zones` x
-#'     AquaMaps cell `am_cells` x BOEM block `boem_blocks`}
+#'     AquaMaps cell `am_cells` x BOEM block `oh_blocks`}
 #'   \item{block_key}{unique block identifier (character), comprised of
 #'     \{PROTRACTION_NUMBER\}_\{BLOCK_NUMBER\}}
 #'   \item{block_type}{one of either "lease" or "plan" depending on data source}
@@ -44,7 +44,26 @@
 #' @concept data
 "am_cell_zones"
 
-# boem_blocks ----
+# oa_regions ----
+#' OceanAdapt regions for bottom trawl data
+#'
+#' Polygons define the regions used in the interpolated bottom trawl data.
+#'
+#' @format A spatial features (`sf`) data frame with 7 features and 4 fields:
+#' \describe{
+#'   \item{oa_rgn}{unique 3-letter lowercase text key}
+#'   \item{oa_region}{name of region}
+#'   \item{oa_region_rds}{name of region used in the stored data file (*.rds)}
+#'   \item{geometry}{}
+#'   \item{oa_region}{}
+#'   \item{oa_region_rds}{}
+#'   \item{geometry}{geometry in geographic coordinate system (EPSG: 4326)}
+#' }
+#' @source [DisMAP Regions 20220516 | InPort](https://www.fisheries.noaa.gov/inport/item/67352)
+#' @concept data
+"oa_regions"
+
+# oh_blocks ----
 #' BOEM Wind Energy Area Block polygons
 #'
 #' BOEM Wind Energy Area Block polygons
@@ -87,48 +106,50 @@
 #' }
 #' @source * [Renewable Energy GIS Data | Bureau of Ocean Energy Management](https://www.boem.gov/renewable-energy/mapping-and-data/renewable-energy-gis-data)
 #' @concept data
-"boem_blocks"
+"oh_blocks"
 
 # oh_zones ----
-#' Offshore Habitat Zone polygons from BOEM Program Areas clipped to US EEZ
+#' Offshore Habitat Zone polygons
 #'
 #' Offshore habitat zones used for summary statistics and derived from BOEM
 #' 2019-2024 Draft Proposed Program Areas for the lower 48 (excluding Hawaii and
-#' Alaska), clipped by the United States Exclusive Economic Zone (EEZ).
+#' Alaska), clipped by the United States Exclusive Economic Zone (EEZ). A second version
+#' was further intersected with the OceanAdapt Regions for bottom trawl
+#' models, since the available data is markedly different inside versus outside
+#' these model results.
 #'
-#' @format A spatial features (`sf`) data frame with 10 rows and 5 columns:
+#' @format A spatial features (`sf`) data frame with 22 features and 11 fields:
 #' \describe{
 #'   \item{zone_id}{unique zone identifier (integer)}
-#'   \item{zone_key}{unique zone identifier (character), the lower-case of original BOEM Planning Area `MMS_PLAN_A` column}
-#'   \item{zone_name}{name of zone, originally BOEM Planning Area `RESA_summa` column}
-#'   \item{region}{oceanic region; one of: "Atlantic", "Gulf of Mexico" or "Pacific"}
+#'   \item{zone_version}{version (integer) indicating whether with (2) or without (1) OceanAdapt regions}
+#'   \item{zone_key}{unique zone identifier (character), of the form
+#'     `{boem_key}-{oa_key}`}
+#'   \item{zone_name}{name of zone, of the form `{boem_area}-{oa_region}`}
+#'   \item{region}{oceanic BOEM region; one of: "Atlantic", "Gulf of Mexico" or
+#'     "Pacific"}
+#'   \item{boem_key}{the three letter lower-case code for the BOEM Planning
+#'     Area, original `MMS_PLAN_A` column}
+#'   \item{boem_area}{name of BOEM Planning Area, original `RESA_summa` column}
 #'   \item{area_km2}{area of zone in square kilometers}
+#'   \item{oa_key}{2-letter lowercase key for OceanAdapt region for bottom trawl
+#'     data}
+#'   \item{oa_region}{name of OceanAdapt region}
+#'   \item{oa_region_rds}{names of regions stored data files (*.rds); multiple
+#'   values seperated by a `;`}
 #'   \item{geom}{geometry in geographic coordinate system (EPSG: 4326)}
 #' }
 #' @source [Geographic Mapping Data in Digital Format](https://www.data.boem.gov/Main/Mapping.aspx),
-#' [Marine Regions · United States Exclusive Economic Zone (EEZ)](https://marineregions.org/gazetteer.php?p=details&id=8456)
+#' [Marine Regions · United States Exclusive Economic Zone (EEZ)](https://marineregions.org/gazetteer.php?p=details&id=8456),
+#' [DisMAP Regions 20220516 | InPort](https://www.fisheries.noaa.gov/inport/item/67352)
 #' @concept data
 "oh_zones"
 
 # oh_zones_s1k ----
-#' Offshore Habitat Zone polygons from BOEM Program Areas clipped to US EEZ, simplified to 1 km
+#' Offshore Habitat Zone polygons, simplified to 1 km
 #'
 #' Same as `oh_zones`, simplified to 1 km for faster rendering of smaller output files.
-#' Offshore habitat zones used for summary statistics and derived from BOEM
-#' 2019-2024 Draft Proposed Program Areas for the lower 48 (excluding Hawaii and
-#' Alaska), clipped by the United States Exclusive Economic Zone (EEZ).
 #'
-#' @format A spatial features (`sf`) data frame with 10 rows and 5 columns:
-#' \describe{
-#'   \item{zone_id}{unique zone identifier (integer)}
-#'   \item{zone_key}{unique zone identifier (character), the lower-case of original BOEM Planning Area `MMS_PLAN_A` column}
-#'   \item{zone_name}{name of zone, originally BOEM Planning Area `RESA_summa` column}
-#'   \item{region}{oceanic region; one of: "Atlantic", "Gulf of Mexico" or "Pacific"}
-#'   \item{area_km2}{area of zone in square kilometers}
-#'   \item{geom}{geometry in geographic coordinate system (EPSG: 4326)}
-#' }
-#' @source [Geographic Mapping Data in Digital Format](https://www.data.boem.gov/Main/Mapping.aspx),
-#' [Marine Regions · United States Exclusive Economic Zone (EEZ)](https://marineregions.org/gazetteer.php?p=details&id=8456)
+#' @seealso [oh_zones]
 #' @concept data
 "oh_zones_s1k"
 

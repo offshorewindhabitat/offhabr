@@ -1,3 +1,74 @@
+#' Connect to OffHab database
+#'
+#' Using local filesystem database `RSQLite::SQLite()`
+#'
+#' @param path_sqlite path to SQLite database file
+#' @param read_only defaults to FALSE, i.e. write
+#'
+#' @return a `DBI::dbConnect()` object
+#' @import DBI
+#' @importFrom RSQLite SQLite
+#' @importFrom glue glue
+#' @export
+#' @concept db
+#'
+#' @examples
+#' \dontrun{
+#' con <- oh_con()
+#' DBI::dbListTables(con)
+#' }
+oh_con <- function(
+    # path_sqlite = system.file("offhab.sqlite", package = "offhabr")){
+    path_duckdb = system.file("offhab.duckdb", package = "offhabr"),
+    read_only = F){
+
+  message(glue::glue("Using path_duckdb: {path_duckdb}"))
+
+  # https://duckdb.org/docs/api/r
+  # librarian::shelf(
+  #   DBI, duckdb)
+
+  options("duckdb.enable_rstudio_connection_pane"=TRUE)
+  # options("sqlite.enable_rstudio_connection_pane"=TRUE)
+  # RStudio Connections tab: /Users/bbest/Github/ecoquants/offhabr/inst/offhab.duckdb
+
+
+  ## write a table to it
+  # dbWriteTable(con, "iris", iris)
+  # dbListTables(con)
+
+  ## and disconnect
+  # dbDisconnect(con, shutdown = T)
+  # create / connect to database file
+
+  DBI::dbConnect(
+    duckdb::duckdb(dbdir = path_duckdb),
+    read_only = read_only)
+
+  # https://rstudio.github.io/connections/
+  # remotes::install_github("edgararuiz/connections")
+  # connection_open() - Opens the database connection. Use instead of dbConnect(), but use the exact same arguments. It also automatically starts the Connections pane.
+  # connection_close() - Closes the database connection.
+  # connections::connection_open(RSQLite::SQLite(), path_sqlite)
+
+  # https://support.posit.co/hc/en-us/articles/115010915687-Using-RStudio-Connections-in-the-RStudio-IDE
+  # devtools::install_github("r-dbi/odbc")
+
+  # Load RStudio IDE Connection pane with:
+  # devtools::load_all("~/Github/ecoquants/offhabr")
+  # con <- offhabr::oh_con()
+
+#   "/Users/bbest/Github/ecoquants/offhabr/inst/offhab.sqlite"
+#   devtools::load_all("~/Github/ecoquants/offhabr")
+#   path_sqlite = system.file("offhab.sqlite", package = "offhabr")
+#
+#   con <- DBI::dbConnect(RSQLite::SQLite(), path_sqlite)
+#
+# con <- DBI::dbConnect(
+#   RSQLite::SQLite(),
+#   "/Users/bbest/Github/ecoquants/offhabr/inst/offhab.sqlite")
+}
+
 #' Connect to OffHab Postgres database
 #'
 #' @return a `DBI::dbConnect()` object
@@ -38,8 +109,8 @@ oh_pg_con <- function(autocommit=T){
 #' DBI::dbListTables(con)
 #' }
 am_pg_con <- function(){
-  # brew services start postgresql
-  # brew services stop postgresql
+  # brew services start postgresql@14
+  # brew services stop postgresql@14
 
   DBI::dbConnect(
     RPostgres::Postgres(),
@@ -61,8 +132,8 @@ am_pg_con <- function(){
 #' DBI::dbListTables(con)
 #' }
 rl_pg_con <- function(){
-  # brew services start postgresql
-  # brew services stop postgresql
+  # brew services start postgresql@14
+  # brew services stop postgresql@14
 
   DBI::dbConnect(
     RPostgres::Postgres(),
@@ -83,7 +154,8 @@ rl_pg_con <- function(){
 #' @param exec logical (default: TRUE) whether to execute SQL statement
 #'
 #' @return nothing
-#' @import glue DBI
+#' @import DBI
+#' @importFrom glue glue
 #' @export
 #' @concept db
 #'
