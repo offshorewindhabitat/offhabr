@@ -3,21 +3,32 @@
 \docType{data}
 \name{oh_zones}
 \alias{oh_zones}
-\title{Offshore Habitat Zone polygons from BOEM Program Areas clipped to US EEZ}
+\title{Offshore Habitat Zone polygons}
 \format{
-A spatial features (\code{sf}) data frame with 10 rows and 5 columns:
+A spatial features (\code{sf}) data frame with 22 features and 10 fields:
 \describe{
 \item{zone_id}{unique zone identifier (integer)}
-\item{zone_key}{unique zone identifier (character), the lower-case of original BOEM Planning Area \code{MMS_PLAN_A} column}
-\item{zone_name}{name of zone, originally BOEM Planning Area \code{RESA_summa} column}
-\item{region}{oceanic region; one of: "Atlantic", "Gulf of Mexico" or "Pacific"}
+\item{zone_key}{unique zone identifier (character), of the form
+\code{{boem_key}-{oa_key}}}
+\item{zone_name}{name of zone, of the form \code{{boem_area}-{oa_region}}}
+\item{region}{oceanic BOEM region; one of: "Atlantic", "Gulf of Mexico" or
+"Pacific"}
+\item{boem_key}{the three letter lower-case code for the BOEM Planning
+Area, original \code{MMS_PLAN_A} column}
+\item{boem_area}{name of BOEM Planning Area, original \code{RESA_summa} column}
 \item{area_km2}{area of zone in square kilometers}
+\item{oa_key}{2-letter lowercase key for OceanAdapt region for bottom trawl
+data}
+\item{oa_region}{name of OceanAdapt region}
+\item{oa_region_rds}{names of regions stored data files (*.rds); multiple
+values seperated by a \verb{;}}
 \item{geom}{geometry in geographic coordinate system (EPSG: 4326)}
 }
 }
 \source{
 \href{https://www.data.boem.gov/Main/Mapping.aspx}{Geographic Mapping Data in Digital Format},
-\href{https://marineregions.org/gazetteer.php?p=details&id=8456}{Marine Regions · United States Exclusive Economic Zone (EEZ)}
+\href{https://marineregions.org/gazetteer.php?p=details&id=8456}{Marine Regions · United States Exclusive Economic Zone (EEZ)},
+\href{https://www.fisheries.noaa.gov/inport/item/67352}{DisMAP Regions 20220516 | InPort}
 }
 \usage{
 oh_zones
@@ -25,7 +36,10 @@ oh_zones
 \description{
 Offshore habitat zones used for summary statistics and derived from BOEM
 2019-2024 Draft Proposed Program Areas for the lower 48 (excluding Hawaii and
-Alaska), clipped by the United States Exclusive Economic Zone (EEZ).
+Alaska), clipped by the United States Exclusive Economic Zone (EEZ). These
+areas were further intersected with the OceanAdapt Regions for bottom trawl
+models, since the available data is markedly different inside versus outside
+these model results.
 }
 \concept{data}
 \keyword{datasets}

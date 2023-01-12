@@ -3,30 +3,18 @@
 \docType{data}
 \name{oh_zones_s1k}
 \alias{oh_zones_s1k}
-\title{Offshore Habitat Zone polygons from BOEM Program Areas clipped to US EEZ, simplified to 1 km}
+\title{Offshore Habitat Zone polygons, simplified to 1 km}
 \format{
-A spatial features (\code{sf}) data frame with 10 rows and 5 columns:
-\describe{
-\item{zone_id}{unique zone identifier (integer)}
-\item{zone_key}{unique zone identifier (character), the lower-case of original BOEM Planning Area \code{MMS_PLAN_A} column}
-\item{zone_name}{name of zone, originally BOEM Planning Area \code{RESA_summa} column}
-\item{region}{oceanic region; one of: "Atlantic", "Gulf of Mexico" or "Pacific"}
-\item{area_km2}{area of zone in square kilometers}
-\item{geom}{geometry in geographic coordinate system (EPSG: 4326)}
-}
-}
-\source{
-\href{https://www.data.boem.gov/Main/Mapping.aspx}{Geographic Mapping Data in Digital Format},
-\href{https://marineregions.org/gazetteer.php?p=details&id=8456}{Marine Regions · United States Exclusive Economic Zone (EEZ)}
+An object of class \code{sf} (inherits from \code{data.frame}) with 22 rows and 11 columns.
 }
 \usage{
 oh_zones_s1k
 }
 \description{
 Same as \code{oh_zones}, simplified to 1 km for faster rendering of smaller output files.
-Offshore habitat zones used for summary statistics and derived from BOEM
-2019-2024 Draft Proposed Program Areas for the lower 48 (excluding Hawaii and
-Alaska), clipped by the United States Exclusive Economic Zone (EEZ).
+}
+\seealso{
+\link{oh_zones}
 }
 \concept{data}
 \keyword{datasets}

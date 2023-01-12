@@ -8,7 +8,7 @@
 A spatial features (\code{sf}) data frame with 1189 features and 6 fields:
 \describe{
 \item{zcb_id}{unique identifier (integer) for OffHab zone \code{oh_zones} x
-AquaMaps cell \code{am_cells} x BOEM block \code{boem_blocks}}
+AquaMaps cell \code{am_cells} x BOEM block \code{oh_blocks}}
 \item{block_key}{unique block identifier (character), comprised of
 \{PROTRACTION_NUMBER\}_\{BLOCK_NUMBER\}}
 \item{block_type}{one of either "lease" or "plan" depending on data source}
@@ -29,7 +29,7 @@ am_cell_blocks
 }
 \description{
 Polygons from intersecting OffHab zone \code{oh_zones} x AquaMaps cell \code{am_cells} x BOEM block
-\code{boem_blocks}
+\code{blocks}
 }
 \concept{data}
 \keyword{datasets}
