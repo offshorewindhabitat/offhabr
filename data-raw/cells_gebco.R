@@ -24,8 +24,10 @@ c_tif  <- glue("{dir_g}/oh_cell.tif")
 na_tif <- glue("{dir_g}/oh_na.tif")
 cg_tif <- glue("{dir_g}/oh_cell-gcs.tif")
 b_tif  <- glue("{dir_g}/oh_block.tif")
-z_tif  <- glue("{dir_g}/oh_zone.tif")
-oh_zones_tif <- here("inst/oh_zones.tif")
+z_v1_tif  <- glue("{dir_g}/oh_zone_v1.tif")
+z_v2_tif  <- glue("{dir_g}/oh_zone_v2.tif")
+oh_zones_v1_tif <- here("inst/oh_zones_v1.tif")
+oh_zones_v2_tif <- here("inst/oh_zones_v2.tif")
 
 # generate rasters in mercator projection ----
 
@@ -41,7 +43,14 @@ names(r_c) <- "cell_id_gcs"
 writeRaster(r_c, gc_tif, overwrite=T, datatype="INT4U")
 
 # zone and block rasters
-r_z <- rasterize(oh_zones, r_e, field = "zone_id")
+r_z_v1 <- oh_zones %>%
+  filter(zone_version == 1) %>%
+  rasterize(r_e, field = "zone_id")
+names(r_z_v1) <- "zone_id_v1"
+r_z_v2 <- oh_zones %>%
+  filter(zone_version == 2) %>%
+  rasterize(r_e, field = "zone_id")
+names(r_z_v2) <- "zone_id_v2"
 r_b <- rasterize(oh_blocks, r_e, field = "block_id")
 
 # project to mercator
@@ -49,7 +58,7 @@ r_bilinear <- r_e %>%
   project(
     leaflet:::epsg3857,
     method = "bilinear")
-r_near <- rast(list(r_c, r_b, r_z)) %>%
+r_near <- rast(list(r_c, r_b, r_z_v1, r_z_v2)) %>%
   terra::project(
     leaflet:::epsg3857,
     method = "near")
@@ -79,9 +88,17 @@ writeRaster(
 # write other rasters to most efficient data type
 r_cbze <- rast(list(r_near, r_bilinear))
 r_cbze
-# names       :  cell_id_gcs, block_id, zone_id,        elev
-# min values  :     1039,        1,       1, -6366.20312
-# max values  : 90163648,     5596,      11,    37.35491
+# class       : SpatRaster
+# dimensions  : 7183, 14678, 5  (nrow, ncol, nlyr)
+# resolution  : 481.3177, 481.3177  (x, y)
+# extent      : -14378304, -7313523, 2733139, 6190444  (xmin, xmax, ymin, ymax)
+# coord. ref. : WGS 84 / Pseudo-Mercator
+# sources     : spat_NnLCuSQdChU2UBo_10223.tif  (4 layers)
+#               spat_gWFqRxGX99ns1Jj_10223.tif
+# names       : cell_id_gcs, block_id, zone_id_v1, zone_id_v2,        elev
+# min values  :        1038,        1,          1,         12, -6366.20312
+# max values  :    90163648,     5754,         11,         22,    37.35491
+
 r_cbze %>%
   subset("cell_id_gcs") %>%
   writeRaster(
@@ -93,12 +110,17 @@ r_cbze %>%
     b_tif, overwrite = T,
     datatype = "INT2U")
 r_cbze %>%
-  subset("zone_id") %>%
+  subset("zone_id_v1") %>%
   writeRaster(
-    z_tif, overwrite = T,
+    z_v1_tif, overwrite = T,
     datatype = "INT1U")
-z_tif  <- glue("{dir_g}/oh_zone.tif")
-file.copy(z_tif, oh_zones_tif, overwrite = T)
+file.copy(z_v1_tif, oh_zones_v1_tif, overwrite = T)
+r_cbze %>%
+  subset("zone_id_v2") %>%
+  writeRaster(
+    z_v2_tif, overwrite = T,
+    datatype = "INT1U")
+file.copy(z_v2_tif, oh_zones_v2_tif, overwrite = T)
 
 r_cbze %>%
   subset("elev") %>%
@@ -149,7 +171,13 @@ create_index(con, "cells", "block_id")
 create_index(con, "cells", "zone_id")
 create_index(con, "cells", "geom", geom = T)
 
-# test ----
+# test zones ----
+r_z_v1z <- oh_rast(type = "zone_id", zone_version=1)
+# terra::plet(r_z_v1z, tiles="Esri.NatGeoWorldMap")
+r_z_v2z <- oh_rast(type = "zone_id", zone_version=2)
+# terra::plet(r_z_v2z, tiles="Esri.NatGeoWorldMap")
+
+# test db ----
 # r <- rast(na_tif)
 con <- oh_pg_con()
 r <- oh_rast()

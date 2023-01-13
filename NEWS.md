@@ -1,6 +1,7 @@
 # offhabr 0.11.0
 
 - Intersected `oh_zones` with `oa_rgns` to further differentiate portions of zones with and without bottom trawl models.
+- Updated `oh_zones` to having two `zone_version` values for with (`2`) and without (`1`) OceanAdapt regions for using and skipping bottom trawl data.
 
 # offhabr 0.10.0
 

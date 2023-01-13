@@ -4,7 +4,11 @@
 \alias{oh_rast}
 \title{OffHab reference raster}
 \usage{
-oh_rast(type = c("NA", "cell_id", "zone_id"), zone_id = "ALL")
+oh_rast(
+  type = c("NA", "cell_id", "zone_id"),
+  zone_id = "ALL",
+  zone_version = 1
+)
 }
 \arguments{
 \item{type}{the type of raster, being one of: \code{"NA"} (default all \code{NA} values)
@@ -13,6 +17,10 @@ oh_rast(type = c("NA", "cell_id", "zone_id"), zone_id = "ALL")
 
 \item{zone_id}{the \code{zone_id} (integer) to trim the output raster, being one of the
 zones found in the \code{zone_id} field of \code{oh_zones} or \code{"ALL"} zones (the default)}
+
+\item{zone_version}{the \code{zone_version} (integer) to choose, whether original BOEM
+planning area clipped out to EEZ (\verb{=1}) or more restricted to OceanAdapt regions
+for bottom trawl data (\verb{=2})}
 }
 \value{
 return a reference raster (from \code{terra::rast()})

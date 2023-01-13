@@ -7,9 +7,9 @@
 write_rast(r, tif, datatype = "INT1U", overwrite = TRUE, epsg = 3857)
 }
 \arguments{
-\item{r}{input raster layer}
+\item{r}{input raster layer or path to input GeoTIFF}
 
-\item{tif}{output GeoTIFF}
+\item{tif}{output path to GeoTIFF}
 
 \item{datatype}{datatype; one of: INT1U (default), INT2S, INT2U, INT4S, INT4U, FLT4S, FLT8S}
 

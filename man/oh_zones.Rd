@@ -5,9 +5,10 @@
 \alias{oh_zones}
 \title{Offshore Habitat Zone polygons}
 \format{
-A spatial features (\code{sf}) data frame with 22 features and 10 fields:
+A spatial features (\code{sf}) data frame with 22 features and 11 fields:
 \describe{
 \item{zone_id}{unique zone identifier (integer)}
+\item{zone_version}{version (integer) indicating whether with (2) or without (1) OceanAdapt regions}
 \item{zone_key}{unique zone identifier (character), of the form
 \code{{boem_key}-{oa_key}}}
 \item{zone_name}{name of zone, of the form \code{{boem_area}-{oa_region}}}
@@ -36,8 +37,8 @@ oh_zones
 \description{
 Offshore habitat zones used for summary statistics and derived from BOEM
 2019-2024 Draft Proposed Program Areas for the lower 48 (excluding Hawaii and
-Alaska), clipped by the United States Exclusive Economic Zone (EEZ). These
-areas were further intersected with the OceanAdapt Regions for bottom trawl
+Alaska), clipped by the United States Exclusive Economic Zone (EEZ). A second version
+was further intersected with the OceanAdapt Regions for bottom trawl
 models, since the available data is markedly different inside versus outside
 these model results.
 }

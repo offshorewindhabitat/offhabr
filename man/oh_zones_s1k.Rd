@@ -5,7 +5,7 @@
 \alias{oh_zones_s1k}
 \title{Offshore Habitat Zone polygons, simplified to 1 km}
 \format{
-An object of class \code{sf} (inherits from \code{data.frame}) with 22 rows and 11 columns.
+An object of class \code{sf} (inherits from \code{tbl_df}, \code{tbl}, \code{data.frame}) with 22 rows and 12 columns.
 }
 \usage{
 oh_zones_s1k

@@ -35,6 +35,9 @@ drop_na_lyrs <- function(x){
 #'   `"zone_id"` corresponding with the `zone_id` of `oh_zones`
 #' @param zone_id the `zone_id` (integer) to trim the output raster, being one of the
 #'   zones found in the `zone_id` field of `oh_zones` or `"ALL"` zones (the default)
+#' @param zone_version the `zone_version` (integer) to choose, whether original BOEM
+#' planning area clipped out to EEZ (`=1`) or more restricted to OceanAdapt regions
+#' for bottom trawl data (`=2`)
 #'
 #' @return return a reference raster (from `terra::rast()`)
 #' @export
@@ -61,12 +64,12 @@ drop_na_lyrs <- function(x){
 #' r_cid_fls <- oh_rast("cell_id", 4)
 #' r_cid_fls
 #' terra::plot(r_cid_fls)
-oh_rast <- function(type = c("NA", "cell_id", "zone_id"), zone_id = "ALL"){
+oh_rast <- function(type = c("NA", "cell_id", "zone_id"), zone_id = "ALL", zone_version=1){
   stopifnot(type %in% c("NA", "cell_id", "zone_id"))
   stopifnot(zone_id == "ALL" | is.numeric(zone_id))
   type = type[1]
 
-  tif <- system.file("oh_zones.tif", package = "offhabr")
+  tif <- system.file(glue::glue("oh_zones_v{zone_version}.tif"), package = "offhabr")
   r_z <- terra::rast(tif)
   # terra::plot(r_z)
   r <- switch(
