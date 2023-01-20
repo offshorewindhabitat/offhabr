@@ -5,8 +5,8 @@
 \title{Connect to OffHab database}
 \usage{
 oh_con(
-  path_duckdb = system.file("offhab.duckdb", package = "offhabr"),
-  read_only = F
+  path_duckdb = file.path(system.file(package = "offhabr"), "offhab.duckdb"),
+  read_only = T
 )
 }
 \arguments{

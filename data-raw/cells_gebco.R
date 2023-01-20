@@ -23,11 +23,16 @@ e_tif  <- glue("{dir_g}/oh_elev.tif")
 c_tif  <- glue("{dir_g}/oh_cell.tif")
 na_tif <- glue("{dir_g}/oh_na.tif")
 cg_tif <- glue("{dir_g}/oh_cell-gcs.tif")
-b_tif  <- glue("{dir_g}/oh_block.tif")
+b_v1_tif  <- glue("{dir_g}/oh_block_v1.tif")
+b_v2_tif  <- glue("{dir_g}/oh_block_v2.tif")
 z_v1_tif  <- glue("{dir_g}/oh_zone_v1.tif")
 z_v2_tif  <- glue("{dir_g}/oh_zone_v2.tif")
+#oh_blocks_tif   <- here("inst/oh_blocks.tif")
 oh_zones_v1_tif <- here("inst/oh_zones_v1.tif")
 oh_zones_v2_tif <- here("inst/oh_zones_v2.tif")
+oh_blocks_v1_tif <- here("inst/oh_blocks_v1.tif")
+oh_blocks_v2_tif <- here("inst/oh_blocks_v2.tif")
+oh_zones_area_m2_tif <- here("inst/oh_zones_area_m2.tif")
 
 # generate rasters in mercator projection ----
 
@@ -36,32 +41,110 @@ r_e <- rast(g_tif)
 
 # make cell identifier for geographic projection
 #  NOTE: must be datatype="INT4U", otherwise weird offset duplication
-r_c <- setValues(r_e, NA)
-cell_ids <- cells(r_e)
+r_c           <- setValues(r_e, NA)
+cell_ids      <- cells(r_e)
 r_c[cell_ids] <- cell_ids
 names(r_c) <- "cell_id_gcs"
 writeRaster(r_c, gc_tif, overwrite=T, datatype="INT4U")
 
-# zone and block rasters
-r_z_v1 <- oh_zones %>%
-  filter(zone_version == 1) %>%
+# zone rasters by version ----
+r_z_v1 <- oh_zones |>
+  filter(zone_version == 1) |>
   rasterize(r_e, field = "zone_id")
 names(r_z_v1) <- "zone_id_v1"
-r_z_v2 <- oh_zones %>%
-  filter(zone_version == 2) %>%
+r_z_v2 <- oh_zones |>
+  filter(zone_version == 2) |>
   rasterize(r_e, field = "zone_id")
 names(r_z_v2) <- "zone_id_v2"
-r_b <- rasterize(oh_blocks, r_e, field = "block_id")
 
-# project to mercator
+# block rasters by version ----
+r_b_v1 <- oh_blocks |>
+  filter(zone_version == 1) |>
+  rasterize(r_e, field = "block_id")
+names(r_b_v1) <- "block_id_v1"
+r_b_v2 <- oh_blocks |>
+  filter(zone_version == 2) |>
+  rasterize(r_e, field = "block_id")
+names(r_b_v2) <- "block_id_v2"
+
+# check that all blocks are included in raster output, geographic ----
+stopifnot(
+  setdiff(
+    oh_blocks |>
+      filter(zone_version == 1) |>
+      pull(block_id),
+    unique(values(r_b_v1))) == 0)
+stopifnot(
+  setdiff(
+    oh_blocks |>
+      filter(zone_version == 2) |>
+      pull(block_id),
+    unique(values(r_b_v2))) == 0)
+
+# get counts of cells per block in geographic ----
+d_b1 <- tibble(
+  block_id = values(r_b_v1, na.rm=T) |> as.integer()) |>
+  group_by(block_id) |>
+  summarize(n = n())
+d_b1$n |> hist()
+summary(d_b1$n)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 3.00    8.00    9.00   36.22   12.00  164.00
+
+d_b2 <- tibble(
+  block_id = values(r_b_v2, na.rm=T) |> as.integer()) |>
+  group_by(block_id) |>
+  summarize(n = n())
+d_b2$n |> hist()
+summary(d_b2$n)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+#    3       8       9      33      12     164
+
+# project rasters to mercator ----
 r_bilinear <- r_e %>%
   project(
     leaflet:::epsg3857,
     method = "bilinear")
-r_near <- rast(list(r_c, r_b, r_z_v1, r_z_v2)) %>%
+r_near <- rast(list(r_c, r_z_v1, r_z_v2, r_b_v1, r_b_v2)) %>%
   terra::project(
     leaflet:::epsg3857,
     method = "near")
+names(r_near)
+# "cell_id_gcs" "zone_id_v1"  "zone_id_v2"  "block_id_v1" "block_id_v2"
+# plot(r_near["block_id_v1"])
+
+# check that all blocks are included in raster output, mercator ----
+stopifnot(
+  setdiff(
+    oh_blocks |>
+      filter(zone_version == 1) |>
+      pull(block_id),
+    unique(values(r_near["block_id_v1"]))) == 0)
+stopifnot(
+  setdiff(
+    oh_blocks |>
+      filter(zone_version == 2) |>
+      pull(block_id),
+    unique(values(r_near["block_id_v2"]))) == 0)
+
+# get counts of cells per block in geographic ----
+d_b1_m <- tibble(
+  block_id = values(r_near["block_id_v1"], na.rm=T) |> as.integer()) |>
+  group_by(block_id) |>
+  summarize(n = n())
+d_b1_m$n |> hist()
+summary(d_b1_m$n)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 4.00    9.00   12.00   42.35   16.00  222.00
+
+d_b2_m <- tibble(
+  block_id = values(r_near["block_id_v2"], na.rm=T) |> as.integer()) |>
+  group_by(block_id) |>
+  summarize(n = n())
+d_b2_m$n |> hist()
+summary(d_b2_m$n)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 4.00    9.00   12.00   38.89   16.00  222.00
 
 # write NA and cell_id (cell identifier) rasters in web Mercator projection
 r_na <- setValues(r_bilinear, NA)
@@ -89,26 +172,33 @@ writeRaster(
 r_cbze <- rast(list(r_near, r_bilinear))
 r_cbze
 # class       : SpatRaster
-# dimensions  : 7183, 14678, 5  (nrow, ncol, nlyr)
+# dimensions  : 7183, 14678, 6  (nrow, ncol, nlyr)
 # resolution  : 481.3177, 481.3177  (x, y)
 # extent      : -14378304, -7313523, 2733139, 6190444  (xmin, xmax, ymin, ymax)
 # coord. ref. : WGS 84 / Pseudo-Mercator
-# sources     : spat_NnLCuSQdChU2UBo_10223.tif  (4 layers)
-#               spat_gWFqRxGX99ns1Jj_10223.tif
-# names       : cell_id_gcs, block_id, zone_id_v1, zone_id_v2,        elev
-# min values  :        1038,        1,          1,         12, -6366.20312
-# max values  :    90163648,     5754,         11,         22,    37.35491
+# sources     : spat_gjDuZY9KrQF9a1y_62102.tif  (5 layers)
+# spat_RvbKCH14BmETUKp_62102.tif
+# names       : cell_id_gcs, zone_id_v1, zone_id_v2, block_id_v1, block_id_v2,        elev
+# min values  :        1038,          1,         12,           1,        5117, -6366.20312
+# max values  :    90163648,         11,         22,        5116,        8398,    37.35491
+
+#' The `datatype` corresponds with the following:
+#' | terra |             min |            max | gdal    |
+#' | :---- | --------------: | -------------: | :------ |
+#' | INT1U | 	             0 |	          255 | Byte    |
+#' | INT2S | 	       -32,767 |	       32,767 | Int16   |
+#' | INT2U | 	             0 |	       65,534 | UInt16  |
+#' | INT4S |  -2,147,483,647 |	2,147,483,647 | Int32   |
+#' | INT4U |	             0 |  4,294,967,296 | UInt32  |
+#' | FLT4S |	      -3.4e+38 |	      3.4e+38 | Float32 |
+#' | FLT8S |	     -1.7e+308 |	     1.7e+308 | Float64 |
 
 r_cbze %>%
   subset("cell_id_gcs") %>%
   writeRaster(
     cg_tif, overwrite = T,
     datatype = "INT4U")
-r_cbze %>%
-  subset("block_id") %>%
-  writeRaster(
-    b_tif, overwrite = T,
-    datatype = "INT2U")
+
 r_cbze %>%
   subset("zone_id_v1") %>%
   writeRaster(
@@ -123,10 +213,33 @@ r_cbze %>%
 file.copy(z_v2_tif, oh_zones_v2_tif, overwrite = T)
 
 r_cbze %>%
+  subset("block_id_v1") %>%
+  writeRaster(
+    b_v1_tif, overwrite = T,
+    datatype = "INT2U")
+file.copy(b_v1_tif, oh_blocks_v1_tif, overwrite = T)
+r_cbze %>%
+  subset("block_id_v2") %>%
+  writeRaster(
+    b_v2_tif, overwrite = T,
+    datatype = "INT2U")
+file.copy(b_v2_tif, oh_blocks_v2_tif, overwrite = T)
+
+r_cbze %>%
   subset("elev") %>%
   writeRaster(
     e_tif, overwrite = T,
     datatype = "FLT4S")
+
+# area in square meters (m^2)
+r   <- oh_rast("cell_id")
+r_a <- cellSize(r, unit="m") # plot(r_a)
+names(r_a) <- "area_m2"
+# range(values(r_a, na.rm = T)) # 102,210.8 192,743.3
+writeRaster(
+  r_a,
+  oh_zones_area_m2_tif, overwrite = T,
+  datatype = "INT4U")
 
 # convert raster to points in geographic coordinate system and inject into db ----
 r_cbze <- rast(c(c_tif, b_tif, z_tif, e_tif))

@@ -115,22 +115,23 @@ oh_add_ply <- function(
     pal <- scales::col_numeric(col_pal, domain = r, reverse = T)
   }
 
-  popups <- glue::glue("{str_id}: <b>{ids}</b><br>{str_val}: {vals}")
+  popups <- glue::glue("{str_id}: <b>{ids}</b><br>{str_val}: <b>{vals}</b>")
+  labels <- popups |> lapply(htmltools::HTML)
 
   map <- map %>%
     leaflet::addPolygons(
-      data = ply,
+      data      = ply,
       fillColor = pal(vals), fillOpacity = fill_opacity,
-      color = brdr_color, opacity = brdr_opacity, weight = brdr_weight,
-      popup = popups,
+      color     = brdr_color,    opacity = brdr_opacity, weight = brdr_weight,
+      popup     = popups,
+      label     = labels,
       ...)
   if (add_legend)
     map <- map %>%
     leaflet::addLegend(
-      pal = pal,
+      pal    = pal,
       values = range(v),
-      title = str_val)
+      title  = str_val)
   map
 }
-
 

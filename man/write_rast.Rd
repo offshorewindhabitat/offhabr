@@ -4,7 +4,15 @@
 \alias{write_rast}
 \title{Write compact raster with compression, tiles and sparse encoding}
 \usage{
-write_rast(r, tif, datatype = "INT1U", overwrite = TRUE, epsg = 3857)
+write_rast(
+  r,
+  tif,
+  datatype = "INT1U",
+  overwrite = TRUE,
+  method = c("average", "nearest"),
+  epsg = 3857,
+  verbose = F
+)
 }
 \arguments{
 \item{r}{input raster layer or path to input GeoTIFF}
@@ -15,7 +23,12 @@ write_rast(r, tif, datatype = "INT1U", overwrite = TRUE, epsg = 3857)
 
 \item{overwrite}{defaults to TRUE}
 
+\item{method}{for internal overview generation; use \code{"average"} (default) for continous
+and \code{"nearest"} for categorical}
+
 \item{epsg}{projection number; default: Web Mercator (3857)}
+
+\item{verbose}{show commands; defaults to FALSE}
 }
 \value{
 returns nothing since only writing \code{tif}, i.e. a side-effect function

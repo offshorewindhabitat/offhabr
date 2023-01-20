@@ -3,7 +3,7 @@ librarian::shelf(
   devtools, here, terra)
 load_all()
 
-con <- oh_pg_con()
+con_pg <- oh_pg_con()
 
 # oh_zones: gdal_translate to smaller ----
 z_tif  <- system.file("oh_zones.tif", package = "offhabr")
@@ -325,7 +325,8 @@ plot(r[["rl_405012"]])
 # https://duckdb.org/docs/api/r
 
 # connect to default duckdb
-con <- oh_con()
+devtools::load_all()
+con <- oh_con(read_only=F)
 
 # write a table to it
 dbWriteTable(con, "iris", iris)
@@ -335,8 +336,7 @@ dbListTables(con)
 dbRemoveTable(con, "iris")
 
 # disconnect and shutdown
-dbDisconnect(con)
-duckdb::duckdb_shutdown(duckdb::duckdb())
+dbDisconnect(con, shutdown=T)
 
 # zones per tif ----
 librarian::shelf(
@@ -474,5 +474,14 @@ dbDisconnect(con, shutdown=T)
 
 
 # taxa ----
+devtools::load_all()
+con_dk <- oh_con(read_only = F) # dbDisconnect(con_dk, shutdown=T)
+con_pg <- oh_pg_con()
 
+
+d_taxa_wm <- tbl(con_pg, "taxa_wm") %>%
+  collect()
+d_taxa_wm
+dbWriteTable(con_dk, "taxa_wm", d_taxa_wm)
+dbListTables(con_dk)
 

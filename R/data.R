@@ -72,8 +72,10 @@
 #' \describe{
 #'   \item{block_id}{unique block identifier (integer)}
 #'   \item{block_key}{unique block identifier (character), comprised of
-#'     \{zone_key\}\{PROTRACTION_NUMBER\}_\{BLOCK_NUMBER\}}
+#'     v\{zone_version\}_\{zone_key\}_\{PROTRACTION_NUMBER\}_\{BLOCK_NUMBER\}}
 #'   \item{block_type}{one of either "lease" or "plan" depending on data source}
+#'   \item{zone_version}{zone version from `oh_zones` containing the block}
+#'   \item{zone_id}{zone id from `oh_zones` containing the block}
 #'   \item{zone_key}{unique zone from `oh_zones` containing the block}
 #'   \item{PROTRACTION_NUMBER}{the BOEM area defined by the roughly
 #'      2° longitude by 1° latitude containing up to 1,200 blocks.
