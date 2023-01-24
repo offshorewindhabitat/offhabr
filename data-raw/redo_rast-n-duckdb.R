@@ -485,3 +485,52 @@ d_taxa_wm
 dbWriteTable(con_dk, "taxa_wm", d_taxa_wm)
 dbListTables(con_dk)
 
+
+# duckdb() -> sqlite ----
+
+# Whoah! on server https://rstudio.offshorewindhabitat.info:
+# > con <- oh_con()
+#
+# Using path_duckdb: /usr/local/lib/R/site-library/offhabr/offhab.duckdb (read_only = TRUE)
+# Error in h(simpleError(msg, call)) :
+#   error in evaluating the argument 'drv' in selecting a method for function 'dbConnect': rapi_startup: Failed to open database: IO Error: Trying to read a database file with version number 39, but we can only read version 41.
+# The database file was created with DuckDB version v0.6.0 or v0.6.1.
+#
+# The storage of DuckDB is not yet stable; newer versions of DuckDB cannot read old database files and vice versa.
+# The storage will be stabilized when version 1.0 releases.
+#
+# For now, we recommend that you load the database file in a supported version of DuckDB, and use the EXPORT DATABASE command followed by IMPORT DATABASE on the current version of DuckDB.
+#
+# See the storage page for more information: https://duckdb.org/internals/storage
+librarian::shelf(
+  DBI, dplyr, duckdb, here, RSQLite)
+devtools::load_all()
+
+path_sqlite <- file.path(system.file(package="offhabr"), "offhab.sqlite")
+path_duckdb <- file.path(system.file(package="offhabr"), "offhab.duckdb")
+
+con_dk <- dbConnect(duckdb(dbdir = path_duckdb, read_only = T))
+con_sl <- dbConnect(RSQLite::SQLite(), path_sqlite)
+# dbDisconnect(con_dk, shutdown=T)
+# dbDisconnect(con_sl)
+
+dbListTables(con_dk)
+# [1] "iris"           "lyr_zone_stats" "taxa_wm"
+
+d_lyr_zone_stats <- tbl(con_dk, "lyr_zone_stats") |>
+  collect()
+dbWriteTable(con_sl, "lyr_zone_stats", d_lyr_zone_stats)
+# tbl(con_sl, "lyr_zone_stats")
+
+d_taxa_wm <- tbl(con_dk, "taxa_wm") |>
+  collect()
+dbWriteTable(con_sl, "taxa_wm", d_taxa_wm)
+tbl(con_sl, "taxa_wm")
+
+dbDisconnect(con_sl)
+
+library(connections)
+library(RSQLite)
+con <- connection_open(RSQLite::SQLite(), path_sqlite)
+tbl(con, "taxa_wm")
+

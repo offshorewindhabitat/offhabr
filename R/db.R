@@ -18,33 +18,13 @@
 #' DBI::dbListTables(con)
 #' }
 oh_con <- function(
-    # path_sqlite = system.file("offhab.sqlite", package = "offhabr")){
-    path_duckdb = file.path(system.file(package="offhabr"), "offhab.duckdb"),
-    read_only = T){
+    path_sqlite = system.file("offhab.sqlite", package="offhabr")){
 
-  message(glue::glue("Using path_duckdb: {path_duckdb} (read_only = {read_only})"))
-
-  # https://duckdb.org/docs/api/r
-  # librarian::shelf(
-  #   DBI, duckdb)
-
-  # options("duckdb.enable_rstudio_connection_pane"=TRUE)
-  # options("sqlite.enable_rstudio_connection_pane"=TRUE)
-  # RStudio Connections tab: /Users/bbest/Github/ecoquants/offhabr/inst/offhab.duckdb
-
-
-  ## write a table to it
-  # dbWriteTable(con, "iris", iris)
-  # dbListTables(con)
-
-  ## and disconnect
-  # dbDisconnect(con, shutdown = T)
-  # create / connect to database file
+  options("sqlite.enable_rstudio_connection_pane"=TRUE)
 
   DBI::dbConnect(
-    duckdb::duckdb(
-      dbdir = path_duckdb,
-      read_only = read_only))
+    RSQLite::SQLite(),
+    path_sqlite)
 
   # https://rstudio.github.io/connections/
   # remotes::install_github("edgararuiz/connections")
