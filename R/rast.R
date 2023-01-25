@@ -150,7 +150,11 @@ write_rast <- function(
     threads   = "ALL_CPUS",
     epsg      = 3857,
     verbose   = F){
+
   method <- method[1]
+
+  # r <- r_rel; tif <- rel_tif
+  # datatype  = "INT1U"; overwrite = TRUE; method    = c("average", "nearest"); threads   = "ALL_CPUS"; epsg = 3857; verbose   = F
 
   # ?terra::writeRaster
   #   datatype = # "INT1U", "INT2U", "INT2S", "INT4U", "INT4S", "FLT4S", "FLT8S"
@@ -213,6 +217,9 @@ write_rast <- function(
       tmp_tif,
       datatype = datatype,
       overwrite = overwrite)
+    # rast(tmp_tif)
+    # dimensions  : 7183, 14678, 1  (nrow, ncol, nlyr)
+    # resolution  : 481.3177, 481.3177  (x, y)
   } else {
     # assume path to tif
     tmp_tif <- r
@@ -223,15 +230,24 @@ write_rast <- function(
   opt_byte     <- ifelse(datatype == "INT1U", "--nodata 255", "")
   opt_compress <- "--cog-profile deflate --allow-intermediate-compression"
   opt_threads  <- "--threads ALL_CPUS"
-  opt_web      <- "--web-optimized"
+  # opt_web      <- "--web-optimized" # https://cogeotiff.github.io/rio-cogeo/Advanced/ create a web-tiling friendly COG
+  # bounds and internal tiles aligned with web-mercator grid; raw data and overviews resolution match mercator zoom level resolution.
+  # it will certainly create a larger file (with padding tiles on the side of the file)
+  # gives different cell sizes and dimensions:
+    # rast(tif)
+    # dimensions  : 5888, 11776, 1  (nrow, ncol, nlyr)
+    # resolution  : 611.4962, 611.4962  (x, y)
+  opt_web      <- ""
   opt_resample <- glue("--resampling {method}")
   opts <- glue("--dtype {dtype} {opt_byte} {opt_compress} {opt_web} {opt_resample}")
   cmd <- glue("rio cogeo create {opts} '{tmp_tif}' '{tif}'")
   if (verbose)
     message(cmd)
   system(cmd)
+
   unlink(tmp_tif)
   return(T)
+
 
   # fs::file_info(rel_tif) |> pull(size) # 233K
   # system(glue("rio cogeo validate '{rel_tif}'"))

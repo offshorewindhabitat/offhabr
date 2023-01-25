@@ -153,7 +153,10 @@ create_index <- function(con, tbl, flds, geom=F, unique=F, overwrite=F, show=F, 
     geom,
     glue::glue(" USING GIST ({flds})"),
     glue::glue("({paste(flds, collapse=', ')})"))
-  idx <- glue("{tbl}_{paste(flds, collapse='_')}_idx")
+  idx <- ifelse(
+    unique,
+    glue("{tbl}_unique_idx"),
+    glue("{tbl}_{paste(flds, collapse='_')}_idx"))
 
   if (overwrite)
     dbSendQuery(con, glue("DROP INDEX IF EXISTS {idx}"))

@@ -520,12 +520,17 @@ dbListTables(con_dk)
 d_lyr_zone_stats <- tbl(con_dk, "lyr_zone_stats") |>
   collect()
 dbWriteTable(con_sl, "lyr_zone_stats", d_lyr_zone_stats)
+create_index(con_sl, "lyr_zone_stats", c("lyr_key", "zone_id"), unique=T)
+create_index(con_sl, "lyr_zone_stats", "aphia_id")
+create_index(con_sl, "lyr_zone_stats", "zone_id")
+create_index(con_sl, "lyr_zone_stats", "ds_key")
 # tbl(con_sl, "lyr_zone_stats")
 
 d_taxa_wm <- tbl(con_dk, "taxa_wm") |>
   collect()
 dbWriteTable(con_sl, "taxa_wm", d_taxa_wm)
-tbl(con_sl, "taxa_wm")
+create_index(con_sl, "lyr_zone_stats", "aphia_id", unique=T)
+# tbl(con_sl, "taxa_wm")
 
 dbDisconnect(con_sl)
 
