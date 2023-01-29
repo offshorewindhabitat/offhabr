@@ -135,3 +135,20 @@ oh_add_ply <- function(
   map
 }
 
+#' Get Colors
+#'
+#' typically used with `leaflet::addPolygons()`
+#'
+#' @param x character vector of names
+#' @param v_colors vector of named characters with colors; defaults to `oh_colors`
+#'
+#' @return
+#' @export
+#' @concept viz
+#'
+#' @examples
+get_colors <- function(x, v_colors = oh_colors){
+  v_colors[x] |>
+    unname()
+}
+

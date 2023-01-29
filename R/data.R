@@ -110,6 +110,15 @@
 #' @concept data
 "oh_blocks"
 
+# oh_colors ----
+#' OffHab colors
+#'
+#' vector of named character colors corresponding with `region` or `zone_name`
+#' from `oh_zones`
+#' @concept data
+"oh_colors"
+
+
 # oh_zones ----
 #' Offshore Habitat Zone polygons
 #'

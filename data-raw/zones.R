@@ -201,3 +201,70 @@ usethis::use_data(oh_zones, overwrite = TRUE)
 oh_zones_s1k <- oh_zones %>%
   sf::st_simplify(T, 1000)
 usethis::use_data(oh_zones_s1k, overwrite = TRUE)
+
+
+# colors for zones and regions ----
+librarian::shelf(
+  dplyr, here, RColorBrewer, readr, scales, sf)
+devtools::load_all()
+# three regions (A,B,C), with a start(0), end(1) and color separation between (|)
+#  0, A, 1, |, 0, B, 1, |, 0, C, 1
+#  1, 2, 3, 4, 5, 6, 7, 9,10,11,12
+cols_all <- scales::colour_ramp(brewer.pal(11, "Spectral"))(seq(0,1, length=12))
+# show_col(cols_all)
+
+rgns <- oh_zones_s1k |>
+  filter(zone_version == 1) |>
+  pull(region) |> sort() |> unique()
+
+cols_rgns <- cols_all[c(2,6,11)]
+names(cols_rgns) <- rgns
+# show_col(cols_rgns)
+
+oh_zns <- oh_zones_s1k |>
+  filter(zone_version == 1)
+
+zone_colors_csv <- here("data-raw/zone_colors.csv")
+if (!file.exists(zone_colors_csv)){
+  oh_zns |>
+    st_drop_geometry() |>
+    arrange(region, zone_name) |>
+    select(region, zone_name) |>
+    write_csv(zone_colors_csv)
+  # manually add color_rank column from NAtlantic down to EGomex to SCal to WA
+}
+d_zon_col_rnk <-  read_csv(zone_colors_csv)
+
+d_cols_zons <- d_zon_col_rnk |>
+  mutate(
+    color = map2_chr(
+      region, zone_name,
+      function(rgn, zon){
+
+        # get rank of color for zone within region
+        rnk <- d_zon_col_rnk |>
+          filter(zone_name == zon) |>
+          pull(color_rank)
+
+        # get color ranks of all zones within region
+        rnks_rgn <- d_zon_col_rnk |>
+          filter(region == rgn) |>
+          pull(color_rank)
+
+        # get index of region color to get start(0) and end(1) colors mentioned above
+        i_col_rgn <- which(cols_rgns[rgn] == cols_all)
+
+        # get color ramp based on region's start(0) and end(1) colors
+        ramp_rgn <- colour_ramp(
+          cols_all[(i_col_rgn - 1):(i_col_rgn + 1)])
+
+        # get colors for all zones in region
+        cols_rgn <- ramp_rgn(seq(0, 1, length = length(rnks_rgn)))
+
+        # get color for specified zone
+        cols_rgn[rnk] }))
+
+cols_zons <- setNames(d_cols_zons$color, d_cols_zons$zone_name)
+
+oh_colors <- c(cols_rgns, cols_zons)
+usethis::use_data(oh_colors, overwrite = TRUE)
