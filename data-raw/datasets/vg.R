@@ -30,7 +30,7 @@ librarian::shelf(
   DBI, devtools, fs, glue, R.utils, sf, terra)
 load_all()
 
-dir_vgpm       <- "/Users/bbest/My Drive/projects/offhab/data/oregonstate.edu - productivity/vgpm.m.2021"
+dir_vgpm       <- "/Users/bbest/My Drive/projects/offhab/data/raw/oregonstate.edu - productivity/vgpm.m.2021"
 vgpm_tif       <- glue("{dir_vgpm}/vgpm_2021_oh.tif")
 
 # unzip from *.gz to *.hdf ----
@@ -105,39 +105,40 @@ range(v) # 217.1408 6174.7437
 ncell(r) # 105,432,074
 # plot(r)
 
-# write to db ----
-con <- oh_pg_con()
-
-tbl_vg_model <- tibble(
-  mdl_id      = 1,
-  name_short  = "VGPM",
-  year        = 2021,
-  name_long   = "Vertically Generalized Production Model (VGPM) annual average
-  from monthly products",
-  description = 'The Vertically Generalized Production Model (VGPM) (Behrenfeld
-  and Falkowski, 1997a) is a "chlorophyll-based" model that estimate net primary
-  production from chlorophyll using a temperature-dependent description of
-  chlorophyll-specific photosynthetic efficiency. For the VGPM, net primary
-  production is a function of chlorophyll, available light, and the
-  photosynthetic efficiency. It is based  on are based on chlorophyll,
-  temperature and PAR data from SeaWiFS, MODIS and VIIRS satellites,
-  along with estimates of euphotic zone depth from a model developed by Morel
-  and Berthon (1989) and based on chlorophyll concentration.',
-  source      = "http://sites.science.oregonstate.edu/ocean.productivity")
-dbWriteTable(con, "vg_model", tbl_vg_model, overwrite = T)
+# write to lyrs, db ----
+dir_lyrs_tif <- "/Users/bbest/My Drive/projects/offhab/data/derived/lyrs_tif"
+vg_tif <- glue("{dir_lyrs_tif}/vg.tif")
 
 r_vgpm <- rast(vgpm_tif)
-r_cid  <- oh_rast("cell_id")
-r      <- c(r_cid, vgpm_tif)
+# plet(r_vgpm, tiles="Esri.NatGeoWorldMap")
 
-d <- r %>%
-  values(dataframe=T, na.rm=T) %>%
-  tibble() %>%
-  mutate(
-    tbl    = "vg_model",
-    mdl_id = 1) %>%
-  select(tbl, mdl_id, cell_id, value = mean)
-# 14,905,295 × 4
-system.time(
-  dbAppendTable(con, "oh_cells_rast", d)) # 378 sec or 6.3 min
-x <- dbGetQuery(con, "SELECT COUNT(*) AS n FROM oh_cells_rast WHERE tbl = 'vg_model'")
+r_vg <- setValues(
+  r_vgpm,
+  scales::rescale(
+    values(r_vgpm),
+    to = c(1, 100)) )
+# plet(r_vg, tiles="Esri.NatGeoWorldMap")
+
+offhabr::write_rast(r_vg, vg_tif)
+file.size(vgpm_tif) # 73,025,983
+file.size(vg_tif)   #    439,834
+
+# revert to original values ----
+(vr <- range(values(r_vgpm, na.rm = T)))
+# 217.1408 6174.7437
+
+# revert to original values
+r_vg_s <- terra::setValues(
+  r_vg,
+  scales::rescale(
+    values(r_vg),
+    to = c(vr[1], vr[2])) )
+# plet(r_vg_s, tiles="Esri.NatGeoWorldMap")
+
+# wrote metadata to inst/datasets.csv
+# wrote to inst/layers.csv:
+#   ds_key  lyr_key aphia_id   val_min   val_max rescale_min rescale_max
+#   vg      vg		            217.1408 6174.7437           1         100
+
+con <- oh_con(read_only = F) # dbDisconnect(con, shutdown = T)
+

@@ -116,9 +116,10 @@ r8 <- pgGetRast(con, "oh_zones_8")
 
 vals <- dbGetQuery(con, "SELECT ST_DumpValues(ST_Union(rast), ) AS vals FROM oh_zones_8")
 range(vals)
-rout <- raster::raster(nrows = info$rows, ncols = info$cols,
-                       xmn = info$xmn, xmx = info$xmx, ymn = info$ymn, ymx = info$ymx,
-                       crs = sp::CRS(p4s), val = vals)
+rout <- raster::raster(
+  nrows = info$rows, ncols = info$cols,
+  xmn = info$xmn, xmx = info$xmx, ymn = info$ymn, ymx = info$ymx,
+  crs = sp::CRS(p4s), val = vals)
 
 # select
 # ST_AsTIFF(ST_Union(rast), 'LZW') as tiff
@@ -255,7 +256,7 @@ rast(glue("{lyr}_0b.tif")) %>% trim() %>% mapView()
 rast(glue("{lyr}_1.tif")) %>% trim() %>% mapView()
 rast(glue("{lyr}_1b.tif")) %>% trim() %>% mapView()
 
-# * vg_model (0 to 1) black abalone ----
+# * vg_model (0 to 1) ----
 d_cv <- tbl(con, "cells_ds_rast") %>%
   filter(
     tbl    == "vg_model",
