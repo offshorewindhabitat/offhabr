@@ -123,7 +123,7 @@ offhabr::write_rast(r_vg, vg_tif)
 file.size(vgpm_tif) # 73,025,983
 file.size(vg_tif)   #    439,834
 
-# revert to original values ----
+# * test: revert to original values ----
 (vr <- range(values(r_vgpm, na.rm = T)))
 # 217.1408 6174.7437
 

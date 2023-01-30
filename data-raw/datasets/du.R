@@ -206,3 +206,85 @@ oh_cells_rast <- d %>%
 con_oh <- oh_pg_con()
 dbWriteTable(con_oh, "oh_cells_rast", oh_cells_rast)
 dbWriteTable(con_oh, "du_density", du_density)
+
+# write to rast lyrs ----
+librarian::shelf(
+  here, readr)
+options(readr.show_col_types = F)
+
+dir_lyrs_tif <- "/Users/bbest/My Drive/projects/offhab/data/derived/lyrs_tif"
+lyrs_csv     <- here("data-raw/layers.csv")
+ds_key       <- "du"
+
+con_oh <- oh_pg_con()
+
+ds_du <- tbl(con_oh, "ds_du") |> collect() |>
+  arrange(aphia_id, row_id) |>
+  filter(!duplicated(row_id))
+
+# * mosaic EC & GOM ----
+aphia_ids <- unique(ds_du$aphia_id)
+for (i in 1:length(aphia_ids) ){ # i = 1
+  aphia_id <- aphia_ids[i]
+  lyr_key <- glue("{ds_key}_{aphia_id}")
+  r_tif <- glue("{dir_lyrs_tif}/{lyr_key}.tif")
+  message(glue("{i} of {length(aphia_ids)}: {basename(r_tif)} ~ {Sys.time()}"))
+
+  ds_sp <- ds_du |>
+    filter(aphia_id == !!aphia_id)
+
+  stk <- list()
+  for (rgn in ds_sp$rgn){ # rgn = ds_sp$rgn[1]
+    message(glue("  rgn: {rgn} ~ {Sys.time()}"))
+
+    mdl_id <- ds_sp |> filter(rgn == !!rgn) |> pull(row_id)
+    d_v <- tbl(con_oh, "cells_ds_rast") %>%
+      filter(
+        tbl    == "du_density",
+        mdl_id == !!mdl_id) %>%
+      select(cell_id, val) |>
+      collect()
+
+    r <- oh_rast("NA")
+    r[d_v$cell_id] <- d_v$val
+    # plet(r, tiles="Esri.NatGeoWorldMap")
+
+    stk[[rgn]] <- r
+  }
+  r <- rast(stk) |>
+    app(fun = "mean", na.rm=T)
+  # plet(r, tiles="Esri.NatGeoWorldMap")
+
+  # rescale 0 to 100
+  (vr <- range(values(r, na.rm = T)))
+  r <- setValues(
+    r,
+    scales::rescale(
+      values(r),
+      to = c(0, 100)) )
+  # 0 -> NA
+  r[r==0] <- NA
+  # plet(r, tiles="Esri.NatGeoWorldMap")
+
+  # write raster
+  write_rast(r, r_tif)
+
+  # write min, max to layers.csv
+  d <- read_csv(lyrs_csv) |>
+    filter(
+      lyr_key != !!lyr_key) |>
+    bind_rows(
+      tibble(
+        lyr_key     = lyr_key,
+        ds_key      = ds_key,
+        aphia_id    = aphia_id,
+        val_min	    = vr[1],
+        val_max     = vr[2],
+        rescale_min	= 0,
+        rescale_max = 100) )
+  message(glue("  nrow(lyrs_csv): {nrow(d)}"))
+  write_csv(d,lyrs_csv)
+}
+
+# TODO: re-add lyr_key == "vg"
+#   https://github.com/ecoquants/offhabr/blob/86a3a5dbab9dde57a5f1c6082c7db404160b0388/data-raw/layers.csv
