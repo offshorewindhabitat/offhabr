@@ -251,9 +251,10 @@ write_rast <- function(
     message(cmd)
   system(cmd)
 
-  unlink(tmp_tif)
-  return(T)
+  if ("SpatRaster" %in% class(r))
+    unlink(tmp_tif)
 
+  return(T)
 
   # fs::file_info(rel_tif) |> pull(size) # 233K
   # system(glue("rio cogeo validate '{rel_tif}'"))
