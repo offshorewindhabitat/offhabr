@@ -71,16 +71,22 @@ oh_rast <- function(
     zone_id      = "ALL",
     zone_version = c(1, 2)){
 
+  # type         = "block_id"
+  # zone_id      = "ALL"
+  # zone_version = 1
+  # devtools::load_all()
+
   stopifnot(type %in% c("NA", "cell_id", "zone_id", "block_id", "area_m2"))
   stopifnot(zone_id == "ALL" | is.numeric(zone_id))
   type         = type[1]
   zone_version = zone_version[1]
 
   gx_tif <- dplyr::case_when(
-    type == "zone_id"  ~ "oh_zones_v{zone_version}.tif",
-    type == "block_id" ~ "oh_blocks_v{zone_version}.tif",
+    type == "zone_id"  ~ glue::glue("oh_zones_v{zone_version}.tif"),
+    type == "block_id" ~ glue::glue("oh_blocks_v{zone_version}.tif"),
     TRUE ~ "oh_zones_area_m2.tif")
-  tif <- system.file(glue::glue(gx_tif), package = "offhabr")
+
+  tif <- system.file(glue::glue(gx_tif), package = "offhabr", mustWork = T)
 
   r_1 <- terra::rast(tif)  # terra::plot(r_z)
   r <- switch(
