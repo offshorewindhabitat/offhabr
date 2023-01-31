@@ -285,6 +285,3 @@ for (i in 1:length(aphia_ids) ){ # i = 1
   message(glue("  nrow(lyrs_csv): {nrow(d)}"))
   write_csv(d,lyrs_csv)
 }
-
-# TODO: re-add lyr_key == "vg"
-#   https://github.com/ecoquants/offhabr/blob/86a3a5dbab9dde57a5f1c6082c7db404160b0388/data-raw/layers.csv

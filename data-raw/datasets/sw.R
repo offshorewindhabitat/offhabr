@@ -30,7 +30,7 @@ load_all()
 
 # read layers ----
 # geodatabase
-gdb <- "/Users/bbest/My Drive/projects/offhab/data/noaa.maps.arcgis.com/swfsc_cce_becker_et_al_2020b.gdb"
+gdb <- "/Users/bbest/My Drive/projects/offhab/data/raw/noaa.maps.arcgis.com - cetaceans, pacific/swfsc_cce_becker_et_al_2020b.gdb"
 
 lyrs <- st_layers(gdb) %>% .$name
 sw_density <- tibble(
@@ -243,3 +243,82 @@ range(b_a) # 0.6680945 23.1188952
 # map
 mapView(r_z, maxpixels=ncell(r_z)) +
   mapView(b_z)
+
+
+# redo rast ----
+librarian::shelf(
+  here, readr, terra)
+options(readr.show_col_types = F)
+
+dir_lyrs_tif <- "/Users/bbest/My Drive/projects/offhab/data/derived/lyrs_tif"
+lyrs_csv     <- here("data-raw/layers.csv")
+ds_key       <- "sw"
+
+# match with aphia_id
+sw_density <- sw_density |>
+  left_join(
+    tbl(con, "taxa") |>
+      filter(tbl == "sw_density") |>
+      select(
+        species_2 = taxa,
+        aphia_id) |>
+      collect(),
+    by = "species_2") |>
+  select(aphia_id, density, geom) |>
+  group_by(aphia_id) |>
+  nest() |>
+  ungroup()
+
+# iterate over rasters
+r_na <- oh_rast("NA")
+for (i in 1:nrow(sw_density)){ # i = 1
+
+  aphia_id <- sw_density$aphia_id[i]
+  lyr_key <- glue("{ds_key}_{aphia_id}")
+  r_tif <- glue("{dir_lyrs_tif}/{lyr_key}.tif")
+  message(glue("{i} of {nrow(sw_density)}: {basename(r_tif)} ~ {Sys.time()}"))
+
+  # get density, geom
+  d <- sw_density |>
+    slice(i) |>
+    pull(data) %>%
+    .[[1]]
+  # mapView(d, zcol = "density")
+
+  # convert to raster
+  r <- d |>
+    st_transform(3857) |>
+    rasterize(
+      r_na, "density")
+  # plet(r, tiles="Esri.NatGeoWorldMap")
+
+  # rescale 0 to 100; set 0 -> NA
+  (vr <- range(values(r, na.rm = T)))
+  r <- setValues(
+    r,
+    scales::rescale(
+      values(r),
+      to = c(0, 100)) )
+  r[r==0] <- NA
+  # plet(r, tiles="Esri.NatGeoWorldMap")
+
+  # write raster
+  write_rast(r, r_tif)
+
+  # write min, max to layers.csv
+  d <- read_csv(lyrs_csv) |>
+    filter(
+      lyr_key != !!lyr_key) |>
+    bind_rows(
+      tibble(
+        lyr_key     = lyr_key,
+        ds_key      = ds_key,
+        aphia_id    = aphia_id,
+        val_min	    = vr[1],
+        val_max     = vr[2],
+        rescale_min	= 0,
+        rescale_max = 100) )
+  # message(glue("  nrow(lyrs_csv): {nrow(d)}"))
+  write_csv(d, lyrs_csv)
+}
+
