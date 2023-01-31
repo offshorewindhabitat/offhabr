@@ -121,15 +121,7 @@ tbl_sm_model <- tibble(
   name_short  = "Seamounts",
   year        = 2011,
   name_long   = "Seamount Census from Altimetry-Derived Gravity Data",
-  description = 'The Vertically Generalized Production Model (VGPM) (Behrenfeld
-  and Falkowski, 1997a) is a "chlorophyll-based" model that estimate net primary
-  production from chlorophyll using a temperature-dependent description of
-  chlorophyll-specific photosynthetic efficiency. For the VGPM, net primary
-  production is a function of chlorophyll, available light, and the
-  photosynthetic efficiency. It is based  on are based on chlorophyll,
-  temperature and PAR data from SeaWiFS, MODIS and VIIRS satellites,
-  along with estimates of euphotic zone depth from a model developed by Morel
-  and Berthon (1989) and based on chlorophyll concentration.',
+  description = '',
   source      = "http://www.soest.hawaii.edu/PT/SMTS/main.html",
   citation    = "Kim S-S, Wessel P (2011) New global seamount census from
   altimetry-derived gravity data: New global seamount census. Geophysical

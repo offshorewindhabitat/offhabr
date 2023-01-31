@@ -20,7 +20,7 @@ load_all()
 options(readr.show_col_types = F)
 
 # read layers ----
-dir_g   <- "/Users/bbest/My Drive/projects/offhab/data"
+dir_g   <- "/Users/bbest/My Drive/projects/offhab/data/raw"
 dir_atl <- glue("{dir_g}/ncei.noaa.gov - seabirds, atlantic/0176682/1.1/data/0-data/NCCOS-Atlantic-Birds_ArchiveDataPackage")
 dir_pac <- glue("{dir_g}/ncei.noaa.gov - seabirds, pacific/0242882/1.1/data/0-data")
 
@@ -77,6 +77,7 @@ d <- d %>%
         terra::mean(na.rm=T)
     }))
 
+# inspect ----
 which.max(d$region == "Atlantic") #  1
 which.max(d$region == "Pacific")  # 48
 
@@ -91,10 +92,10 @@ which.max(d$region == "Pacific")  # 48
 # different projections whether Atlantic or Pacific
 
 # get projections for Atlantic and Pacific
-r_atl_om1 <- d$r[[1]]           # plot(r_ec_alb)
+r_atl_om1 <- d$r[[1]]           # plot(r_atl_om1)
 crs(r_atl_om1, proj=T)
 # +proj=omerc +lat_0=35 +lonc=-75 +alpha=40 +gamma=40 +k=0.9996 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs
-r_pac_om2 <- d$r[[48]]         # plot(r_gom_alb)  # WGS_1984_Albers
+r_pac_om2 <- d$r[[48]]         # plot(r_pac_om2)  # WGS_1984_Albers
 crs(r_pac_om2, proj=T)
 # +proj=omerc +lat_0=39 +lonc=-125 +alpha=75 +gamma=75 +k=0.9996 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs
 r_cid_mer <- oh_rast("cell_id") # plot(r_zid_mer)  # WGS 84 / Pseudo-Mercator
@@ -271,3 +272,134 @@ nc_density <- read_csv(m_csv) %>%
     row_id, aphia_id, species_code, common_name, scientific_name,
     region, seasons, n_seasons, tifs)
 dbWriteTable(con, "nc_density", nc_density)
+
+# redo rast ----
+librarian::shelf(
+  here, readr)
+options(readr.show_col_types = F)
+
+dir_lyrs_tif <- "/Users/bbest/My Drive/projects/offhab/data/derived/lyrs_tif"
+lyrs_csv     <- here("data-raw/layers.csv")
+ds_key       <- "nc"
+
+con <- oh_pg_con()
+
+# join aphia_id to data
+intersect(colnames(d), colnames(d_taxa))
+# [1] "region"    "seasons"   "n_seasons"
+setdiff(colnames(d), colnames(d_taxa))
+# [1] "sp_code" "data"    "r"
+setdiff(colnames(d_taxa), colnames(d))
+# [1] "row_id"          "aphia_id"        "species_code"
+# [4] "common_name"     "scientific_name" "tifs"
+d <- d |>
+  left_join(
+    tbl(con, "ds_nc") |>
+      collect() |>
+      rename(sp_code = species_code),
+    by = c("sp_code", "region", "seasons", "n_seasons"))
+
+# * fill in missing aphia_ids manually ----
+d |>
+  filter(is.na(aphia_id)) |>
+  pull(sp_code)
+# [1] "HERG-ICGU"      "ROYT-ELTE"      "SCMU-GUMU-CRMU" "WEGR-CLGR"
+# [5] "WEGU-WGWH-GWGU"
+d_sp_lookups <- tribble(
+  ~sp_code, ~aphia_id, ~sp_lookup, ~scientific_name, ~common_name,
+  "SCMU-GUMU-CRMU", 343632, "Synthliboramphus", "Synthliboramphus scrippsi/hypoleucus/craveri", "Scripps’s/Guadalupe/Craveri’s Murrelet",
+  "HERG-ICGU",  137043, "Larus", "Larus argentatus/glaucoides ", "Herring/Iceland Gull",
+  "ROYT-ELTE", 137047, "Thalasseus", "Thalasseus maximus/elegans","Royal/Elegant Tern",
+  "WEGR-CLGR", 366616, "Aechmophorus", "Aechmophorus occidentalis/clarkii", "Western/Clark’s Grebe",
+  "WEGU-WGWH-GWGU", 137043, "Larus", "Larus occidentalis/glaucescens", "Western/Glaucous-winged Gull")
+d <- d |>
+  filter(!is.na(aphia_id)) |>
+  rbind(
+    d |>
+      filter(is.na(aphia_id)) |>
+      select(-aphia_id, -scientific_name, -common_name) |>
+      left_join(
+        d_sp_lookups |>
+          select(sp_code, aphia_id, scientific_name, common_name),
+        by = "sp_code"))
+
+# * iterate over aphia_ids ----
+r_na <- oh_rast("NA")
+aphia_ids <- unique(d$aphia_id)
+for (i in 2:length(aphia_ids)){ # i = 1
+
+  aphia_id <- aphia_ids[i]
+  lyr_key  <- glue("{ds_key}_{aphia_id}")
+  r_tif    <- glue("{dir_lyrs_tif}/{lyr_key}.tif")
+  message(glue("{i} of {length(aphia_ids)}: {basename(r_tif)} ~ {Sys.time()}"))
+
+  d_sp <- d |>
+    filter(aphia_id == !!aphia_id)
+
+  stk <- list()
+  for (region in d_sp$region){ # region = d_sp$region[1]
+    message(glue("  region: {region} ~ {Sys.time()}"))
+
+    r <- d_sp |>
+      filter(region == !!region) |>
+      pull(r) %>%
+      .[[1]]
+    # plet(r, tiles="Esri.NatGeoWorldMap")
+    stk[[region]] <- terra::project(r, r_na)
+    # plet(stk[[region]], tiles="Esri.NatGeoWorldMap")
+  }
+  r <- rast(stk) |>
+    app(fun = "mean", na.rm=T)
+  # plet(r, tiles="Esri.NatGeoWorldMap")
+
+  # rescale 0 to 100
+  (vr <- range(values(r, na.rm = T)))
+  r <- setValues(
+    r,
+    scales::rescale(
+      values(r),
+      to = c(0, 100)) )
+  # 0 -> NA
+  r[r==0] <- NA
+  # plet(r, tiles="Esri.NatGeoWorldMap")
+
+  # write raster
+  write_rast(r, r_tif)
+
+  # write min, max metadata to layers.csv
+  d_m <- read_csv(lyrs_csv) |>
+    filter(
+      lyr_key != !!lyr_key) |>
+    bind_rows(
+      tibble(
+        lyr_key     = lyr_key,
+        ds_key      = ds_key,
+        aphia_id    = aphia_id,
+        val_min	    = vr[1],
+        val_max     = vr[2],
+        rescale_min	= 0,
+        rescale_max = 100) )
+  message(glue("  nrow(lyrs_csv): {nrow(d)}"))
+  write_csv(d_m, lyrs_csv)
+}
+
+# write data-raw/layers.csv to duckdb ----
+
+# ls() %>% stringr::str_subset("con")
+# DBI::dbDisconnect(con, shutdown = T)
+con <- oh_con(read_only = F)
+# dbListTables(con)
+
+lyrs <- read_csv(here("../offhabr/data-raw/layers.csv"))
+# head(lyrs)
+# ds_key lyr_key   aphia_id       val_min  val_max rescale_min rescale_max
+# <chr>  <chr>        <dbl>         <dbl>    <dbl>       <dbl>       <dbl>
+# 1 vg     vg              NA 217.          6175.              1         100
+# 2 du     du_136986   136986   0             15.2             0         100
+# 3 du     du_137017   137017   0.000000173   77.5             0         100
+# 4 du     du_137034   137034   0.000000837   15.6             0         100
+# 5 du     du_137087   137087   0              1.71            0         100
+# 6 du     du_137088   137088   0              0.694           0         100
+DBI::dbWriteTable(con, "lyrs", lyrs)
+
+DBI::dbDisconnect(con, shutdown = T)
