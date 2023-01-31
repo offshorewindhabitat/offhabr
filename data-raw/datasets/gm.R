@@ -46,7 +46,7 @@ get_annual_density <- function(d_sf, i=0){
 }
 
 # read layers ----
-dir_shp   <- "/Users/bbest/My Drive/projects/offhab/data/ncei.noaa.gov - GoMex cetacean & sea turtle SDMs/0256800/2.2/data/0-data/NOAA_SEFSC_Cetacean_SeaTurtle_SDM_shapefiles"
+dir_shp   <- "/Users/bbest/My Drive/projects/offhab/data/raw/ncei.noaa.gov - GoMex cetacean & sea turtle SDMs/0256800/2.2/data/0-data/NOAA_SEFSC_Cetacean_SeaTurtle_SDM_shapefiles"
 taxa_xls <- glue("{dir_shp}/../spp_gmx.xlsx")
 
 taxa <- read_excel(taxa_xls)
@@ -163,3 +163,132 @@ tmp_tif <- tempfile(fileext = ".tif")
 r <- trim(r)
 plot(r)
 mapView(r, maxpixels=ncell(r))
+
+
+# redo rast ----
+librarian::shelf(
+  here, readr, terra)
+options(readr.show_col_types = F)
+
+dir_lyrs_tif <- "/Users/bbest/My Drive/projects/offhab/data/derived/lyrs_tif"
+lyrs_csv     <- here("data-raw/layers.csv")
+ds_key       <- "gm"
+
+# match with aphia_id
+D <- d |>
+  left_join(
+    tbl(con, "taxa") |> # distinct(tbl) |> pull(tbl)
+      filter(tbl == "gm_models") |>
+      select(
+        taxa_sci = taxa,
+        aphia_id) |>
+      collect(),
+    by = "taxa_sci")
+
+# combine:
+#           Stenella frontalis | Tursiops truncatus
+#  oceanic |                 8 |                  9
+#    shelf |                15 |                 16
+d_sf <- D |>
+  filter(
+    mdl_id == 8) |>
+  select(aphia_id, d_density) |>
+  unnest(d_density) |>
+  rename(density_oceanic = density) |>
+  left_join(
+    D |>
+      filter(
+        mdl_id == 15) |>
+      select(mdl_id, d_density) |>
+      unnest(d_density) |>
+      select(
+        hexid, density_shelf = density),
+    by = "hexid") |>
+  mutate(
+    density = map2_dbl(
+      density_oceanic, density_shelf, sum, na.rm = T)) |>
+  select(-density_oceanic, -density_shelf) |>
+  nest(
+    d_density = c(hexid, geom, density))
+d_tt <- D |>
+  filter(
+    mdl_id == 9) |>
+  select(aphia_id, d_density) |>
+  unnest(d_density) |>
+  rename(density_oceanic = density) |>
+  left_join(
+    D |>
+      filter(
+        mdl_id == 16) |>
+      select(mdl_id, d_density) |>
+      unnest(d_density) |>
+      select(
+        hexid, density_shelf = density),
+    by = "hexid") |>
+  mutate(
+    density = map2_dbl(
+      density_oceanic, density_shelf, sum, na.rm = T)) |>
+  select(-density_oceanic, -density_shelf) |>
+  nest(
+    d_density = c(hexid, geom, density))
+D <- D |>
+  filter(!mdl_id %in% c(8,9,15,16)) |>
+  select(aphia_id, d_density) |>
+  rbind(
+    d_sf,
+    d_tt)
+
+# iterate over rasters
+r_na <- oh_rast("NA")
+# for (i in 1:nrow(D)){ # i = 1
+for (i in 16:nrow(D)){ # i = 16
+
+  aphia_id <- D$aphia_id[i]
+  lyr_key <- glue("{ds_key}_{aphia_id}")
+  r_tif <- glue("{dir_lyrs_tif}/{lyr_key}.tif")
+  message(glue("{i} of {nrow(D)}: {basename(r_tif)} ~ {Sys.time()}"))
+
+  # get density, geom
+  d <- D |>
+    slice(i) |>
+    pull(d_density) %>%
+    .[[1]] |>
+    st_as_sf()
+  # mapView(d, zcol = "density")
+
+  # convert to raster
+  r <- d |>
+    st_transform(3857) |>
+    rasterize(
+      r_na, "density")
+  # plet(r, tiles="Esri.NatGeoWorldMap")
+
+  # rescale 0 to 100; set 0 -> NA
+  (vr <- range(values(r, na.rm = T)))
+  r <- setValues(
+    r,
+    scales::rescale(
+      values(r),
+      to = c(0, 100)) )
+  r[r==0] <- NA
+  # plet(r, tiles="Esri.NatGeoWorldMap")
+
+  # write raster
+  write_rast(r, r_tif)
+
+  # write min, max to layers.csv
+  d <- read_csv(lyrs_csv) |>
+    filter(
+      lyr_key != !!lyr_key) |>
+    bind_rows(
+      tibble(
+        lyr_key     = lyr_key,
+        ds_key      = ds_key,
+        aphia_id    = aphia_id,
+        val_min	    = vr[1],
+        val_max     = vr[2],
+        rescale_min	= 0,
+        rescale_max = 100) )
+  # message(glue("  nrow(lyrs_csv): {nrow(d)}"))
+  write_csv(d, lyrs_csv)
+}
