@@ -21,7 +21,7 @@ load_all()
 
 dir_seamounts <- "/Users/bbest/My Drive/projects/offhab/data/seamounts (Kim & Wessel, 2011)"
 seamounts_csv <- glue("{dir_seamounts}/KWSMTSv01.csv")
-seamounts_geo <- here("data-raw/mdls_sm_seamounts.geojson")
+seamounts_geo <- here("data-raw/datasets/sm_seamounts.geojson")
 
 d <- read_csv(seamounts_csv) %>%
   clean_names()
@@ -140,4 +140,54 @@ d <- r %>%
 # 56,701 × 4
 dbAppendTable(con, "oh_cells_rast", d)
 # dbGetQuery(con, "SELECT COUNT(*) AS n FROM oh_cells_rast WHERE tbl = 'sm_model'")
+
+# redo rast ----
+librarian::shelf(
+  here, readr)
+options(readr.show_col_types = F)
+
+dir_lyrs_tif <- "/Users/bbest/My Drive/projects/offhab/data/derived/lyrs_tif"
+lyrs_csv     <- here("data-raw/layers.csv")
+ds_key       <- "sm"
+r_tif        <- glue("{dir_lyrs_tif}/{ds_key}.tif")
+
+# read geojson, project to web Mercator
+ply <- read_sf(seamounts_geo) %>%
+  st_transform(3857)
+# mapView(ply)
+
+# rasterize to OH
+r_na <- oh_rast("NA")
+r_sm <- rasterize(ply, r_na, 1)
+write_rast(r_sm, r_tif)
+# plet(r_sm, tiles="Esri.NatGeoWorldMap")
+
+# clear old layers of same dataset
+con <- oh_con(read_only = F)
+dbSendQuery(con, glue("DELETE FROM lyrs WHERE ds_key = '{ds_key}'"))
+
+# set data for new layer
+# tbl(con, "lyrs") |>
+#   colnames() |> paste(collapse=' = " ",\n') |> cat()
+d_lyr <- tibble(
+  ds_key      = ds_key,
+  lyr_key     = ds_key,
+  aphia_id    = NA,
+  val_min     = 1,
+  val_max     = 1,
+  rescale_min = 1,
+  rescale_max = 1)
+
+# insert new layer
+cols <- colnames(d_lyr) |> paste(collapse = ", ")
+qs   <- rep("?", ncol(d_lyr)) |> paste(collapse = ", ")
+dbExecute(
+  con,
+  glue("INSERT INTO lyrs ({cols}) VALUES ({qs})"),
+  d_lyr |> as.list() |> unname())
+# tbl(con, "lyrs") |>
+#   filter(ds_key == !!ds_key)
+
+# disconnect db
+dbDisconnect(con, shutdown=T)
 

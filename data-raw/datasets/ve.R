@@ -15,9 +15,9 @@ librarian::shelf(
   devtools, glue, here, janitor, readr, sf, terra)
 load_all()
 
-dir_vents <- "/Users/bbest/My Drive/projects/offhab/data/vents (Interridge Vent Database v3.4)/"
+dir_vents <- "/Users/bbest/My Drive/projects/offhab/data/derived/vents (Interridge Vent Database v3.4)/"
 vents_csv <- glue("{dir_vents}/vent_fields_all_20200325cleansorted.csv")
-vents_geo <- here("data-raw/ve_vents.geojson")
+vents_geo <- here("data-raw/datasets/ve.geojson")
 
 pts <- read_csv(vents_csv) %>%
   # chr (14): Name.ID, Name.Alias.es., Vent.Sites, Activity, Max.Temperature.Category, Ocean, ...
@@ -95,4 +95,54 @@ d <- r %>%
 dbSendQuery(con, "DELETE FROM oh_cells_rast WHERE tbl = 've_model'")
 dbAppendTable(con, "oh_cells_rast", d)
 # dbGetQuery(con, "SELECT COUNT(*) AS n FROM oh_cells_rast WHERE tbl = 've_model'")
+
+# redo rast ----
+librarian::shelf(
+  here, readr)
+options(readr.show_col_types = F)
+
+dir_lyrs_tif <- "/Users/bbest/My Drive/projects/offhab/data/derived/lyrs_tif"
+lyrs_csv     <- here("data-raw/layers.csv")
+ds_key       <- "ve"
+r_tif        <- glue("{dir_lyrs_tif}/{ds_key}.tif")
+
+# read geojson, project to web Mercator
+ply <- read_sf(vents_geo) %>%
+  st_transform(3857)
+# mapView(ply)
+
+# rasterize to OH
+r_na <- oh_rast("NA")
+r_ve <- rasterize(ply, r_na, 1)
+write_rast(r_ve, r_tif)
+# plet(r_ve, tiles="Esri.NatGeoWorldMap")
+
+# clear old layers of same dataset
+con <- oh_con(read_only = F)
+dbSendQuery(con, glue("DELETE FROM lyrs WHERE ds_key = '{ds_key}'"))
+
+# set data for new layer
+# tbl(con, "lyrs") |>
+#   colnames() |> paste(collapse=' = " ",\n') |> cat()
+d_lyr <- tibble(
+  ds_key      = ds_key,
+  lyr_key     = ds_key,
+  aphia_id    = NA,
+  val_min     = 1,
+  val_max     = 1,
+  rescale_min = 1,
+  rescale_max = 1)
+
+# insert new layer
+cols <- colnames(d_lyr) |> paste(collapse = ", ")
+qs   <- rep("?", ncol(d_lyr)) |> paste(collapse = ", ")
+dbExecute(
+  con,
+  glue("INSERT INTO lyrs ({cols}) VALUES ({qs})"),
+  d_lyr |> as.list() |> unname())
+# tbl(con, "lyrs") |>
+#   filter(ds_key == !!ds_key)
+
+# disconnect db
+dbDisconnect(con, shutdown=T)
 

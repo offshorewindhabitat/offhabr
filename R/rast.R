@@ -32,6 +32,7 @@ drop_na_lyrs <- function(x){
 #'
 #' @param type the type of raster, being one of: `"NA"` (default all `NA` values)
 #'   `"cell_id"` with unique cell indices to set values of reference raster,
+#'   `"region"` showing the 3 unique regions ("Atlantic","Gulf of Mexico" and "Pacific"),
 #'   `"zone_id"` corresponding with the `zone_id` of `oh_zones`,
 #'   `"block_id"` corresponding with the `block_id` of `oh_blocks`, or `"area_m2"`
 #'   for square meter area per cell
@@ -67,7 +68,7 @@ drop_na_lyrs <- function(x){
 #' r_cid_fls
 #' terra::plot(r_cid_fls)
 oh_rast <- function(
-    type         = c("NA", "cell_id", "zone_id", "block_id", "area_m2"),
+    type         = c("NA", "cell_id", "region", "zone_id", "block_id", "area_m2"),
     zone_id      = "ALL",
     zone_version = c(1, 2)){
 
@@ -76,14 +77,15 @@ oh_rast <- function(
   # zone_version = 1
   # devtools::load_all()
 
-  stopifnot(type %in% c("NA", "cell_id", "zone_id", "block_id", "area_m2"))
+  stopifnot(type %in% c("NA", "cell_id", "region", "zone_id", "block_id", "area_m2"))
   stopifnot(zone_id == "ALL" | is.numeric(zone_id))
   type         = type[1]
   zone_version = zone_version[1]
 
   gx_tif <- dplyr::case_when(
-    type == "zone_id"  ~ glue::glue("oh_zones_v{zone_version}.tif"),
-    type == "block_id" ~ glue::glue("oh_blocks_v{zone_version}.tif"),
+    type == "region"  ~ "oh_regions.tif",
+    type == "zone_id"  ~ as.character(glue::glue("oh_zones_v{zone_version}.tif")),
+    type == "block_id" ~ as.character(glue::glue("oh_blocks_v{zone_version}.tif")),
     TRUE ~ "oh_zones_area_m2.tif")
 
   tif <- system.file(glue::glue(gx_tif), package = "offhabr", mustWork = T)
@@ -93,6 +95,7 @@ oh_rast <- function(
     type,
     cell_id  = terra::setValues(r_1, 1:(terra::ncell(r_1))) %>%
       mask(r_1),
+    region   = r_1,
     zone_id  = r_1,
     block_id = r_1,
     area_m2  = r_1,

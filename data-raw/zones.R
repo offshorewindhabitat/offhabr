@@ -268,3 +268,33 @@ cols_zons <- setNames(d_cols_zons$color, d_cols_zons$zone_name)
 
 oh_colors <- c(cols_rgns, cols_zons)
 usethis::use_data(oh_colors, overwrite = TRUE)
+
+# make oh_regions.tif ----
+rgns_tif <- here("inst/oh_regions.tif")
+
+v_rgns <- c("Atlantic","Gulf of Mexico", "Pacific")
+d_z2r <- oh_zones_s1k |>
+  st_drop_geometry() |>
+  filter(zone_version == 1) |>
+  mutate(
+    rgn_id = match(region, v_rgns)) |>
+  select(zone_id, rgn_id)
+r_z <- oh_rast("zone_id")
+r_rgns <- classify(r_z, d_z2r)
+levels(r_rgns) <- tibble(
+  id     = 1:length(v_rgns),
+  region = v_rgns)
+# plot(r_rgn)
+names(r_rgns) <- "region"
+# tmp_tif <- tempfile(fileext = ".tif")
+# writeRaster(
+#   r_rgns, tmp_tif,
+#   datatype  = "INT1U", overwrite = T)
+# file_move(tmp_tif, rgns_tif)
+writeRaster(
+  r_rgns, rgns_tif,
+  datatype  = "INT1U", overwrite = T)
+
+# try
+# r_rgns <- rast(rgns_tif)
+# plot(r_rgns)
