@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">offhabr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.11.0</span>
       </span>
     </div>
 
@@ -75,6 +75,10 @@
           <p class="section-desc"></p><p>functions for visualizing data</p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="get_colors.html">get_colors()</a></code> </p>
+        </td>
+        <td><p>Get Colors</p></td>
+      </tr><tr><td>
           <p><code><a href="oh_add_ply.html">oh_add_ply()</a></code> </p>
         </td>
         <td><p>Add polygons to map</p></td>
@@ -82,6 +86,10 @@
           <p><code><a href="oh_map.html">oh_map()</a></code> </p>
         </td>
         <td><p>Setup interactive map with OffHab defaults</p></td>
+      </tr><tr><td>
+          <p><code><a href="oh_map_cog.html">oh_map_cog()</a></code> </p>
+        </td>
+        <td><p>Map Cloud-Optimized GeoTIFF</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="database">Database <a href="#database" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>functions specific to databases</p>
@@ -95,6 +103,10 @@
         </td>
         <td><p>Create index in database</p></td>
       </tr><tr><td>
+          <p><code><a href="oh_con.html">oh_con()</a></code> </p>
+        </td>
+        <td><p>Connect to OffHab database</p></td>
+      </tr><tr><td>
           <p><code><a href="oh_pg_con.html">oh_pg_con()</a></code> </p>
         </td>
         <td><p>Connect to OffHab Postgres database</p></td>
@@ -107,9 +119,29 @@
           <p class="section-desc"></p><p>functions for handling rasters, especially of reference cells</p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="drop_na_lyrs.html">drop_na_lyrs()</a></code> </p>
+        </td>
+        <td><p>Drop raster layers without any data</p></td>
+      </tr><tr><td>
           <p><code><a href="oh_rast.html">oh_rast()</a></code> </p>
         </td>
         <td><p>OffHab reference raster</p></td>
+      </tr><tr><td>
+          <p><code><a href="write_rast.html">write_rast()</a></code> </p>
+        </td>
+        <td><p>Write compact raster with compression, tiles and sparse encoding</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="google-cloud-storage">Google Cloud Storage <a href="#google-cloud-storage" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>functions for work with Google Cloud Storage (used to load data into Google Earth Engine)</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="gcs_to_gee.html">gcs_to_gee()</a></code> </p>
+        </td>
+        <td><p>Load into Google Earth Engine from Google Cloud Storage</p></td>
+      </tr><tr><td>
+          <p><code><a href="upload_to_gcs.html">upload_to_gcs()</a></code> </p>
+        </td>
+        <td><p>Upload to Google Cloud Storage</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="data">Data <a href="#data" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>available datasets</p>
@@ -131,6 +163,10 @@
         </td>
         <td><p>BOEM Wind Energy Area Block polygons</p></td>
       </tr><tr><td>
+          <p><code><a href="oh_colors.html">oh_colors</a></code> </p>
+        </td>
+        <td><p>OffHab colors</p></td>
+      </tr><tr><td>
           <p><code><a href="oh_zones.html">oh_zones</a></code> </p>
         </td>
         <td><p>Offshore Habitat Zone polygons</p></td>
@@ -147,9 +183,21 @@
           <p class="section-desc"></p><p>check for other functions or datasets not captured by above categories</p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="drop_na_lyrs.html">drop_na_lyrs()</a></code> </p>
+        </td>
+        <td><p>Drop raster layers without any data</p></td>
+      </tr><tr><td>
+          <p><code><a href="gcs_to_gee.html">gcs_to_gee()</a></code> </p>
+        </td>
+        <td><p>Load into Google Earth Engine from Google Cloud Storage</p></td>
+      </tr><tr><td>
           <p><code><a href="oh_rast.html">oh_rast()</a></code> </p>
         </td>
         <td><p>OffHab reference raster</p></td>
+      </tr><tr><td>
+          <p><code><a href="upload_to_gcs.html">upload_to_gcs()</a></code> </p>
+        </td>
+        <td><p>Upload to Google Cloud Storage</p></td>
       </tr><tr><td>
           <p><code><a href="wm_add_aphia_id.html">wm_add_aphia_id()</a></code> </p>
         </td>
@@ -158,6 +206,10 @@
           <p><code><a href="wm_rest.html">wm_rest()</a></code> </p>
         </td>
         <td><p>Query WoRMS REST API with multiple requests</p></td>
+      </tr><tr><td>
+          <p><code><a href="write_rast.html">write_rast()</a></code> </p>
+        </td>
+        <td><p>Write compact raster with compression, tiles and sparse encoding</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -171,7 +223,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

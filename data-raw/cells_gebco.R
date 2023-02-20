@@ -9,12 +9,12 @@
 
 # packages ----
 librarian::shelf(
-  devtools, dplyr, fasterize, glue, here, leaflet, mapview, ncdf4, purrr,
+  devtools, dplyr, fasterize, fs, glue, here, leaflet, mapview, ncdf4, purrr,
   rlang, sf, terra, tibble, tidyr)
 load_all()
 
 # paths ----
-dir_g      <- "/Users/bbest/My Drive/projects/offhab/data/gebco.net"
+dir_g      <- "/Users/bbest/My Drive/projects/offhab/data/raw/gebco.net"
 # rasters in geographic projection
 g_tif  <- glue("{dir_g}/gebco_gcs.tif")
 gc_tif <- glue("{dir_g}/gebco_cell_gcs.tif")
@@ -34,10 +34,29 @@ oh_blocks_v1_tif <- here("inst/oh_blocks_v1.tif")
 oh_blocks_v2_tif <- here("inst/oh_blocks_v2.tif")
 oh_zones_area_m2_tif <- here("inst/oh_zones_area_m2.tif")
 
+g_web_tif  <- glue("{dir_g}/gebco_mer_web.tif")
+gc_web_tif <- glue("{dir_g}/gebco_cell_mer_web.tif")
+
 # generate rasters in mercator projection ----
 
 # get gebco elevation
 r_e <- rast(g_tif)
+
+# make web-optimized version of elevation raster:
+#   crs: web-mercator
+write_rast(r_e, g_web_tif, datatype="INT2S", web_optimize = T)
+r_e_web <- rast(g_web_tif)
+# plot(r_e_web)
+# dimensions  : 5888, 11776, 1  (nrow, ncol, nlyr)
+# resolution  : 611.4962, 611.4962  (x, y)
+# extent      : -14401959, -7200980, 2661232, 6261721
+
+# ensure same extent as lyrs_aphia
+# r_aphia1 <- rast("/Users/bbest/My Drive/projects/offhab/data/derived/lyrs_aphia/aphia_283257_web.tif")
+# dimensions  : 5888, 11776, 1  (nrow, ncol, nlyr)
+# resolution  : 611.4962, 611.4962  (x, y)
+# extent      : -14401959, -7200980, 2661232, 6261721
+# terra::compareGeom(r_e_web, r_aphia1) # TRUE
 
 # make cell identifier for geographic projection
 #  NOTE: must be datatype="INT4U", otherwise weird offset duplication
@@ -46,6 +65,82 @@ cell_ids      <- cells(r_e)
 r_c[cell_ids] <- cell_ids
 names(r_c) <- "cell_id_gcs"
 writeRaster(r_c, gc_tif, overwrite=T, datatype="INT4U")
+
+# make cell identifier for web mercator COG
+r_c_web               <- setValues(r_e_web, NA)
+cell_ids_web          <- cells(r_e_web)
+r_c_web[cell_ids_web] <- cell_ids_web
+names(r_c_web)        <- "cell_id_web"
+# write_rast(r_c_web, gc_web_tif, datatype="INT4U", web_optimize = F)
+
+
+write_rast(r_c_web, gc_web_tif, datatype="INT4U", web_optimize = F, use_gdal_cog_driver = T)
+
+upload_to_gcs(gc_web_tif)
+
+ext(r_c_web) |>
+  st_bbox() |>
+  st_as_sfc() |>
+  st_set_crs(3857) |>
+  st_transform(4326) |>
+  st_bbox() |>
+  as.numeric() |>
+  round(1)
+# -129.4   23.2  -64.7   48.9
+
+load_all()
+
+rng_c_web <- range(values(r_c_web, na.rm=T)) # 1,355,066 67,956,176
+oh_map_cog(
+  cog_file  = basename(gc_web_tif),
+  cog_range = rng_c_web,
+  title     = "CellID (web)")
+
+oh_map_cog <- function(
+    cog_file,
+    cog_dir      = "https://storage.googleapis.com/offhab_lyrs",
+    cog_range    = c(1, 100),
+    cog_colors   = "viridis",
+    bb           = c(-129.4, 23.2, -64.7, 48.9),
+    title        = "% Habitat",
+    base_map     = leaflet::providers$CartoDB.Positron,
+    base_opacity = 0.5)
+
+
+r_c_web <- rast(gc_web_tif)
+
+
+r_c_web
+# dimensions  : 5888, 11776, 1  (nrow, ncol, nlyr)
+# resolution  : 611.4962, 611.4962  (x, y)
+# extent      : -14401959, -7200980, 2661232, 6261721 (xmin, xmax, ymin, ymax)
+r_c_web <- rast(gc_web_tif)
+
+ext(r_c_web) |>
+
+# range(values(r_c_web, na.rm=T)) # 1,355,066 67,956,176
+# dimensions  : 5888, 12288, 1  (nrow, ncol, nlyr)
+# resolution  : 611.4962, 611.4962  (x, y)
+# extent      : -14558502, -7044437, 2661232, 6261721 (xmin, xmax, ymin, ymax)
+# WHOAH! padded on x
+#   ncol:    11,776 -> 12,288
+#   xmin: -14401959 -> -14558502
+#   xmax: - 7200980 -> - 7044437
+stopifnot(sum(duplicated(values(r_c_web, na.rm=T))) == 0)
+# compareGeom(r_e_web, r_c_web)
+# Error: [compareGeom] extents do not match
+
+# fix r_e_web to match extent of r_c_web
+r_e_web <- extend(r_e_web, r_c_web)
+r_e_web
+# dimensions  : 5888, 12288, 1  (nrow, ncol, nlyr)
+# resolution  : 611.4962, 611.4962  (x, y)
+# extent      : -14558502, -7044437, 2661232, 6261721
+compareGeom(r_e_web, r_c_web) # TRUE
+write_rast(r_e_web, g_web_tif, datatype="INT2S", web_optimize = T)
+
+r_e_web <- rast(g_web_tif)
+compareGeom(r_e_web, r_c_web) # TRUE
 
 # zone rasters by version ----
 r_z_v1 <- oh_zones |>
@@ -56,6 +151,15 @@ r_z_v2 <- oh_zones |>
   filter(zone_version == 2) |>
   rasterize(r_e, field = "zone_id")
 names(r_z_v2) <- "zone_id_v2"
+
+r_z_v1_web <- oh_zones |>
+  filter(zone_version == 1) |>
+  rasterize(r_e_web, field = "zone_id")
+names(r_z_v1_web) <- "zone_id_v1_web"
+r_z_v2_web <- oh_zones |>
+  filter(zone_version == 2) |>
+  rasterize(r_e_web, field = "zone_id")
+names(r_z_v2_web) <- "zone_id_v2_web"
 
 # block rasters by version ----
 r_b_v1 <- oh_blocks |>

@@ -28,6 +28,10 @@ reference:
   desc: functions for handling rasters, especially of reference cells
   contents:
   - has_concept("rast")
+- title: "Google Cloud Storage"
+  desc: functions for work with Google Cloud Storage (used to load data into Google Earth Engine)
+  contents:
+  - has_concept("gcs")
 - title: "Data"
   desc: available datasets
   contents:

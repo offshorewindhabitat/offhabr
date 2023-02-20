@@ -5,14 +5,14 @@
 \title{Connect to OffHab database}
 \usage{
 oh_con(
-  path_duckdb = file.path(system.file(package = "offhabr"), "offhab.duckdb"),
+  path_db = system.file("offhab.duckdb", package = "offhabr"),
   read_only = T
 )
 }
 \arguments{
-\item{read_only}{defaults to FALSE, i.e. write}
+\item{path_db}{path to database file, defaults to duckdb in this R package}
 
-\item{path_sqlite}{path to SQLite database file}
+\item{read_only}{only applicable to duckdb (not SQLite); defaults to TRUE; vs set to FALSE if writing to database}
 }
 \value{
 a \code{DBI::dbConnect()} object

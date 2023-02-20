@@ -10,8 +10,11 @@ write_rast(
   datatype = "INT1U",
   overwrite = TRUE,
   method = c("average", "nearest"),
+  threads = "ALL_CPUS",
   epsg = 3857,
-  verbose = F
+  verbose = F,
+  web_optimize = F,
+  use_gdal_cog = F
 )
 }
 \arguments{
@@ -26,9 +29,18 @@ write_rast(
 \item{method}{for internal overview generation; use \code{"average"} (default) for continous
 and \code{"nearest"} for categorical}
 
+\item{threads}{used by \href{https://cogeotiff.github.io/rio-cogeo/CLI/}{\verb{rio cogeo create}}; defaults to \code{"ALL_CPUS"}; change to \code{1} if using in parallel}
+
 \item{epsg}{projection number; default: Web Mercator (3857)}
 
 \item{verbose}{show commands; defaults to FALSE}
+
+\item{web_optimize}{create a web-tiling friendly COG per
+\href{https://cogeotiff.github.io/rio-cogeo/Advanced/}{Advanced Topics - rio-cogeo}
+that aligns internal tiles with the web-mercator grid resulting in a larger}
+
+\item{use_gdal_cog}{use GDAL COG driver (requires GDAL >= 3.1); does not change extent
+file with different bounds and pixel sizes from original; defaults to FALSE}
 }
 \value{
 returns nothing since only writing \code{tif}, i.e. a side-effect function

@@ -34,6 +34,68 @@ oh_map <- function(
     leaflet.extras::addFullscreenControl()
 }
 
+
+#' Map Cloud-Optimized GeoTIFF
+#'
+#' Make an interactive map with basemap
+#'
+#' @param cog_file filename of Cloud-Optimized GeoTIFF (COG)
+#' @param cog_dir directory of path to COG; defaults to "https://storage.googleapis.com/offhab_lyrs"
+#' @param cog_range range of values to colorramp in COG; default: `c(1, 100)`
+#' @param cog_method method for interpolation between zoom levels; choose "nearest" for categorical; default: "average" (for continuous)
+#' @param cog_colors color ramp that applies to both `leaflet::colorNumeric()`
+#'   and the `colormap_name` of
+#'   [https://api.cogeo.xyz/cog/tiles](https://api.cogeo.xyz/docs#/Cloud%20Optimized%20GeoTIFF/tile_cog_tiles__TileMatrixSetId___z___x___y___scale_x__format__get);
+#'   default: "viridis"
+#' @param bb bounding box to feed `leaflet::fitBounds()` defaults to US48:
+#'   `c(-129.4, 23.2, -64.7, 48.9)`
+#' @param title title for legend; default: `"% Habitat"`
+#' @param base_map the basemap (see  `leaflet$providers`); default is
+#'   `"CartoDB.Positron"`
+#' @param base_opacity the opacity of the basemap; default is `0.5`
+#'
+#' @return a `leaflet::leaflet()` map
+#' @import leaflet
+#' @export
+#' @concept viz
+#'
+#' @examples
+#' # map by aphia_id
+#' oh_map_cog("aphia_100599_web.tif")
+oh_map_cog <- function(
+  cog_file,
+  cog_dir      = "https://storage.googleapis.com/offhab_lyrs",
+  cog_range    = c(1, 100),
+  cog_method   = "average",
+  cog_colors   = "viridis",
+  bb           = c(-129.4, 23.2, -64.7, 48.9),
+  title        = "% Habitat",
+  base_map     = leaflet::providers$CartoDB.Positron,
+  base_opacity = 0.5){
+
+  stopifnot(all(is.numeric(cog_range), length(cog_range)==2, cog_range[2] > cog_range[1]))
+
+  cog_url   <- glue("{cog_dir}/{cog_file}")
+  tile_opts <- glue(
+    "resampling_method={cog_method}&rescale={paste(cog_range, collapse=',')}&return_mask=true&colormap_name={cog_colors}")
+  tile_url  <- glue(
+    "https://api.cogeo.xyz/cog/tiles/WebMercatorQuad/{{z}}/{{x}}/{{y}}@2x?url={cog_url}&{tile_opts}")
+
+  leaflet::leaflet() |>
+    leaflet::addProviderTiles(
+      leaflet::providers[[base_map]],
+      options = leaflet::providerTileOptions(
+        opacity = base_opacity)) |>
+    addTiles(
+      urlTemplate=tile_url) |>
+    fitBounds(bb[1], bb[2], bb[3], bb[4]) |>
+    leaflet.extras::addFullscreenControl() |>
+  addLegend(
+    pal    = colorNumeric(cog_colors, cog_range[1]:cog_range[2]),
+    values = c(cog_range[1], cog_range[2]),
+    title  = title)
+}
+
 #' Add polygons to map
 #'
 #' Add polygons to an interactive choropleth map, optionally with a color scheme that
@@ -151,4 +213,5 @@ get_colors <- function(x, v_colors = oh_colors){
   v_colors[x] |>
     unname()
 }
+
 

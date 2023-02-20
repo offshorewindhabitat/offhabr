@@ -5,7 +5,7 @@
 \title{OffHab reference raster}
 \usage{
 oh_rast(
-  type = c("NA", "cell_id", "zone_id", "block_id", "area_m2"),
+  type = c("NA", "cell_id", "region", "zone_id", "block_id", "area_m2"),
   zone_id = "ALL",
   zone_version = c(1, 2)
 )
@@ -13,6 +13,7 @@ oh_rast(
 \arguments{
 \item{type}{the type of raster, being one of: \code{"NA"} (default all \code{NA} values)
 \code{"cell_id"} with unique cell indices to set values of reference raster,
+\code{"region"} showing the 3 unique regions ("Atlantic","Gulf of Mexico" and "Pacific"),
 \code{"zone_id"} corresponding with the \code{zone_id} of \code{oh_zones},
 \code{"block_id"} corresponding with the \code{block_id} of \code{oh_blocks}, or \code{"area_m2"}
 for square meter area per cell}

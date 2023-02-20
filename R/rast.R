@@ -142,7 +142,11 @@ oh_rast <- function(
 #' @param epsg projection number; default: Web Mercator (3857)
 #' @param threads used by [`rio cogeo create`](https://cogeotiff.github.io/rio-cogeo/CLI/); defaults to `"ALL_CPUS"`; change to `1` if using in parallel
 #' @param verbose show commands; defaults to FALSE
-#'
+#' @param web_optimize create a web-tiling friendly COG per
+#' [Advanced Topics - rio-cogeo](https://cogeotiff.github.io/rio-cogeo/Advanced/)
+#' that aligns internal tiles with the web-mercator grid resulting in a larger
+#' @param use_gdal_cog use GDAL COG driver (requires GDAL >= 3.1); does not change extent
+#' file with different bounds and pixel sizes from original; defaults to FALSE
 #' @return returns nothing since only writing `tif`, i.e. a side-effect function
 #' @importFrom terra writeRaster
 #' @importFrom glue glue
@@ -153,12 +157,14 @@ oh_rast <- function(
 write_rast <- function(
     r,
     tif,
-    datatype  = "INT1U",
-    overwrite = TRUE,
-    method    = c("average", "nearest"),
-    threads   = "ALL_CPUS",
-    epsg      = 3857,
-    verbose   = F){
+    datatype     = "INT1U",
+    overwrite    = TRUE,
+    method       = c("average", "nearest"),
+    threads      = "ALL_CPUS",
+    epsg         = 3857,
+    verbose      = F,
+    web_optimize = F,
+    use_gdal_cog = F){
 
   method <- method[1]
 
@@ -226,10 +232,10 @@ write_rast <- function(
       tmp_tif,
       datatype = datatype,
       overwrite = overwrite)
-    # rast(tmp_tif)
-    # dimensions  : 7183, 14678, 1  (nrow, ncol, nlyr)
-    # resolution  : 481.3177, 481.3177  (x, y)
   } else {
+    if (!is.character(r)) stop(
+      "Expecting the input argument r to be a character path to a raster file
+      (if not a terra::rast object)")
     # assume path to tif
     tmp_tif <- r
   }
@@ -239,16 +245,17 @@ write_rast <- function(
   opt_byte     <- ifelse(datatype == "INT1U", "--nodata 255", "")
   opt_compress <- "--cog-profile deflate --allow-intermediate-compression"
   opt_threads  <- "--threads ALL_CPUS"
-  # opt_web      <- "--web-optimized" # https://cogeotiff.github.io/rio-cogeo/Advanced/ create a web-tiling friendly COG
-  # bounds and internal tiles aligned with web-mercator grid; raw data and overviews resolution match mercator zoom level resolution.
-  # it will certainly create a larger file (with padding tiles on the side of the file)
-  # gives different cell sizes and dimensions:
+  opt_web      <- ifelse(web_optimize, "--web-optimized", "")
+    # https://cogeotiff.github.io/rio-cogeo/Advanced/ create a web-tiling friendly COG
+    # bounds and internal tiles aligned with web-mercator grid; raw data and overviews resolution match mercator zoom level resolution.
+    # it will certainly create a larger file (with padding tiles on the side of the file)
+    # gives different cell sizes and dimensions:
     # rast(tif)
     # dimensions  : 5888, 11776, 1  (nrow, ncol, nlyr)
     # resolution  : 611.4962, 611.4962  (x, y)
-  opt_web      <- ""
   opt_resample <- glue("--resampling {method}")
-  opts <- glue("--dtype {dtype} {opt_byte} {opt_compress} {opt_web} {opt_resample}")
+  opt_driver   <- ifelse(use_gdal_cog_driver, "--use-cog-driver", "")
+  opts <- glue("--dtype {dtype} {opt_byte} {opt_compress} {opt_web} {opt_resample} {opt_driver}")
   cmd <- glue("rio cogeo create {opts} '{tmp_tif}' '{tif}'")
   if (verbose)
     message(cmd)

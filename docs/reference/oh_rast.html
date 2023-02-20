@@ -18,7 +18,7 @@ optionally trim to zone_id."><!-- mathjax --><script src="https://cdnjs.cloudfla
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">offhabr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.11.0</span>
       </span>
     </div>
 
@@ -55,20 +55,33 @@ optionally trim to <code>zone_id</code>.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">oh_rast</span><span class="op">(</span>type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NA"</span>, <span class="st">"cell_id"</span>, <span class="st">"zone_id"</span><span class="op">)</span>, zone_id <span class="op">=</span> <span class="st">"ALL"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">oh_rast</span><span class="op">(</span></span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NA"</span>, <span class="st">"cell_id"</span>, <span class="st">"region"</span>, <span class="st">"zone_id"</span>, <span class="st">"block_id"</span>, <span class="st">"area_m2"</span><span class="op">)</span>,</span>
+<span>  zone_id <span class="op">=</span> <span class="st">"ALL"</span>,</span>
+<span>  zone_version <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>type</dt>
 <dd><p>the type of raster, being one of: <code>"NA"</code> (default all <code>NA</code> values)
-<code>"cell_id"</code> with unique cell indices to set values of reference raster, or
-<code>"zone_id"</code> corresponding with the <code>zone_id</code> of <code>oh_zones</code></p></dd>
+<code>"cell_id"</code> with unique cell indices to set values of reference raster,
+<code>"region"</code> showing the 3 unique regions ("Atlantic","Gulf of Mexico" and "Pacific"),
+<code>"zone_id"</code> corresponding with the <code>zone_id</code> of <code>oh_zones</code>,
+<code>"block_id"</code> corresponding with the <code>block_id</code> of <code>oh_blocks</code>, or <code>"area_m2"</code>
+for square meter area per cell</p></dd>
 
 
 <dt>zone_id</dt>
 <dd><p>the <code>zone_id</code> (integer) to trim the output raster, being one of the
 zones found in the <code>zone_id</code> field of <code>oh_zones</code> or <code>"ALL"</code> zones (the default)</p></dd>
+
+
+<dt>zone_version</dt>
+<dd><p>the <code>zone_version</code> (integer) to choose, whether original BOEM
+planning area clipped out to EEZ (<code>=1</code>) or more restricted to OceanAdapt regions
+for bottom trawl data (<code>=2</code>); applies to either <code>type</code> of <code>"zone_id"</code> or <code>"block_id"</code></p></dd>
 
 </dl></div>
     <div id="value">
@@ -95,7 +108,7 @@ with interactive maps (e.g. <code><a href="https://rdrr.io/pkg/leaflet/man/leafl
 <span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 481.3177, 481.3177  (x, y)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> extent      : -14378304, -7313523, 2733139, 6190444  (xmin, xmax, ymin, ymax)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : WGS 84 / Pseudo-Mercator </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> source      : memory </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> source      : spat_fJSSMZijguaxb3X_27022.tif </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> name        :  NA </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> min value   : NaN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> max value   : NaN </span>
@@ -108,10 +121,10 @@ with interactive maps (e.g. <code><a href="https://rdrr.io/pkg/leaflet/man/leafl
 <span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 481.3177, 481.3177  (x, y)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> extent      : -14378304, -7313523, 2733139, 6190444  (xmin, xmax, ymin, ymax)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : WGS 84 / Pseudo-Mercator </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> source      : oh_zones.tif </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> name        : zone_id </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> min value   :       1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> max value   :      11 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> source      : oh_zones_v1.tif </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> name        : zone_id_v1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> min value   :          1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> max value   :         11 </span>
 <span class="r-in"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">r_zid</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="oh_rast-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
@@ -123,22 +136,23 @@ with interactive maps (e.g. <code><a href="https://rdrr.io/pkg/leaflet/man/leafl
 <span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 481.3177, 481.3177  (x, y)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> extent      : -14378304, -7313523, 2733139, 6190444  (xmin, xmax, ymin, ymax)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : WGS 84 / Pseudo-Mercator </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> source      : memory </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> source      : spat_T6sXO0K8yByEusM_27022.tif </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> name        :   cell_id </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> min value   :      1001 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> max value   : 105428345 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> max value   : 105428344 </span>
 <span class="r-in"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">r_cid</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="oh_rast-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># cell_id for Straits of Florida (zone_id: 4; zone_key: fls)</span></span></span>
 <span class="r-in"><span><span class="va">r_cid_fls</span> <span class="op">&lt;-</span> <span class="fu">oh_rast</span><span class="op">(</span><span class="st">"cell_id"</span>, <span class="fl">4</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |---------|---------|---------|---------|=========================================                                          </span>
 <span class="r-in"><span><span class="va">r_cid_fls</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class       : SpatRaster </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dimensions  : 1068, 831, 1  (nrow, ncol, nlyr)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 481.3177, 481.3177  (x, y)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> extent      : -9239756, -8839781, 2733139, 3247186  (xmin, xmax, ymin, ymax)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : WGS 84 / Pseudo-Mercator </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> source      : memory </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> source(s)   : memory</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> name        :   cell_id </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> min value   :  89767232 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> max value   : 105428344 </span>
@@ -158,7 +172,7 @@ with interactive maps (e.g. <code><a href="https://rdrr.io/pkg/leaflet/man/leafl
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
