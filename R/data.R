@@ -118,6 +118,14 @@
 #' @concept data
 "oh_colors"
 
+# oh_study_v1 ----
+#' Offshore Habitat study area (version 1)
+#'
+#' Offshore habitat zones `oh_zones` (filtered by `zone_version`==1) dissolved into a single study area polygon.
+#'
+#' @concept data
+"oh_study_v1"
+
 
 # oh_zones ----
 #' Offshore Habitat Zone polygons

@@ -34,13 +34,15 @@ drop_na_lyrs <- function(x){
 #'   `"cell_id"` with unique cell indices to set values of reference raster,
 #'   `"region"` showing the 3 unique regions ("Atlantic","Gulf of Mexico" and "Pacific"),
 #'   `"zone_id"` corresponding with the `zone_id` of `oh_zones`,
-#'   `"block_id"` corresponding with the `block_id` of `oh_blocks`, or `"area_m2"`
+#'   `"block_id"` corresponding with the `block_id` of `oh_blocks`,
+#'   `"elev_m"` for GEBCO elevation (meters), or `"area_m2"`
 #'   for square meter area per cell
 #' @param zone_id the `zone_id` (integer) to trim the output raster, being one of the
 #'   zones found in the `zone_id` field of `oh_zones` or `"ALL"` zones (the default)
 #' @param zone_version the `zone_version` (integer) to choose, whether original BOEM
 #' planning area clipped out to EEZ (`=1`) or more restricted to OceanAdapt regions
 #' for bottom trawl data (`=2`); applies to either `type` of `"zone_id"` or `"block_id"`
+#' @param web_version use web-optimized cloud-optimized GeoTIFF version; default=FALSE
 #'
 #' @return return a reference raster (from `terra::rast()`)
 #' @export
@@ -68,32 +70,35 @@ drop_na_lyrs <- function(x){
 #' r_cid_fls
 #' terra::plot(r_cid_fls)
 oh_rast <- function(
-    type         = c("NA", "cell_id", "region", "zone_id", "block_id", "area_m2"),
+    type         = c("NA", "cell_id", "region", "zone_id", "block_id", "elev_m", "area_m2"),
     zone_id      = "ALL",
-    zone_version = c(1, 2)){
+    zone_version = c(1, 2),
+    web_version  = F){
 
   # type         = "block_id"
   # zone_id      = "ALL"
   # zone_version = 1
   # devtools::load_all()
 
-  stopifnot(type %in% c("NA", "cell_id", "region", "zone_id", "block_id", "area_m2"))
+  stopifnot(type %in% c("NA", "cell_id", "region", "zone_id", "block_id", "elev_m", "area_m2"))
   stopifnot(zone_id == "ALL" | is.numeric(zone_id))
   type         = type[1]
   zone_version = zone_version[1]
+  tif_sfx      = ifelse(web_version, "_web", "")
 
   gx_tif <- dplyr::case_when(
-    type == "region"  ~ "oh_regions.tif",
-    type == "zone_id"  ~ as.character(glue::glue("oh_zones_v{zone_version}.tif")),
-    type == "block_id" ~ as.character(glue::glue("oh_blocks_v{zone_version}.tif")),
-    TRUE ~ "oh_zones_area_m2.tif")
+    type == "region"   ~ as.character(glue::glue("oh_regions{tif_sfx}.tif")),
+    type == "zone_id"  ~ as.character(glue::glue("oh_zones_v{zone_version}{tif_sfx}.tif")),
+    type == "block_id" ~ as.character(glue::glue("oh_blocks_v{zone_version}{tif_sfx}.tif")),
+    type == "elev_m"   ~ as.character(glue::glue("oh_elev_m{tif_sfx}.tif")),
+    TRUE ~ as.character(glue::glue("oh_area_m2{tif_sfx}.tif")))
 
   tif <- system.file(glue::glue(gx_tif), package = "offhabr", mustWork = T)
 
   r_1 <- terra::rast(tif)  # terra::plot(r_z)
   r <- switch(
     type,
-    cell_id  = terra::setValues(r_1, 1:(terra::ncell(r_1))) %>%
+    cell_id  = terra::setValues(r_1, 1:(terra::ncell(r_1))) |>
       mask(r_1),
     region   = r_1,
     zone_id  = r_1,
@@ -105,11 +110,11 @@ oh_rast <- function(
     TRUE ~ type)
 
   if (is.numeric(zone_id)){
-    gx_z  <- "oh_zones_v{zone_version}.tif"
+    gx_z  <- "oh_zones_v{zone_version}{tif_sfx}.tif"
     z_tif <- system.file(glue::glue(gx_z), package = "offhabr")
     r_z <- terra::rast(z_tif)
-    r <- r %>%
-      terra::mask(r_z == zone_id, maskvalues=c(NA,0)) %>%
+    r <- r |>
+      terra::mask(r_z == zone_id, maskvalues=c(NA,0))  |>
       terra::trim()
   }
   r
@@ -117,21 +122,23 @@ oh_rast <- function(
 
 #' Write compact raster with compression, tiles and sparse encoding
 #'
-#' Use `terra::WriteRaster()` followed by `gdal_translate` for minimizing the output
-#' file size with creation options for maximum compression
-#' (`COMPRESS=DEFLATE ZLEVEL=9 PREDICTOR=2`), tiles (`TILED=YES`) and sparse
-#' (`SPARSE_OK=TRUE`) encoding.
+#' Use `terra::WriteRaster()` followed by
+#' [`rio cogeo create`](https://cogeotiff.github.io/rio-cogeo/CLI/) for
+#' creating cloud-optimized GeoTIFF that minimizes the output file size with
+#' creation options for maximum compression
+#' (`COMPRESS=DEFLATE ZLEVEL=9 PREDICTOR=2`), tiles (`TILED=YES`) (and
+#' optionally sparse (`SPARSE_OK=TRUE`) encoding).
 #'
 #' The `datatype` corresponds with the following:
-#' | terra |             min |            max | gdal    |
-#' | :---- | --------------: | -------------: | :------ |
-#' | INT1U | 	             0 |	          255 | Byte    |
-#' | INT2S | 	       -32,767 |	       32,767 | Int16   |
-#' | INT2U | 	             0 |	       65,534 | UInt16  |
-#' | INT4S |  -2,147,483,647 |	2,147,483,647 | Int32   |
-#' | INT4U |	             0 |  4,294,967,296 | UInt32  |
-#' | FLT4S |	      -3.4e+38 |	      3.4e+38 | Float32 |
-#' | FLT8S |	     -1.7e+308 |	     1.7e+308 | Float64 |
+#' | terra |             min |            max | gdal    | rio     |
+#' | :---- | --------------: | -------------: | :------ |:------- |
+#' | INT1U | 	             0 |	          255 | Byte    | uint8   |
+#' | INT2S | 	       -32,767 |	       32,767 | Int16   | int16   |
+#' | INT2U | 	             0 |	       65,534 | UInt16  | uint16  |
+#' | INT4S |  -2,147,483,647 |	2,147,483,647 | Int32   | int32   |
+#' | INT4U |	             0 |  4,294,967,296 | UInt32  | uint32  |
+#' | FLT4S |	      -3.4e+38 |	      3.4e+38 | Float32 | float32 |
+#' | FLT8S |	     -1.7e+308 |	     1.7e+308 | Float64 | float64 |
 #'
 #' @param r input raster layer or path to input GeoTIFF
 #' @param tif output path to GeoTIFF
@@ -168,40 +175,12 @@ write_rast <- function(
 
   method <- method[1]
 
-  # r <- r_rel; tif <- rel_tif
-  # datatype  = "INT1U"; overwrite = TRUE; method    = c("average", "nearest"); threads   = "ALL_CPUS"; epsg = 3857; verbose   = F
-
-  # ?terra::writeRaster
-  #   datatype = # "INT1U", "INT2U", "INT2S", "INT4U", "INT4S", "FLT4S", "FLT8S"
-
-  # https://search.r-project.org/CRAN/refmans/raster/html/dataType.html
-  # Datatype definition	minimum possible value	maximum possible value
-  # LOG1S	      FALSE(0) 	      TRUE(1)
-  # INT1S	          -127	          127
-  # INT1U	             0	          255  Byte
-  # INT2S	       -32,767	       32,767  Int16
-  # INT2U	             0	       65,534  UInt16
-  # INT4S	-2,147,483,647	2,147,483,647  Int32
-  # INT4U	             0  4,294,967,296  UInt32
-  # FLT4S	      -3.4e+38	      3.4e+38  Float32
-  # FLT8S	     -1.7e+308	     1.7e+308  Float64
-
-  # https://gdal.org/programs/gdal_translate.html
-  # -ot {Byte/Int8/Int16/UInt16/UInt32/Int32/UInt64/Int64/Float32/Float64/
-  #      CInt16/CInt32/CFloat32/CFloat64}
-  # terra2gdal_datatypes <- c(      #    min            max
-  #   "INT1U" = "Byte",    # 	             0	          255
-  #   "INT2S" = "Int16",   #	       -32,767	       32,767
-  #   "INT2U" = "UInt16",  #	             0	       65,534
-  #   "INT4S" = "Int32",   #	-2,147,483,647	2,147,483,647
-  #   "INT4U" = "UInt32",  #	             0  4,294,967,296
-  #   "FLT4S" = "Float32", #	      -3.4e+38	      3.4e+38
-  #   "FLT8S" = "Float64") #	     -1.7e+308	     1.7e+308
+  # datatype="INT1U"; overwrite=TRUE; method=c("average", "nearest"); threads="ALL_CPUS"; epsg=3857; verbose=F
 
   # rio cogeo create --help
   # --dtype [ubyte|uint8|uint16|int16|uint32|int32|float32|float64]
-  terra2rio_dtypes <- c(      #    min            max
-    "INT1U" = "uint8",    # 	             0	          255
+  terra2rio_dtypes <- c( #             min            max
+    "INT1U" = "uint8",   # 	             0	          255
     "INT2S" = "int16",   #	       -32,767	       32,767
     "INT2U" = "uint16",  #	             0	       65,534
     "INT4S" = "int32",   #	-2,147,483,647	2,147,483,647
@@ -254,7 +233,7 @@ write_rast <- function(
     # dimensions  : 5888, 11776, 1  (nrow, ncol, nlyr)
     # resolution  : 611.4962, 611.4962  (x, y)
   opt_resample <- glue("--resampling {method}")
-  opt_driver   <- ifelse(use_gdal_cog_driver, "--use-cog-driver", "")
+  opt_driver   <- ifelse(use_gdal_cog, "--use-cog-driver", "")
   opts <- glue("--dtype {dtype} {opt_byte} {opt_compress} {opt_web} {opt_resample} {opt_driver}")
   cmd <- glue("rio cogeo create {opts} '{tmp_tif}' '{tif}'")
   if (verbose)
@@ -266,9 +245,7 @@ write_rast <- function(
 
   return(T)
 
-  # fs::file_info(rel_tif) |> pull(size) # 233K
   # system(glue("rio cogeo validate '{rel_tif}'"))
-
 
   # tested COG tif with public URL uploaed to Google Cloud Storage via:
   #   https://api.cogeo.xyz/docs#/Cloud%20Optimized%20GeoTIFF/cog_validate_cog_validate_get

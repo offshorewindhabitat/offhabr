@@ -56,9 +56,10 @@ optionally trim to <code>zone_id</code>.</p>
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">oh_rast</span><span class="op">(</span></span>
-<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NA"</span>, <span class="st">"cell_id"</span>, <span class="st">"region"</span>, <span class="st">"zone_id"</span>, <span class="st">"block_id"</span>, <span class="st">"area_m2"</span><span class="op">)</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NA"</span>, <span class="st">"cell_id"</span>, <span class="st">"region"</span>, <span class="st">"zone_id"</span>, <span class="st">"block_id"</span>, <span class="st">"elev_m"</span>, <span class="st">"area_m2"</span><span class="op">)</span>,</span>
 <span>  zone_id <span class="op">=</span> <span class="st">"ALL"</span>,</span>
-<span>  zone_version <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span>  zone_version <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  web_version <span class="op">=</span> <span class="cn">F</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -69,7 +70,8 @@ optionally trim to <code>zone_id</code>.</p>
 <code>"cell_id"</code> with unique cell indices to set values of reference raster,
 <code>"region"</code> showing the 3 unique regions ("Atlantic","Gulf of Mexico" and "Pacific"),
 <code>"zone_id"</code> corresponding with the <code>zone_id</code> of <code>oh_zones</code>,
-<code>"block_id"</code> corresponding with the <code>block_id</code> of <code>oh_blocks</code>, or <code>"area_m2"</code>
+<code>"block_id"</code> corresponding with the <code>block_id</code> of <code>oh_blocks</code>,
+<code>"elev_m"</code> for GEBCO elevation (meters), or <code>"area_m2"</code>
 for square meter area per cell</p></dd>
 
 
@@ -82,6 +84,10 @@ zones found in the <code>zone_id</code> field of <code>oh_zones</code> or <code>
 <dd><p>the <code>zone_version</code> (integer) to choose, whether original BOEM
 planning area clipped out to EEZ (<code>=1</code>) or more restricted to OceanAdapt regions
 for bottom trawl data (<code>=2</code>); applies to either <code>type</code> of <code>"zone_id"</code> or <code>"block_id"</code></p></dd>
+
+
+<dt>web_version</dt>
+<dd><p>use web-optimized cloud-optimized GeoTIFF version; default=FALSE</p></dd>
 
 </dl></div>
     <div id="value">
@@ -108,7 +114,7 @@ with interactive maps (e.g. <code><a href="https://rdrr.io/pkg/leaflet/man/leafl
 <span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 481.3177, 481.3177  (x, y)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> extent      : -14378304, -7313523, 2733139, 6190444  (xmin, xmax, ymin, ymax)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : WGS 84 / Pseudo-Mercator </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> source      : spat_fJSSMZijguaxb3X_27022.tif </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> source      : spat_2h4G84Yylo6jmjp_99541.tif </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> name        :  NA </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> min value   : NaN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> max value   : NaN </span>
@@ -136,7 +142,7 @@ with interactive maps (e.g. <code><a href="https://rdrr.io/pkg/leaflet/man/leafl
 <span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 481.3177, 481.3177  (x, y)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> extent      : -14378304, -7313523, 2733139, 6190444  (xmin, xmax, ymin, ymax)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : WGS 84 / Pseudo-Mercator </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> source      : spat_T6sXO0K8yByEusM_27022.tif </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> source      : spat_gUh9PljFhZ2UhSI_99541.tif </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> name        :   cell_id </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> min value   :      1001 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> max value   : 105428344 </span>

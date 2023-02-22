@@ -5,9 +5,10 @@
 \title{OffHab reference raster}
 \usage{
 oh_rast(
-  type = c("NA", "cell_id", "region", "zone_id", "block_id", "area_m2"),
+  type = c("NA", "cell_id", "region", "zone_id", "block_id", "elev_m", "area_m2"),
   zone_id = "ALL",
-  zone_version = c(1, 2)
+  zone_version = c(1, 2),
+  web_version = F
 )
 }
 \arguments{
@@ -15,7 +16,8 @@ oh_rast(
 \code{"cell_id"} with unique cell indices to set values of reference raster,
 \code{"region"} showing the 3 unique regions ("Atlantic","Gulf of Mexico" and "Pacific"),
 \code{"zone_id"} corresponding with the \code{zone_id} of \code{oh_zones},
-\code{"block_id"} corresponding with the \code{block_id} of \code{oh_blocks}, or \code{"area_m2"}
+\code{"block_id"} corresponding with the \code{block_id} of \code{oh_blocks},
+\code{"elev_m"} for GEBCO elevation (meters), or \code{"area_m2"}
 for square meter area per cell}
 
 \item{zone_id}{the \code{zone_id} (integer) to trim the output raster, being one of the
@@ -24,6 +26,8 @@ zones found in the \code{zone_id} field of \code{oh_zones} or \code{"ALL"} zones
 \item{zone_version}{the \code{zone_version} (integer) to choose, whether original BOEM
 planning area clipped out to EEZ (\verb{=1}) or more restricted to OceanAdapt regions
 for bottom trawl data (\verb{=2}); applies to either \code{type} of \code{"zone_id"} or \code{"block_id"}}
+
+\item{web_version}{use web-optimized cloud-optimized GeoTIFF version; default=FALSE}
 }
 \value{
 return a reference raster (from \code{terra::rast()})

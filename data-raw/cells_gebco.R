@@ -16,26 +16,40 @@ load_all()
 # paths ----
 dir_g      <- "/Users/bbest/My Drive/projects/offhab/data/raw/gebco.net"
 # rasters in geographic projection
-g_tif  <- glue("{dir_g}/gebco_gcs.tif")
-gc_tif <- glue("{dir_g}/gebco_cell_gcs.tif")
+g_tif     <- glue("{dir_g}/gebco_gcs.tif")
+gc_tif    <- glue("{dir_g}/gebco_cell_gcs.tif")
 # rasters in mercator projection
-e_tif  <- glue("{dir_g}/oh_elev.tif")
-c_tif  <- glue("{dir_g}/oh_cell.tif")
-na_tif <- glue("{dir_g}/oh_na.tif")
-cg_tif <- glue("{dir_g}/oh_cell-gcs.tif")
+e_tif     <- glue("{dir_g}/oh_elev.tif")
+c_tif     <- glue("{dir_g}/oh_cell.tif")
+na_tif    <- glue("{dir_g}/oh_na.tif")
+cg_tif    <- glue("{dir_g}/oh_cell-gcs.tif")
 b_v1_tif  <- glue("{dir_g}/oh_block_v1.tif")
 b_v2_tif  <- glue("{dir_g}/oh_block_v2.tif")
 z_v1_tif  <- glue("{dir_g}/oh_zone_v1.tif")
 z_v2_tif  <- glue("{dir_g}/oh_zone_v2.tif")
-#oh_blocks_tif   <- here("inst/oh_blocks.tif")
-oh_zones_v1_tif <- here("inst/oh_zones_v1.tif")
-oh_zones_v2_tif <- here("inst/oh_zones_v2.tif")
+oh_zones_v1_tif  <- here("inst/oh_zones_v1.tif")
+oh_zones_v2_tif  <- here("inst/oh_zones_v2.tif")
 oh_blocks_v1_tif <- here("inst/oh_blocks_v1.tif")
 oh_blocks_v2_tif <- here("inst/oh_blocks_v2.tif")
-oh_zones_area_m2_tif <- here("inst/oh_zones_area_m2.tif")
+oh_area_m2_tif   <- here("inst/oh_area_m2.tif")
+oh_elev_tif      <- here("inst/oh_elev.tif")
 
-g_web_tif  <- glue("{dir_g}/gebco_mer_web.tif")
-gc_web_tif <- glue("{dir_g}/gebco_cell_mer_web.tif")
+# web-optimized mercator versions
+g_web_tif     <- glue("{dir_g}/gebco_mer_web.tif")
+gc_web_tif    <- glue("{dir_g}/gebco_cell_mer_web.tif")
+e_web_tif     <- glue("{dir_g}/oh_elev_web.tif")
+c_web_tif     <- glue("{dir_g}/oh_cell_web.tif")
+na_web_tif    <- glue("{dir_g}/oh_na_web.tif")
+b_v1_web_tif  <- glue("{dir_g}/oh_block_v1_web.tif")
+b_v2_web_tif  <- glue("{dir_g}/oh_block_v2_web.tif")
+z_v1_web_tif  <- glue("{dir_g}/oh_zone_v1_web.tif")
+z_v2_web_tif  <- glue("{dir_g}/oh_zone_v2_web.tif")
+oh_zones_v1_web_tif  <- here("inst/oh_zones_v1_web.tif")
+oh_zones_v2_web_tif  <- here("inst/oh_zones_v2_web.tif")
+oh_blocks_v1_web_tif <- here("inst/oh_blocks_v1_web.tif")
+oh_blocks_v2_web_tif <- here("inst/oh_blocks_v2_web.tif")
+oh_area_m2_web_tif   <- here("inst/oh_area_m2_web.tif")
+oh_elev_web_tif      <- here("inst/oh_elev_web.tif")
 
 # generate rasters in mercator projection ----
 
@@ -56,7 +70,7 @@ r_e_web <- rast(g_web_tif)
 # dimensions  : 5888, 11776, 1  (nrow, ncol, nlyr)
 # resolution  : 611.4962, 611.4962  (x, y)
 # extent      : -14401959, -7200980, 2661232, 6261721
-# terra::compareGeom(r_e_web, r_aphia1) # TRUE
+# compareGeom(r_e_web, r_aphia1) # TRUE
 
 # make cell identifier for geographic projection
 #  NOTE: must be datatype="INT4U", otherwise weird offset duplication
@@ -66,18 +80,24 @@ r_c[cell_ids] <- cell_ids
 names(r_c) <- "cell_id_gcs"
 writeRaster(r_c, gc_tif, overwrite=T, datatype="INT4U")
 
-# make cell identifier for web mercator COG
+# make cell identifier for web COG
 r_c_web               <- setValues(r_e_web, NA)
 cell_ids_web          <- cells(r_e_web)
 r_c_web[cell_ids_web] <- cell_ids_web
 names(r_c_web)        <- "cell_id_web"
-# write_rast(r_c_web, gc_web_tif, datatype="INT4U", web_optimize = F)
+stopifnot(sum(duplicated(values(r_c_web, na.rm=T))) == 0)
+write_rast(
+  r_c_web, gc_web_tif, datatype="INT4U",
+  web_optimize = F, use_gdal_cog_driver = T)
+r_c_web <- rast(gc_web_tif)
+stopifnot(sum(duplicated(values(r_c_web, na.rm=T))) == 0)
+stopifnot(compareGeom(r_c_web, r_e_web))
+# ensure same extent as lyrs_aphia
+# r_aphia1 <- rast("/Users/bbest/My Drive/projects/offhab/data/derived/lyrs_aphia/aphia_283257_web.tif")
+# compareGeom(r_c_web, r_aphia1) # TRUE
 
-
-write_rast(r_c_web, gc_web_tif, datatype="INT4U", web_optimize = F, use_gdal_cog_driver = T)
-
+# upload to Google Cloud and map
 upload_to_gcs(gc_web_tif)
-
 ext(r_c_web) |>
   st_bbox() |>
   st_as_sfc() |>
@@ -87,60 +107,11 @@ ext(r_c_web) |>
   as.numeric() |>
   round(1)
 # -129.4   23.2  -64.7   48.9
-
-load_all()
-
-rng_c_web <- range(values(r_c_web, na.rm=T)) # 1,355,066 67,956,176
+rng_c_web <- range(values(r_c_web, na.rm=T)) # 1,355,066  67,956,176
 oh_map_cog(
   cog_file  = basename(gc_web_tif),
   cog_range = rng_c_web,
   title     = "CellID (web)")
-
-oh_map_cog <- function(
-    cog_file,
-    cog_dir      = "https://storage.googleapis.com/offhab_lyrs",
-    cog_range    = c(1, 100),
-    cog_colors   = "viridis",
-    bb           = c(-129.4, 23.2, -64.7, 48.9),
-    title        = "% Habitat",
-    base_map     = leaflet::providers$CartoDB.Positron,
-    base_opacity = 0.5)
-
-
-r_c_web <- rast(gc_web_tif)
-
-
-r_c_web
-# dimensions  : 5888, 11776, 1  (nrow, ncol, nlyr)
-# resolution  : 611.4962, 611.4962  (x, y)
-# extent      : -14401959, -7200980, 2661232, 6261721 (xmin, xmax, ymin, ymax)
-r_c_web <- rast(gc_web_tif)
-
-ext(r_c_web) |>
-
-# range(values(r_c_web, na.rm=T)) # 1,355,066 67,956,176
-# dimensions  : 5888, 12288, 1  (nrow, ncol, nlyr)
-# resolution  : 611.4962, 611.4962  (x, y)
-# extent      : -14558502, -7044437, 2661232, 6261721 (xmin, xmax, ymin, ymax)
-# WHOAH! padded on x
-#   ncol:    11,776 -> 12,288
-#   xmin: -14401959 -> -14558502
-#   xmax: - 7200980 -> - 7044437
-stopifnot(sum(duplicated(values(r_c_web, na.rm=T))) == 0)
-# compareGeom(r_e_web, r_c_web)
-# Error: [compareGeom] extents do not match
-
-# fix r_e_web to match extent of r_c_web
-r_e_web <- extend(r_e_web, r_c_web)
-r_e_web
-# dimensions  : 5888, 12288, 1  (nrow, ncol, nlyr)
-# resolution  : 611.4962, 611.4962  (x, y)
-# extent      : -14558502, -7044437, 2661232, 6261721
-compareGeom(r_e_web, r_c_web) # TRUE
-write_rast(r_e_web, g_web_tif, datatype="INT2S", web_optimize = T)
-
-r_e_web <- rast(g_web_tif)
-compareGeom(r_e_web, r_c_web) # TRUE
 
 # zone rasters by version ----
 r_z_v1 <- oh_zones |>
@@ -152,14 +123,18 @@ r_z_v2 <- oh_zones |>
   rasterize(r_e, field = "zone_id")
 names(r_z_v2) <- "zone_id_v2"
 
+# zone_web rasters by version ----
 r_z_v1_web <- oh_zones |>
   filter(zone_version == 1) |>
+  st_transform(3857) |>
   rasterize(r_e_web, field = "zone_id")
 names(r_z_v1_web) <- "zone_id_v1_web"
 r_z_v2_web <- oh_zones |>
   filter(zone_version == 2) |>
+  st_transform(3857) |>
   rasterize(r_e_web, field = "zone_id")
 names(r_z_v2_web) <- "zone_id_v2_web"
+# plet(r_z_v1_web, tiles=providers$Esri.NatGeoWorldMap)
 
 # block rasters by version ----
 r_b_v1 <- oh_blocks |>
@@ -170,6 +145,18 @@ r_b_v2 <- oh_blocks |>
   filter(zone_version == 2) |>
   rasterize(r_e, field = "block_id")
 names(r_b_v2) <- "block_id_v2"
+
+# block_web rasters by version ----
+r_b_v1_web <- oh_blocks |>
+  filter(zone_version == 1) |>
+  st_transform(3857) |>
+  rasterize(r_e_web, field = "block_id")
+names(r_b_v1_web) <- "block_id_v1_web"
+r_b_v2_web <- oh_blocks |>
+  filter(zone_version == 2) |>
+  st_transform(3857) |>
+  rasterize(r_e_web, field = "block_id")
+names(r_b_v2_web) <- "block_id_v2_web"
 
 # check that all blocks are included in raster output, geographic ----
 stopifnot(
@@ -184,6 +171,20 @@ stopifnot(
       filter(zone_version == 2) |>
       pull(block_id),
     unique(values(r_b_v2))) == 0)
+
+# check that all blocks are included in raster output, web COG ----
+stopifnot(
+  setdiff(
+    oh_blocks |>
+      filter(zone_version == 1) |>
+      pull(block_id),
+    unique(values(r_b_v1_web))) == 0)
+stopifnot(
+  setdiff(
+    oh_blocks |>
+      filter(zone_version == 2) |>
+      pull(block_id),
+    unique(values(r_b_v2_web))) == 0)
 
 # get counts of cells per block in geographic ----
 d_b1 <- tibble(
@@ -203,6 +204,25 @@ d_b2$n |> hist()
 summary(d_b2$n)
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
 #    3       8       9      33      12     164
+
+# get counts of cells per block in web COG ----
+d_b1_web <- tibble(
+  block_id = values(r_b_v1_web, na.rm=T) |> as.integer()) |>
+  group_by(block_id) |>
+  summarize(n = n())
+d_b1_web$n |> hist()
+summary(d_b1_web$n)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 2.00    6.00    6.00   26.21    9.00  121.00
+
+d_b2_web <- tibble(
+  block_id = values(r_b_v2_web, na.rm=T) |> as.integer()) |>
+  group_by(block_id) |>
+  summarize(n = n())
+d_b2_web$n |> hist()
+summary(d_b2_web$n)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 2.00    6.00    6.00   24.02    9.00  121.00
 
 # project rasters to mercator ----
 r_bilinear <- r_e %>%
@@ -250,7 +270,7 @@ summary(d_b2_m$n)
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
 # 4.00    9.00   12.00   38.89   16.00  222.00
 
-# write NA and cell_id (cell identifier) rasters in web Mercator projection
+# write NA and cell_id rasters in web Mercator projection ----
 r_na <- setValues(r_bilinear, NA)
 cell_ids <- cells(r_bilinear)
 r_c <- r_na
@@ -263,6 +283,17 @@ writeRaster(
   r_c, c_tif, overwrite=T,
   datatype="INT4U")
 
+# write NA and cell_id web COG ----
+r_na_web <- setValues(r_e_web, NA)
+write_rast(
+  r_na_web, na_web_tif,
+  datatype="INT1U", overwrite=T,
+  use_gdal_cog = T)
+write_rast(
+  r_c_web, c_web_tif,
+  datatype="INT4U", overwrite=T,
+  use_gdal_cog = T)
+
 # write all NA make cell identifier (cell_id) for Mercator projection
 r_c <- setValues(r_bilinear, NA)
 cell_ids <- cells(r_bilinear)
@@ -272,7 +303,7 @@ writeRaster(
   r_c, c_tif, overwrite=T,
   datatype="INT4U")
 
-# write other rasters to most efficient data type
+# write other rasters to most efficient data type ----
 r_cbze <- rast(list(r_near, r_bilinear))
 r_cbze
 # class       : SpatRaster
@@ -334,16 +365,66 @@ r_cbze %>%
   writeRaster(
     e_tif, overwrite = T,
     datatype = "FLT4S")
+file.copy(e_tif, oh_elev_tif, overwrite = T)
 
-# area in square meters (m^2)
+# write other web COGs to most efficient data type ----
+r_z_v1_web |>
+  write_rast(
+    z_v1_web_tif,
+    datatype="INT1U", overwrite=T,
+    use_gdal_cog = T)
+file.copy(z_v1_web_tif, oh_zones_v1_web_tif, overwrite = T)
+
+r_z_v2_web %>%
+  write_rast(
+    z_v2_web_tif,
+    datatype="INT1U", overwrite=T,
+    use_gdal_cog = T)
+file.copy(z_v2_web_tif, oh_zones_v2_web_tif, overwrite = T)
+
+r_b_v1_web |>
+  write_rast(
+    b_v1_web_tif,
+    datatype="INT2U", overwrite=T,
+    use_gdal_cog = T)
+file.copy(b_v1_web_tif, oh_blocks_v1_web_tif, overwrite = T)
+
+r_b_v2_web |>
+  write_rast(
+    b_v2_web_tif,
+    datatype="INT2U", overwrite=T,
+    use_gdal_cog = T)
+file.copy(b_v2_web_tif, oh_blocks_v2_web_tif, overwrite = T)
+
+v <- values(r_e_web, na.rm=T)
+sum(v %% 1 != 0) #      0
+range(v)         # -5,324    34
+r_e_web |>
+  write_rast(
+    e_web_tif,
+    datatype="INT2S", overwrite=T,
+    use_gdal_cog = T)
+file.copy(e_web_tif, oh_elev_web_tif, overwrite = T)
+
+# area in square meters (m^2) ----
 r   <- oh_rast("cell_id")
 r_a <- cellSize(r, unit="m") # plot(r_a)
 names(r_a) <- "area_m2"
 # range(values(r_a, na.rm = T)) # 102,210.8 192,743.3
 writeRaster(
   r_a,
-  oh_zones_area_m2_tif, overwrite = T,
+  oh_area_m2_tif, overwrite = T,
   datatype = "INT4U")
+
+# area in square meters (m^2) for web COG ----
+r_a_web <- cellSize(r_e_web, unit="m") # plot(r_a)
+names(r_a_web) <- "area_m2_web"
+# range(values(r_a_web, na.rm = T)) # 164,286.3 311,460.6
+write_rast(
+  r_a_web,
+  oh_area_m2_web_tif,
+  datatype="INT4U", overwrite=T,
+  use_gdal_cog = T)
 
 # convert raster to points in geographic coordinate system and inject into db ----
 r_cbze <- rast(c(c_tif, b_tif, z_tif, e_tif))
@@ -360,7 +441,7 @@ stopifnot(
   sum(duplicated(f_cbze$cell_id)) == 0)
 # nrow(f_cbze) # 14,916,905
 
-# write to db ----
+# OLD: write to postgis db ----
 con <- oh_pg_con()
 
 # get ranges of values to use smallest data type

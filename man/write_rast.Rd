@@ -46,21 +46,23 @@ file with different bounds and pixel sizes from original; defaults to FALSE}
 returns nothing since only writing \code{tif}, i.e. a side-effect function
 }
 \description{
-Use \code{terra::WriteRaster()} followed by \code{gdal_translate} for minimizing the output
-file size with creation options for maximum compression
-(\verb{COMPRESS=DEFLATE ZLEVEL=9 PREDICTOR=2}), tiles (\code{TILED=YES}) and sparse
-(\code{SPARSE_OK=TRUE}) encoding.
+Use \code{terra::WriteRaster()} followed by
+\href{https://cogeotiff.github.io/rio-cogeo/CLI/}{\verb{rio cogeo create}} for
+creating cloud-optimized GeoTIFF that minimizes the output file size with
+creation options for maximum compression
+(\verb{COMPRESS=DEFLATE ZLEVEL=9 PREDICTOR=2}), tiles (\code{TILED=YES}) (and
+optionally sparse (\code{SPARSE_OK=TRUE}) encoding).
 }
 \details{
-The \code{datatype} corresponds with the following:\tabular{lrrl}{
-   terra \tab min \tab max \tab gdal \cr
-   INT1U \tab 0 \tab 255 \tab Byte \cr
-   INT2S \tab -32,767 \tab 32,767 \tab Int16 \cr
-   INT2U \tab 0 \tab 65,534 \tab UInt16 \cr
-   INT4S \tab -2,147,483,647 \tab 2,147,483,647 \tab Int32 \cr
-   INT4U \tab 0 \tab 4,294,967,296 \tab UInt32 \cr
-   FLT4S \tab -3.4e+38 \tab 3.4e+38 \tab Float32 \cr
-   FLT8S \tab -1.7e+308 \tab 1.7e+308 \tab Float64 \cr
+The \code{datatype} corresponds with the following:\tabular{lrrll}{
+   terra \tab min \tab max \tab gdal \tab rio \cr
+   INT1U \tab 0 \tab 255 \tab Byte \tab uint8 \cr
+   INT2S \tab -32,767 \tab 32,767 \tab Int16 \tab int16 \cr
+   INT2U \tab 0 \tab 65,534 \tab UInt16 \tab uint16 \cr
+   INT4S \tab -2,147,483,647 \tab 2,147,483,647 \tab Int32 \tab int32 \cr
+   INT4U \tab 0 \tab 4,294,967,296 \tab UInt32 \tab uint32 \cr
+   FLT4S \tab -3.4e+38 \tab 3.4e+38 \tab Float32 \tab float32 \cr
+   FLT8S \tab -1.7e+308 \tab 1.7e+308 \tab Float64 \tab float64 \cr
 }
 }
 \concept{rast}

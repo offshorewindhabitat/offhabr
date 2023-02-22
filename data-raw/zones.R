@@ -298,3 +298,35 @@ writeRaster(
 # try
 # r_rgns <- rast(rgns_tif)
 # plot(r_rgns)
+
+
+# make oh_regions_web.tif ----
+rgns_web_tif <- here("inst/oh_regions_web.tif")
+r_z <- oh_rast("zone_id", web_version=T)
+r_rgns_web <- classify(r_z, d_z2r)
+levels(r_rgns_web) <- tibble(
+  id     = 1:length(v_rgns),
+  region = v_rgns)
+# plot(r_rgns)
+names(r_rgns_web) <- "region"
+# tmp_tif <- tempfile(fileext = ".tif")
+# writeRaster(
+#   r_rgns, tmp_tif,
+#   datatype  = "INT1U", overwrite = T)
+# file_move(tmp_tif, rgns_tif)
+write_rast(
+  r_rgns_web, rgns_web_tif,
+  datatype="INT1U", overwrite=T,
+  use_gdal_cog = T)
+
+# create study area mask feature class
+oh_study_v1 <- oh_zones |>
+  filter(zone_version == 1) |>
+  select(geom) |>
+  st_union()
+# mapview::mapview(oh_study_v1)
+oh_study_v1 |>
+  sf::write_sf(here("inst/oh_study_v1.geojson"))
+oh_study_v1 |>
+  sf::write_sf(here("inst/oh_study_v1.shp"))
+usethis::use_data(oh_study_v1)
