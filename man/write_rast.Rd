@@ -7,7 +7,7 @@
 write_rast(
   r,
   tif,
-  datatype = "INT1U",
+  datatype = NULL,
   overwrite = TRUE,
   method = c("average", "nearest"),
   threads = "ALL_CPUS",
@@ -22,7 +22,8 @@ write_rast(
 
 \item{tif}{output path to GeoTIFF}
 
-\item{datatype}{datatype; one of: INT1U (default), INT2S, INT2U, INT4S, INT4U, FLT4S, FLT8S}
+\item{datatype}{datatype; one of: INT1U, INT2S, INT2U, INT4S, INT4U, FLT4S, FLT8S;
+default is NULL and datatype is automatically detected}
 
 \item{overwrite}{defaults to TRUE}
 

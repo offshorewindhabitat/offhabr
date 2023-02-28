@@ -142,7 +142,8 @@ oh_rast <- function(
 #'
 #' @param r input raster layer or path to input GeoTIFF
 #' @param tif output path to GeoTIFF
-#' @param datatype datatype; one of: INT1U (default), INT2S, INT2U, INT4S, INT4U, FLT4S, FLT8S
+#' @param datatype datatype; one of: INT1U, INT2S, INT2U, INT4S, INT4U, FLT4S, FLT8S;
+#'   default is NULL and datatype is automatically detected
 #' @param method for internal overview generation; use `"average"` (default) for continous
 #'   and `"nearest"` for categorical
 #' @param overwrite defaults to TRUE
@@ -164,7 +165,7 @@ oh_rast <- function(
 write_rast <- function(
     r,
     tif,
-    datatype     = "INT1U",
+    datatype     = NULL,
     overwrite    = TRUE,
     method       = c("average", "nearest"),
     threads      = "ALL_CPUS",
@@ -197,6 +198,25 @@ write_rast <- function(
   # Creation Options
   #   NUM_THREADS=number_of_threads/ALL_CPUS
   #   BIGTIFF=YES
+
+  if (is.null(datatype)){
+    if (!"SpatRaster" %in% class(r))
+      r <- rast(r)
+
+    rng <- range(values(r, na.rm=T))
+    rng_is_integer  <- all(rng_lyr %% 1 == 0)
+    rng_is_positive <- min(rng_lyr) >= 0
+
+    datatype <- dplyr::case_when(
+      rng_is_integer &  rng_is_positive & max(rng) <=        255 ~ "INT1U",
+      rng_is_integer &  rng_is_positive & max(rng) <=      65534 ~ "INT2U",
+      rng_is_integer &  rng_is_positive & max(rng) <= 4294967296 ~ "INT4U",
+      rng_is_integer & !rng_is_positive & max(rng) <=        255 ~ "INT2S",
+      rng_is_integer & !rng_is_positive & max(rng) <=      32767 & min(rng) <=      -32767 ~ "INT2S",
+      rng_is_integer & !rng_is_positive & max(rng) <= 2147483647 & min(rng) <= -2147483647 ~ "INT4S",
+      TRUE ~ "FLT4S")
+    message(glue("  datatype: {datatype}"))
+  }
 
   if (!datatype %in% names(terra2rio_dtypes))
     stop(glue::glue("Sorry, write_rast() needs one of the following datatype values:
