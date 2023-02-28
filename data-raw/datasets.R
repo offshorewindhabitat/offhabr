@@ -2,7 +2,7 @@
 #
 
 librarian::shelf(
-  devtools, dplyr, janitor, purrr, sf, tibble, tidyr)
+  devtools, dplyr, janitor, glue, here, purrr, readr, sf, tibble, tidyr)
 load_all()
 con <- oh_pg_con()
 
@@ -643,3 +643,27 @@ tbl(con, "taxa") %>%
 dbSendQuery(
   con,
   "ALTER TABLE taxa DROP COLUMN tbl")
+
+# update datasets ----
+dbDisconnect(con, shutdown = T)
+con <- oh_con(read_only = F)
+
+datasets_csv <- here("data-raw/datasets.csv")
+
+# write out latest to csv
+tbl(con, "datasets") |>
+  collect() |>
+  write_csv(datasets_csv, na = "")
+
+# make some tweaks to datasets_csv in Excel ...
+
+# write datasets_csv to duckdb
+d_datasets <- read_csv(
+  datasets_csv, na = "", col_types = list(
+    ds_id = col_integer(),
+    year  = col_integer()))
+dbWriteTable(con, "datasets", d_datasets, overwrite=T)
+
+
+# close db connection
+dbDisconnect(con, shutdown = T)
