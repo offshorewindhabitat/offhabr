@@ -9,7 +9,9 @@ oh_map_cog(
   cog_dir = "https://storage.googleapis.com/offhab_lyrs",
   cog_range = c(1, 100),
   cog_method = "average",
-  cog_colors = "viridis",
+  cog_palette = "spectral_r",
+  lgnd_palette = "Spectral",
+  lgnd_palette_r = TRUE,
   bb = c(-129.4, 23.2, -64.7, 48.9),
   title = "\% Habitat",
   base_opacity = 0.5
@@ -24,10 +26,16 @@ oh_map_cog(
 
 \item{cog_method}{method for interpolation between zoom levels; choose "nearest" for categorical; default: "average" (for continuous)}
 
-\item{cog_colors}{color ramp that applies to both \code{leaflet::colorNumeric()}
-and the \code{colormap_name} of
+\item{cog_palette}{color ramp that applies to the \code{colormap_name} of
 \href{https://api.cogeo.xyz/docs#/Cloud\%20Optimized\%20GeoTIFF/tile_cog_tiles__TileMatrixSetId___z___x___y___scale_x__format__get}{https://api.cogeo.xyz/cog/tiles};
-default: "viridis"}
+default: "spectral_r"}
+
+\item{lgnd_palette}{color ramp that applies to both \code{leaflet::colorNumeric()}
+default: "Spectral"}
+
+\item{lgnd_palette_r}{boolean whether \code{lgnd_palette} is reversed in
+\code{leaflet::colorNumeric()} color ramp
+default: True}
 
 \item{bb}{bounding box to feed \code{leaflet::fitBounds()} defaults to US48:
 \code{c(-129.4, 23.2, -64.7, 48.9)}}

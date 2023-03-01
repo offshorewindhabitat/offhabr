@@ -47,10 +47,14 @@ oh_map <- function(base_opacity = 0.5){
 #' @param cog_dir directory of path to COG; defaults to "https://storage.googleapis.com/offhab_lyrs"
 #' @param cog_range range of values to colorramp in COG; default: `c(1, 100)`
 #' @param cog_method method for interpolation between zoom levels; choose "nearest" for categorical; default: "average" (for continuous)
-#' @param cog_colors color ramp that applies to both `leaflet::colorNumeric()`
-#'   and the `colormap_name` of
+#' @param cog_palette color ramp that applies to the `colormap_name` of
 #'   [https://api.cogeo.xyz/cog/tiles](https://api.cogeo.xyz/docs#/Cloud%20Optimized%20GeoTIFF/tile_cog_tiles__TileMatrixSetId___z___x___y___scale_x__format__get);
-#'   default: "viridis"
+#'   default: "spectral_r"
+#' @param lgnd_palette color ramp that applies to both `leaflet::colorNumeric()`
+#'   default: "Spectral"
+#' @param lgnd_palette_r boolean whether `lgnd_palette` is reversed in
+#'   `leaflet::colorNumeric()` color ramp
+#'   default: True
 #' @param bb bounding box to feed `leaflet::fitBounds()` defaults to US48:
 #'   `c(-129.4, 23.2, -64.7, 48.9)`
 #' @param title title for legend; default: `"% Habitat"`
@@ -66,19 +70,21 @@ oh_map <- function(base_opacity = 0.5){
 #' oh_map_cog("aphia_100599_web.tif")
 oh_map_cog <- function(
   cog_file,
-  cog_dir      = "https://storage.googleapis.com/offhab_lyrs",
-  cog_range    = c(1, 100),
-  cog_method   = "average",
-  cog_colors   = "viridis",
-  bb           = c(-129.4, 23.2, -64.7, 48.9),
-  title        = "% Habitat",
-  base_opacity = 0.5){
+  cog_dir        = "https://storage.googleapis.com/offhab_lyrs",
+  cog_range      = c(1, 100),
+  cog_method     = "average",
+  cog_palette    = "spectral_r",
+  lgnd_palette   = "Spectral",
+  lgnd_palette_r = TRUE,
+  bb             = c(-129.4, 23.2, -64.7, 48.9),
+  title          = "% Habitat",
+  base_opacity   = 0.5){
 
-  stopifnot(all(is.numeric(cog_range), length(cog_range)==2, cog_range[2] > cog_range[1]))
+  stopifnot(all(is.numeric(cog_range), length(cog_range)==2, cog_range[2] >= cog_range[1]))
 
   cog_url   <- glue("{cog_dir}/{cog_file}")
   tile_opts <- glue(
-    "resampling_method={cog_method}&rescale={paste(cog_range, collapse=',')}&return_mask=true&colormap_name={cog_colors}")
+    "resampling_method={cog_method}&rescale={paste(cog_range, collapse=',')}&return_mask=true&colormap_name={cog_palette}")
   tile_url  <- glue(
     "https://api.cogeo.xyz/cog/tiles/WebMercatorQuad/{{z}}/{{x}}/{{y}}@2x?url={cog_url}&{tile_opts}")
 
@@ -100,9 +106,26 @@ oh_map_cog <- function(
     fitBounds(bb[1], bb[2], bb[3], bb[4]) |>
     leaflet.extras::addFullscreenControl() |>
   addLegend(
-    pal    = colorNumeric(cog_colors, cog_range[1]:cog_range[2]),
+    pal    = colorNumeric(lgnd_palette, cog_range[1]:cog_range[2], reverse = lgnd_palette_r),
     values = c(cog_range[1], cog_range[2]),
     title  = title)
+}
+
+oh_map_cog_lyr <- function(
+    lyr_key,
+    lyr_title = "% Habitat",
+    con   = con,
+    ...){
+
+  d_rng <- tbl(con, "lyrs") |>
+    filter(lyr_key == !!lyr_key) |>
+    select(val_min, val_max) |>
+    collect()
+
+  oh_map_cog(
+    cog_file  = glue("{lyr_key}.tif"),
+    cog_range = c(d_rng$val_min, d_rng$val_max),
+    title     = lyr_title, ...)
 }
 
 #' Add polygons to map
