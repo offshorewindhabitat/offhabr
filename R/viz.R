@@ -2,8 +2,6 @@
 #'
 #' Make an interactive map with basemap
 #'
-#' @param base_map the basemap (see  `leaflet$providers`); default is
-#'   "CartoDB.Positron"
 #' @param base_opacity the opacity of the basemap; default is 0.5
 #'
 #' @return a `leaflet::leaflet()` map
@@ -23,17 +21,23 @@
 #'   str_val = "area (km^2)",
 #'   str_id  = "Zone",
 #'   div_mid = mean(oh_zones$area_km2))
-oh_map <- function(
-    base_map = "CartoDB.Positron", base_opacity = 0.5){
+oh_map <- function(base_opacity = 0.5){
 
   leaflet::leaflet() %>%
+    # add base: blue bathymetry and light brown/green topography
     leaflet::addProviderTiles(
-      leaflet::providers[[base_map]],
-      options = leaflet::providerTileOptions(
-        opacity = base_opacity)) %>%
+      "Esri.OceanBasemap",
+      options = providerTileOptions(
+        variant = "Ocean/World_Ocean_Base",
+        opacity = base_opacity)) |>
+    # add reference: placename labels and borders
+    leaflet::addProviderTiles(
+      "Esri.OceanBasemap",
+      options = providerTileOptions(
+        variant = "Ocean/World_Ocean_Reference",
+        opacity = base_opacity)) |>
     leaflet.extras::addFullscreenControl()
 }
-
 
 #' Map Cloud-Optimized GeoTIFF
 #'
@@ -50,8 +54,6 @@ oh_map <- function(
 #' @param bb bounding box to feed `leaflet::fitBounds()` defaults to US48:
 #'   `c(-129.4, 23.2, -64.7, 48.9)`
 #' @param title title for legend; default: `"% Habitat"`
-#' @param base_map the basemap (see  `leaflet$providers`); default is
-#'   `"CartoDB.Positron"`
 #' @param base_opacity the opacity of the basemap; default is `0.5`
 #'
 #' @return a `leaflet::leaflet()` map
@@ -70,7 +72,6 @@ oh_map_cog <- function(
   cog_colors   = "viridis",
   bb           = c(-129.4, 23.2, -64.7, 48.9),
   title        = "% Habitat",
-  base_map     = leaflet::providers$CartoDB.Positron,
   base_opacity = 0.5){
 
   stopifnot(all(is.numeric(cog_range), length(cog_range)==2, cog_range[2] > cog_range[1]))
@@ -82,9 +83,17 @@ oh_map_cog <- function(
     "https://api.cogeo.xyz/cog/tiles/WebMercatorQuad/{{z}}/{{x}}/{{y}}@2x?url={cog_url}&{tile_opts}")
 
   leaflet::leaflet() |>
+    # add base: blue bathymetry and light brown/green topography
     leaflet::addProviderTiles(
-      leaflet::providers[[base_map]],
-      options = leaflet::providerTileOptions(
+      "Esri.OceanBasemap",
+      options = providerTileOptions(
+        variant = "Ocean/World_Ocean_Base",
+        opacity = base_opacity)) |>
+    # add reference: placename labels and borders
+    leaflet::addProviderTiles(
+      "Esri.OceanBasemap",
+      options = providerTileOptions(
+        variant = "Ocean/World_Ocean_Reference",
         opacity = base_opacity)) |>
     addTiles(
       urlTemplate=tile_url) |>

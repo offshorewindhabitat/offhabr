@@ -4,12 +4,9 @@
 \alias{oh_map}
 \title{Setup interactive map with OffHab defaults}
 \usage{
-oh_map(base_map = "CartoDB.Positron", base_opacity = 0.5)
+oh_map(base_opacity = 0.5)
 }
 \arguments{
-\item{base_map}{the basemap (see  \code{leaflet$providers}); default is
-"CartoDB.Positron"}
-
 \item{base_opacity}{the opacity of the basemap; default is 0.5}
 }
 \value{

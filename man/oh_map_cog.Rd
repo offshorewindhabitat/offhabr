@@ -12,7 +12,6 @@ oh_map_cog(
   cog_colors = "viridis",
   bb = c(-129.4, 23.2, -64.7, 48.9),
   title = "\% Habitat",
-  base_map = leaflet::providers$CartoDB.Positron,
   base_opacity = 0.5
 )
 }
@@ -34,9 +33,6 @@ default: "viridis"}
 \code{c(-129.4, 23.2, -64.7, 48.9)}}
 
 \item{title}{title for legend; default: \code{"\% Habitat"}}
-
-\item{base_map}{the basemap (see  \code{leaflet$providers}); default is
-\code{"CartoDB.Positron"}}
 
 \item{base_opacity}{the opacity of the basemap; default is \code{0.5}}
 }
