@@ -128,6 +128,116 @@ oh_map_cog_lyr <- function(
     title     = lyr_title, ...)
 }
 
+#' Map score as deviation from average in zone with blocks
+#'
+#' @param zone_key one of `zone_key` from `offhabr::oh_zones`
+#' @param stk_web_tif path to `stack_web.tif` containing layers "oh_zones_v1_web" and "score_v1_web"
+#' @param zonal_blocks_csv path to zonal average values of blocks
+#'
+#' @return htmlwidget map as `leaflet::leaflet()` with `attr("zone_name")`
+#' @import dplyr glue htmltools leaflet readr terra
+#' @export
+#'
+#' @examples
+oh_map_zone_score_dev <- function(
+    zone_key,
+    stk_web_tif      = "~/My Drive/projects/offhab/data/derived/stack_web.tif",
+    zonal_blocks_csv = "~/Github/ecoquants/offhab-scripts/data/zonal_blocks.csv"){
+  # map zone's deviation from score avg for raster and blocks
+
+  # raster stack with zones and scores
+  stk_web <- terra::rast(stk_web_tif)
+
+  # attribute scores for blocks
+  d_b <- readr::read_csv(zonal_blocks_csv, show_col_types=F)
+
+  # polygons of block
+  ply_blocks <- offhabr::oh_blocks |>
+    dplyr::filter(zone_version == 1) |>
+    dplyr::left_join(
+      d_b, by = c("block_id" = "block_id_v1"))
+
+  # get raster of score for zone, applying mask
+  zone_id <- offhabr::oh_zones_s1k |>
+    dplyr::filter(zone_key == !!zone_key) |>
+    dplyr::pull(zone_id)
+  r_z <- stk_web[["oh_zones_v1_web"]] == zone_id
+  r_score_z <- stk_web[["score_v1_web"]] |>
+    terra::mask(r_z, maskvalues=c(NA,0)) |>
+    terra::trim()
+
+  # normalize scores: [x_i - mean(x)] / sd(x) [see terra::scale()]
+  score_z_avg <- terra::global(r_score_z, "mean", na.rm=T) |> as.numeric()
+  score_z_sd  <- terra::global(r_score_z, "sd", na.rm=T) |> as.numeric()
+  r_score_zn  <- (r_score_z - score_z_avg) / score_z_sd
+
+  # get polygons of blocks for zone, calculate same normalized score
+  ply_blocks_z <- ply_blocks |>
+    dplyr::filter(
+      zone_key == !!zone_key) |>
+    dplyr::mutate(
+      score_v1_web_zn = (score_v1_web - score_z_avg) / score_z_sd)
+
+  # setup color ramp
+  score_zn_vals <- values(r_score_zn, na.rm=T)
+  score_zn_rng  <- range(score_zn_vals)
+  pal <- leaflet::colorNumeric(
+    "Spectral", score_zn_rng, na.color = "transparent", reverse = T)
+
+  # setup popups and labels
+  popups <- with(
+    ply_blocks_z, glue::glue(
+      "BOEM Block: <b>{protraction_number} {block_number}</b><br>
+     BOAM Plan: <b>{plan_additional_information}</b><br>
+     area_km<sup>2</sup>: <code>{round(area_km2, 2)}</code><br>
+     score: <b><code>{round(score_v1_web,1)}</code></b><br>
+     sd from zone avg score: <b><code>{round(score_v1_web_zn, 2)}</code></b>"))
+  labels <- popups |> lapply(htmltools::HTML)
+
+
+  m <- leaflet::leaflet() |>
+    # add base: blue bathymetry and light brown/green topography
+    leaflet::addProviderTiles(
+      "Esri.OceanBasemap",
+      options = leaflet::providerTileOptions(
+        variant = "Ocean/World_Ocean_Base",
+        opacity = 0.5)) |>
+    # add reference: placename labels and borders
+    leaflet::addProviderTiles(
+      "Esri.OceanBasemap",
+      options = leaflet::providerTileOptions(
+        variant = "Ocean/World_Ocean_Reference",
+        opacity = 0.5)) |>
+    leaflet::addRasterImage(
+      r_score_zn,
+      colors = pal, opacity = 0.7) |>
+    leaflet::addLegend(
+      pal = pal, values = score_zn_vals,
+      title = glue(
+        "Deviation from<br>
+       Score Avg in Zone")) |>
+    leaflet::addPolygons(
+      data        = ply_blocks_z,
+      fillColor   = ~pal(score_v1_web_zn),
+      fillOpacity = 0.9,
+      color       = 'black',
+      opacity     = 0.9,
+      weight      = 0.5,
+      popup       = popups,
+      label       = labels)
+
+  # set zone_name for populating header as attribute of output map
+  zone_name <- oh_zones_s1k |>
+    dplyr::filter(
+      zone_version == 1,
+      zone_key == !!zone_key) |>
+    dplyr::pull(zone_name)
+  attr(m, "zone_name") <- zone_name
+
+  m
+}
+
+
 #' Add polygons to map
 #'
 #' Add polygons to an interactive choropleth map, optionally with a color scheme that
