@@ -58,10 +58,11 @@
 <span>  cog_dir <span class="op">=</span> <span class="st">"https://storage.googleapis.com/offhab_lyrs"</span>,</span>
 <span>  cog_range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">100</span><span class="op">)</span>,</span>
 <span>  cog_method <span class="op">=</span> <span class="st">"average"</span>,</span>
-<span>  cog_colors <span class="op">=</span> <span class="st">"viridis"</span>,</span>
+<span>  cog_palette <span class="op">=</span> <span class="st">"spectral_r"</span>,</span>
+<span>  lgnd_palette <span class="op">=</span> <span class="st">"Spectral"</span>,</span>
+<span>  lgnd_palette_r <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  bb <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">129.4</span>, <span class="fl">23.2</span>, <span class="op">-</span><span class="fl">64.7</span>, <span class="fl">48.9</span><span class="op">)</span>,</span>
 <span>  title <span class="op">=</span> <span class="st">"% Habitat"</span>,</span>
-<span>  base_map <span class="op">=</span> <span class="fu">leaflet</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/leaflet/man/providers.html" class="external-link">providers</a></span><span class="op">$</span><span class="va">CartoDB.Positron</span>,</span>
 <span>  base_opacity <span class="op">=</span> <span class="fl">0.5</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -84,11 +85,21 @@
 <dd><p>method for interpolation between zoom levels; choose "nearest" for categorical; default: "average" (for continuous)</p></dd>
 
 
-<dt>cog_colors</dt>
-<dd><p>color ramp that applies to both <code><a href="https://rdrr.io/pkg/leaflet/man/colorNumeric.html" class="external-link">leaflet::colorNumeric()</a></code>
-and the <code>colormap_name</code> of
+<dt>cog_palette</dt>
+<dd><p>color ramp that applies to the <code>colormap_name</code> of
 <a href="https://api.cogeo.xyz/docs#/Cloud%20Optimized%20GeoTIFF/tile_cog_tiles__TileMatrixSetId___z___x___y___scale_x__format__get" class="external-link">https://api.cogeo.xyz/cog/tiles</a>;
-default: "viridis"</p></dd>
+default: "spectral_r"</p></dd>
+
+
+<dt>lgnd_palette</dt>
+<dd><p>color ramp that applies to both <code><a href="https://rdrr.io/pkg/leaflet/man/colorNumeric.html" class="external-link">leaflet::colorNumeric()</a></code>
+default: "Spectral"</p></dd>
+
+
+<dt>lgnd_palette_r</dt>
+<dd><p>boolean whether <code>lgnd_palette</code> is reversed in
+<code><a href="https://rdrr.io/pkg/leaflet/man/colorNumeric.html" class="external-link">leaflet::colorNumeric()</a></code> color ramp
+default: True</p></dd>
 
 
 <dt>bb</dt>
@@ -98,11 +109,6 @@ default: "viridis"</p></dd>
 
 <dt>title</dt>
 <dd><p>title for legend; default: <code>"% Habitat"</code></p></dd>
-
-
-<dt>base_map</dt>
-<dd><p>the basemap (see  <code>leaflet$providers</code>); default is
-<code>"CartoDB.Positron"</code></p></dd>
 
 
 <dt>base_opacity</dt>
@@ -120,8 +126,8 @@ default: "viridis"</p></dd>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># map by aphia_id</span></span></span>
 <span class="r-in"><span><span class="fu">oh_map_cog</span><span class="op">(</span><span class="st">"aphia_100599_web.tif"</span><span class="op">)</span></span></span>
-<div id="htmlwidget-bebd3222bacaef779087" style="width:700px;height:432.632880098888px;" class="leaflet html-widget "></div>
-<script type="application/json" data-for="htmlwidget-bebd3222bacaef779087">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}},"fullscreenControl":{"position":"topleft","pseudoFullscreen":false}},"calls":[{"method":"addProviderTiles","args":["CartoDB.Positron",null,null,{"errorTileUrl":"","noWrap":false,"opacity":0.5,"detectRetina":false}]},{"method":"addTiles","args":["https://api.cogeo.xyz/cog/tiles/WebMercatorQuad/{z}/{x}/{y}@2x?url=https://storage.googleapis.com/offhab_lyrs/aphia_100599_web.tif&resampling_method=average&rescale=1,100&return_mask=true&colormap_name=viridis",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false}]},{"method":"addLegend","args":[{"colors":["#440154 , #424186 19.1919191919192%, #2A768E 39.3939393939394%, #22A785 59.5959595959596%, #78D152 79.7979797979798%, #FDE725 100%, #FDE725 "],"labels":["20","40","60","80","100"],"na_color":null,"na_label":"NA","opacity":0.5,"position":"topright","type":"numeric","title":"% Habitat","extra":{"p_1":0.191919191919192,"p_n":1},"layerId":null,"className":"info legend","group":null}]}],"fitBounds":[23.2,-129.4,48.9,-64.7,[]]},"evals":[],"jsHooks":[]}</script></code></pre></div>
+<div id="htmlwidget-0ff1291b4f5becc27366" style="width:700px;height:432.632880098888px;" class="leaflet html-widget "></div>
+<script type="application/json" data-for="htmlwidget-0ff1291b4f5becc27366">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}},"fullscreenControl":{"position":"topleft","pseudoFullscreen":false}},"calls":[{"method":"addProviderTiles","args":["Esri.OceanBasemap",null,null,{"errorTileUrl":"","noWrap":false,"opacity":0.5,"detectRetina":false,"variant":"Ocean/World_Ocean_Base"}]},{"method":"addProviderTiles","args":["Esri.OceanBasemap",null,null,{"errorTileUrl":"","noWrap":false,"opacity":0.5,"detectRetina":false,"variant":"Ocean/World_Ocean_Reference"}]},{"method":"addTiles","args":["https://api.cogeo.xyz/cog/tiles/WebMercatorQuad/{z}/{x}/{y}@2x?url=https://storage.googleapis.com/offhab_lyrs/aphia_100599_web.tif&resampling_method=average&rescale=1,100&return_mask=true&colormap_name=spectral_r",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false}]},{"method":"addLegend","args":[{"colors":["#5E4FA2 , #63BDA7 19.1919191919192%, #E3F499 39.3939393939394%, #FEE18D 59.5959595959596%, #F46E44 79.7979797979798%, #9E0142 100%, #9E0142 "],"labels":["20","40","60","80","100"],"na_color":null,"na_label":"NA","opacity":0.5,"position":"topright","type":"numeric","title":"% Habitat","extra":{"p_1":0.191919191919192,"p_n":1},"layerId":null,"className":"info legend","group":null}]}],"fitBounds":[23.2,-129.4,48.9,-64.7,[]]},"evals":[],"jsHooks":[]}</script></code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
