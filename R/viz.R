@@ -224,7 +224,8 @@ oh_map_zone_score_dev <- function(
       opacity     = 0.9,
       weight      = 0.5,
       popup       = popups,
-      label       = labels)
+      label       = labels) |>
+    leaflet.extras::addFullscreenControl()
 
   # set zone_name for populating header as attribute of output map
   zone_name <- oh_zones_s1k |>
