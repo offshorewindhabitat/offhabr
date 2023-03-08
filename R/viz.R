@@ -59,6 +59,7 @@ oh_map <- function(base_opacity = 0.5){
 #'   `c(-129.4, 23.2, -64.7, 48.9)`
 #' @param title title for legend; default: `"% Habitat"`
 #' @param base_opacity the opacity of the basemap; default is `0.5`
+#' @param cog_opacity the opacity of the COG tile layer; default is `0.9`
 #'
 #' @return a `leaflet::leaflet()` map
 #' @import leaflet
@@ -78,6 +79,7 @@ oh_map_cog <- function(
   lgnd_palette_r = TRUE,
   bb             = c(-129.4, 23.2, -64.7, 48.9),
   title          = "% Habitat",
+  cog_opacity    = 0.9,
   base_opacity   = 0.5){
 
   stopifnot(all(is.numeric(cog_range), length(cog_range)==2, cog_range[2] >= cog_range[1]))
@@ -102,7 +104,9 @@ oh_map_cog <- function(
         variant = "Ocean/World_Ocean_Reference",
         opacity = base_opacity)) |>
     addTiles(
-      urlTemplate=tile_url) |>
+      urlTemplate=tile_url,
+      options = tileOptions(
+        opacity = cog_opacity)) |>
     fitBounds(bb[1], bb[2], bb[3], bb[4]) |>
     leaflet.extras::addFullscreenControl() |>
   addLegend(
