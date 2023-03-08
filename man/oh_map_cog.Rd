@@ -14,6 +14,7 @@ oh_map_cog(
   lgnd_palette_r = TRUE,
   bb = c(-129.4, 23.2, -64.7, 48.9),
   title = "\% Habitat",
+  cog_opacity = 0.9,
   base_opacity = 0.5
 )
 }
@@ -41,6 +42,8 @@ default: True}
 \code{c(-129.4, 23.2, -64.7, 48.9)}}
 
 \item{title}{title for legend; default: \code{"\% Habitat"}}
+
+\item{cog_opacity}{the opacity of the COG tile layer; default is \code{0.9}}
 
 \item{base_opacity}{the opacity of the basemap; default is \code{0.5}}
 }
