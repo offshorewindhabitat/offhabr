@@ -162,17 +162,19 @@ oh_map_cog_sp <- function(
     con   = con,
     ...){
 
-  d_rng <- tbl(con, "lyrs") |>
+  d_lyr <- tbl(con, "lyrs") |>
     filter(
       aphia_id == !!aphia_id,
       is_ds_prime == TRUE) |>
-    select(val_min, val_max) |>
+    select(lyr_key, val_min, val_max, bbox) |>
     collect()
+  b <- d_lyr$bbox[[1]]
 
   oh_map_cog(
-    cog_file  = glue("{lyr_key}.tif"),
-    cog_range = c(d_rng$val_min, d_rng$val_max),
-    title     = lyr_title, ...)
+    cog_file  = glue("{d_lyr$lyr_key}.tif"),
+    cog_range = c(d_lyr$val_min, d_lyr$val_max),
+    title     = lyr_title, ...) |>
+    fitBounds(b[1], b[2], b[3], b[4])
 }
 
 #' Map score as deviation from average in zone with blocks
