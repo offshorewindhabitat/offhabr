@@ -39,4 +39,4 @@ reference:
 - title: "Other"
   desc: check for other functions or datasets not captured by above categories
   contents:
-  - lacks_concepts(c("aquamaps", "read", "analyze", "viz", "db", "data"))
+  - lacks_concepts(c("aquamaps", "worms", "viz", "db", "rast", "gcs", "data"))

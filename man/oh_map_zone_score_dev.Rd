@@ -23,3 +23,4 @@ htmlwidget map as \code{leaflet::leaflet()} with \code{attr("zone_name")}
 \description{
 Map score as deviation from average in zone with blocks
 }
+\concept{viz}

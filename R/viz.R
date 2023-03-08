@@ -111,6 +111,20 @@ oh_map_cog <- function(
     title  = title)
 }
 
+#' Map Cloud-Optimize TIFF OffHab layer
+#'
+#' Use offhabr `lyr_key` to pull range from database and render map with `oh_map_cog()`
+#'
+#' @param lyr_key
+#' @param lyr_title
+#' @param con
+#' @param ...
+#'
+#' @return
+#' @export
+#' @concept viz
+#'
+#' @examples
 oh_map_cog_lyr <- function(
     lyr_key,
     lyr_title = "% Habitat",
@@ -119,6 +133,39 @@ oh_map_cog_lyr <- function(
 
   d_rng <- tbl(con, "lyrs") |>
     filter(lyr_key == !!lyr_key) |>
+    select(val_min, val_max) |>
+    collect()
+
+  oh_map_cog(
+    cog_file  = glue("{lyr_key}.tif"),
+    cog_range = c(d_rng$val_min, d_rng$val_max),
+    title     = lyr_title, ...)
+}
+
+#' Map Cloud-Optimize TIFF OffHab Species
+#'
+#' Use offhabr `aphia_id` to pull range from database and render map with `oh_map_cog()`
+#'
+#' @param aphia_id
+#' @param lyr_title
+#' @param con
+#' @param ...
+#'
+#' @return
+#' @export
+#' @concept viz
+#'
+#' @examples
+oh_map_cog_sp <- function(
+    aphia_id,
+    lyr_title = "% Habitat",
+    con   = con,
+    ...){
+
+  d_rng <- tbl(con, "lyrs") |>
+    filter(
+      aphia_id == !!aphia_id,
+      is_ds_prime == TRUE) |>
     select(val_min, val_max) |>
     collect()
 
@@ -137,6 +184,7 @@ oh_map_cog_lyr <- function(
 #' @return htmlwidget map as `leaflet::leaflet()` with `attr("zone_name")`
 #' @import dplyr glue htmltools leaflet readr terra
 #' @export
+#' @concept viz
 #'
 #' @examples
 oh_map_zone_score_dev <- function(
