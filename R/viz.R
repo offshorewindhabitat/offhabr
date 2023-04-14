@@ -183,6 +183,8 @@ oh_map_cog_sp <- function(
     con   = con,
     ...){
 
+  # aphia_id = 282884
+
   d_lyr <- tbl(con, "lyrs") |>
     filter(
       aphia_id == !!aphia_id,
