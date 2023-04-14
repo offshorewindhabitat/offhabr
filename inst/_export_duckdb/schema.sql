@@ -6,15 +6,23 @@ CREATE TABLE taxa_rl(aphia_id INTEGER, taxa VARCHAR, taxonid INTEGER, scientific
 CREATE TABLE lyr_rgn_ds(lyr_key VARCHAR, region VARCHAR, ds_id DOUBLE);
 CREATE TABLE taxa_wm(aphia_id INTEGER, url VARCHAR, scientificname VARCHAR, authority VARCHAR, status VARCHAR, unacceptreason VARCHAR, taxon_rank_id INTEGER, rank VARCHAR, valid_aphia_id INTEGER, valid_name VARCHAR, valid_authority VARCHAR, parent_name_usage_id INTEGER, kingdom VARCHAR, phylum VARCHAR, "class" VARCHAR, "order" VARCHAR, "family" VARCHAR, genus VARCHAR, citation VARCHAR, lsid VARCHAR, is_marine INTEGER, is_brackish INTEGER, is_freshwater INTEGER, is_terrestrial INTEGER, is_extinct INTEGER, match_type VARCHAR, modified VARCHAR);
 CREATE TABLE lyr_zone_stats(lyr_key VARCHAR, ds_key VARCHAR, aphia_id INTEGER, zone_id DOUBLE, area_km2 DOUBLE, mean DOUBLE, "notNA" DOUBLE);
-CREATE TABLE lyrs(path_tif VARCHAR, lyr_key VARCHAR, ds_key VARCHAR, aphia_id INTEGER, val_min DOUBLE, val_max DOUBLE, rescale_min DOUBLE, rescale_max DOUBLE, ds_id DOUBLE, is_ds_prime BOOLEAN);
+CREATE TABLE lyrs(path_tif VARCHAR, lyr_key VARCHAR, ds_key VARCHAR, aphia_id INTEGER, val_min DOUBLE, val_max DOUBLE, rescale_min DOUBLE, rescale_max DOUBLE, ds_id DOUBLE, is_ds_prime BOOLEAN, bbox FLOAT[]);
 CREATE TABLE datasets(ds_id INTEGER, ds_key VARCHAR, active BOOLEAN, name_short VARCHAR, name_long VARCHAR, "year" INTEGER, "type" VARCHAR, units VARCHAR, taxa_classes VARCHAR, rgn_pacific BOOLEAN, rgn_atlantic BOOLEAN, rgn_gomex BOOLEAN, source_urls VARCHAR, source_url_titles VARCHAR, res_space VARCHAR, res_time VARCHAR, notes VARCHAR, description VARCHAR, n_taxa BOOLEAN, citation VARCHAR, citation_url VARCHAR, meta_url VARCHAR);
 
 
-CREATE  INDEX IF NOT EXISTS taxa_rl_catscores_category_idx ON taxa_rl_catscores(category);
-CREATE  INDEX IF NOT EXISTS taxa_rl_category_idx ON taxa_rl(category);
-CREATE UNIQUE INDEX IF NOT EXISTS taxa_rl_unique_idx ON taxa_rl(aphia_id);
-CREATE  INDEX IF NOT EXISTS lyr_rgn_ds_ds_id_idx ON lyr_rgn_ds(ds_id);
-CREATE UNIQUE INDEX IF NOT EXISTS lyr_rgn_ds_unique_idx ON lyr_rgn_ds(lyr_key, region);
+
 CREATE UNIQUE INDEX lyr_zone_stats_idx ON lyr_zone_stats (lyr_key, zone_id);
+
+CREATE UNIQUE INDEX IF NOT EXISTS lyr_rgn_ds_unique_idx ON lyr_rgn_ds(lyr_key, region);
+
+CREATE  INDEX IF NOT EXISTS lyr_rgn_ds_ds_id_idx ON lyr_rgn_ds(ds_id);
+
+CREATE UNIQUE INDEX IF NOT EXISTS taxa_rl_unique_idx ON taxa_rl(aphia_id);
+
+CREATE  INDEX IF NOT EXISTS taxa_rl_category_idx ON taxa_rl(category);
+
+
+
+CREATE  INDEX IF NOT EXISTS taxa_rl_catscores_category_idx ON taxa_rl_catscores(category);
 
 
