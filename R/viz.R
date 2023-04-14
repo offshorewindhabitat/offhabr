@@ -131,8 +131,9 @@ oh_map_cog <- function(
 #' @examples
 oh_map_cog_lyr <- function(
     lyr_key,
-    lyr_title = "% Habitat",
-    con   = con,
+    lyr_title  = "% Habitat",
+    con        = con,
+    show_zones = T,
     ...){
 
   d_rng <- tbl(con, "lyrs") |>
@@ -140,10 +141,26 @@ oh_map_cog_lyr <- function(
     select(val_min, val_max) |>
     collect()
 
-  oh_map_cog(
+  m <- oh_map_cog(
     cog_file  = glue("{lyr_key}.tif"),
     cog_range = c(d_rng$val_min, d_rng$val_max),
     title     = lyr_title, ...)
+
+  if (show_zones){
+    f_zns <- oh_zones_s1k |>
+      filter(zone_version == 1)
+
+    m <- m |>
+      addPolygons(
+        data        = f_zns,
+        color       = "black",
+        weight      = 1,
+        opacity     = 1,
+        fillOpacity = 0,
+        label       = ~zone_name)
+  }
+ m
+
 }
 
 #' Map Cloud-Optimize TIFF OffHab Species
