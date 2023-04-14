@@ -4,7 +4,13 @@
 \alias{oh_map_cog_lyr}
 \title{Map Cloud-Optimize TIFF OffHab layer}
 \usage{
-oh_map_cog_lyr(lyr_key, lyr_title = "\% Habitat", con = con, ...)
+oh_map_cog_lyr(
+  lyr_key,
+  lyr_title = "\% Habitat",
+  con = con,
+  show_zones = T,
+  ...
+)
 }
 \arguments{
 \item{...}{}
