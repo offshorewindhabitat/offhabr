@@ -13,7 +13,16 @@ oh_map_cog_lyr(
 )
 }
 \arguments{
-\item{...}{}
+\item{lyr_key}{layer key (in form of \verb{\{dataset_key\}_\{aphia_id\}})}
+
+\item{lyr_title}{layer title}
+
+\item{con}{database connection}
+
+\item{...}{parameters passed onto \code{oh_map_cog()}}
+}
+\value{
+\code{leaflet::leaflet()} object
 }
 \description{
 Use offhabr \code{lyr_key} to pull range from database and render map with \code{oh_map_cog()}

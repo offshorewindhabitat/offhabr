@@ -11,6 +11,9 @@ get_colors(x, v_colors = oh_colors)
 
 \item{v_colors}{vector of named characters with colors; defaults to \code{oh_colors}}
 }
+\value{
+hexadecimal colors
+}
 \description{
 typically used with \code{leaflet::addPolygons()}
 }

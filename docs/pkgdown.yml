@@ -1,8 +1,8 @@
 pandoc: 2.19.2
-pkgdown: 2.0.6
+pkgdown: 2.0.7
 pkgdown_sha: ~
 articles: {}
-last_built: 2022-12-03T01:01Z
+last_built: 2023-04-18T20:38Z
 urls:
   reference: https://ecoquants.github.io/offhabr/reference
   article: https://ecoquants.github.io/offhabr/articles

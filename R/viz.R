@@ -119,16 +119,14 @@ oh_map_cog <- function(
 #'
 #' Use offhabr `lyr_key` to pull range from database and render map with `oh_map_cog()`
 #'
-#' @param lyr_key
-#' @param lyr_title
-#' @param con
-#' @param ...
+#' @param lyr_key layer key (in form of `{dataset_key}_{aphia_id}`)
+#' @param lyr_title layer title
+#' @param con database connection
+#' @param ... parameters passed onto `oh_map_cog()`
 #'
-#' @return
-#' @export
+#' @return `leaflet::leaflet()` object
 #' @concept viz
-#'
-#' @examples
+#' @import leaflet
 oh_map_cog_lyr <- function(
     lyr_key,
     lyr_title  = "% Habitat",
@@ -167,16 +165,14 @@ oh_map_cog_lyr <- function(
 #'
 #' Use offhabr `aphia_id` to pull range from database and render map with `oh_map_cog()`
 #'
-#' @param aphia_id
-#' @param lyr_title
-#' @param con
-#' @param ...
+#' @param aphia_id unique taxonomic identifier from [MarineSpecies.org](https://www.marinespecies.org/about.php#what_is_aphia)
+#' @param lyr_title layer title
+#' @param con database connection
+#' @param ... other parameters to `oh_map_cog()`
 #'
-#' @return
+#' @return htmlwidget map as `leaflet::leaflet()`
 #' @export
 #' @concept viz
-#'
-#' @examples
 oh_map_cog_sp <- function(
     aphia_id,
     lyr_title = "% Habitat",
@@ -207,11 +203,11 @@ oh_map_cog_sp <- function(
 #' @param zonal_blocks_csv path to zonal average values of blocks
 #'
 #' @return htmlwidget map as `leaflet::leaflet()` with `attr("zone_name")`
-#' @import dplyr glue htmltools leaflet readr terra
+#' @import dplyr htmltools leaflet readr
+#' @importFrom terra rast mask trim global
+#' @importFrom glue glue
 #' @export
 #' @concept viz
-#'
-#' @examples
 oh_map_zone_score_dev <- function(
     zone_key,
     stk_web_tif      = "~/My Drive/projects/offhab/data/derived/stack_web.tif",
@@ -420,11 +416,9 @@ oh_add_ply <- function(
 #' @param x character vector of names
 #' @param v_colors vector of named characters with colors; defaults to `oh_colors`
 #'
-#' @return
+#' @return hexadecimal colors
 #' @export
 #' @concept viz
-#'
-#' @examples
 get_colors <- function(x, v_colors = oh_colors){
   v_colors[x] |>
     unname()

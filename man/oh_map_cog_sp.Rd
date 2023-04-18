@@ -7,7 +7,16 @@
 oh_map_cog_sp(aphia_id, lyr_title = "\% Habitat", con = con, ...)
 }
 \arguments{
-\item{...}{}
+\item{aphia_id}{unique taxonomic identifier from \href{https://www.marinespecies.org/about.php#what_is_aphia}{MarineSpecies.org}}
+
+\item{lyr_title}{layer title}
+
+\item{con}{database connection}
+
+\item{...}{other parameters to \code{oh_map_cog()}}
+}
+\value{
+htmlwidget map as \code{leaflet::leaflet()}
 }
 \description{
 Use offhabr \code{aphia_id} to pull range from database and render map with \code{oh_map_cog()}

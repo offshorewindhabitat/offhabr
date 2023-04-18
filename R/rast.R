@@ -10,8 +10,6 @@
 #' @importFrom dplyr pull
 #' @export
 #' @concept rast
-#'
-#' @examples
 drop_na_lyrs <- function(x){
   d_i <- terra::global(x, fun="min", na.rm=T)
   i <- d_i %>%
@@ -160,8 +158,6 @@ oh_rast <- function(
 #' @importFrom glue glue
 #' @export
 #' @concept rast
-#'
-#' @examples
 write_rast <- function(
     r,
     tif,
