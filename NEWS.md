@@ -1,3 +1,7 @@
+# offhabr 0.12.1
+
+- more package cleanup for shinyapps.io install
+
 # offhabr 0.12.0
 
 - Fixed all warnings with package loading and moved packages to Suggests for loading [offhab-scripts: sp_map/](https://github.com/ecoquants/offhab-scripts/tree/cbce3bd670d49deb571202d617bd64acd09620d6/sp_map) Shiny app into [ShinyApps.io](https://ShinyApps.io).
