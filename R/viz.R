@@ -6,6 +6,7 @@
 #'
 #' @return a `leaflet::leaflet()` map
 #' @import leaflet
+#' @importFrom leaflet.extras addFullscreenControl
 #' @export
 #' @concept viz
 #'
@@ -63,6 +64,7 @@ oh_map <- function(base_opacity = 0.5){
 #'
 #' @return a `leaflet::leaflet()` map
 #' @import leaflet
+#' @importFrom leaflet.extras addFullscreenControl
 #' @export
 #' @concept viz
 #'
@@ -207,6 +209,7 @@ oh_map_cog_sp <- function(
 #' @importFrom terra rast mask trim global
 #' @importFrom glue glue
 #' @importFrom readr read_csv
+#' @importFrom leaflet.extras addFullscreenControl
 #' @export
 #' @concept viz
 oh_map_zone_score_dev <- function(
