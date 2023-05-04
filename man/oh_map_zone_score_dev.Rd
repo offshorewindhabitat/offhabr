@@ -7,7 +7,7 @@
 oh_map_zone_score_dev(
   zone_key,
   stk_web_tif = "~/My Drive/projects/offhab/data/derived/stack_web.tif",
-  zonal_blocks_csv = "~/Github/ecoquants/offhab-scripts/data/zonal_blocks.csv"
+  zonal_blocks_csv = "~/Github/offshorewindhabitat/scripts/data/zonal_blocks.csv"
 )
 }
 \arguments{

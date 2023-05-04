@@ -1,3 +1,9 @@
+# offhabr 0.13.0
+
+- Added reporting functions (with concept report and new reference header) `oh_tbl_zone_score_dev()`, `dt_color_fld()`, `link_caption()` for use in generating table outputs in [report source](https://github.com/offshorewindhabitat/report).
+
+- Modified `oh_map()` with additional arguments (defaulting to TRUE|FALSE according to `knitr::is_html_output()`) for zoomControl, attributionControl and fullScreenControl in case of screenshot captures into static report.docx.
+
 # offhabr 0.12.1
 
 - more package cleanup for shinyapps.io install

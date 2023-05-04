@@ -36,7 +36,11 @@ reference:
   desc: available datasets
   contents:
   - has_concept("data")
+- title: "Report"
+  desc: utility functions for generating reports in various formats (html, docx, pdf)
+  contents:
+  - has_concept("report")
 - title: "Other"
   desc: check for other functions or datasets not captured by above categories
   contents:
-  - lacks_concepts(c("aquamaps", "worms", "viz", "db", "rast", "gcs", "data"))
+  - lacks_concepts(c("aquamaps", "worms", "viz", "db", "rast", "gcs", "data", "report"))
