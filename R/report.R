@@ -75,6 +75,7 @@ dt_color_fld <- function(dt, fld_data, fld_style = glue::glue("{fld_data}_clr"),
 #' (if `knitr::is_html_output() == TRUE`), or a static table of type `gt:gt()`
 #' for Word docx output
 #' @export
+#' @concept report
 #' @importFrom knitr is_html_output
 #' @import DT
 #' @import gt

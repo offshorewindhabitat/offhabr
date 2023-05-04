@@ -18,3 +18,4 @@ for Word docx output
 \description{
 Tabulate Blocks with Score as deviation from average in zone
 }
+\concept{report}
