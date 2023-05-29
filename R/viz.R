@@ -3,9 +3,17 @@
 #' Make an interactive map with basemap
 #'
 #' @param base_opacity the opacity of the basemap; default is 0.5
+#' @param zoomControl boolean (TRUE or FALSE) for `leaflet::leafletOptions()`
+#'   on whether to include zoom; default: `TRUE`
+#' @param attributionControl boolean (TRUE or FALSE) for `leaflet::leafletOptions()`
+#'   on whether to include attribution; default: `TRUE`
+#' @param fullScreenControl boolean (TRUE or FALSE) on whether to include
+#'   `leaflet.extras::addFullscreenControl()`; default: `TRUE`
+#' @param verbose boolean (TRUE or FALSE) on whether to show debug information; default: `FALSE`
 #'
 #' @return a `leaflet::leaflet()` map
 #' @import leaflet
+#' @importFrom leaflet.extras addFullscreenControl
 #' @export
 #' @concept viz
 #'
@@ -21,9 +29,20 @@
 #'   str_val = "area (km^2)",
 #'   str_id  = "Zone",
 #'   div_mid = mean(oh_zones$area_km2))
-oh_map <- function(base_opacity = 0.5){
+oh_map <- function(
+    base_opacity       = 0.5,
+    zoomControl        = knitr::is_html_output(),
+    attributionControl = knitr::is_html_output(),
+    fullScreenControl  = knitr::is_html_output(),
+    verbose = F){
 
-  leaflet::leaflet() %>%
+  if (verbose)
+    message(glue("oh_map() -- knitr::is_html_output(): {knitr::is_html_output()}; zoomControl: {zoomControl}"))
+
+  m <- leaflet::leaflet(
+    options = leafletOptions(
+      zoomControl        = zoomControl,
+      attributionControl = attributionControl)) |>
     # add base: blue bathymetry and light brown/green topography
     leaflet::addProviderTiles(
       "Esri.OceanBasemap",
@@ -35,8 +54,11 @@ oh_map <- function(base_opacity = 0.5){
       "Esri.OceanBasemap",
       options = providerTileOptions(
         variant = "Ocean/World_Ocean_Reference",
-        opacity = base_opacity)) |>
-    leaflet.extras::addFullscreenControl()
+        opacity = base_opacity))
+  if (fullScreenControl)
+    m <- m |>
+      leaflet.extras::addFullscreenControl()
+  m
 }
 
 #' Map Cloud-Optimized GeoTIFF
@@ -90,25 +112,12 @@ oh_map_cog <- function(
   tile_url  <- glue(
     "https://api.cogeo.xyz/cog/tiles/WebMercatorQuad/{{z}}/{{x}}/{{y}}@2x?url={cog_url}&{tile_opts}")
 
-  leaflet::leaflet() |>
-    # add base: blue bathymetry and light brown/green topography
-    leaflet::addProviderTiles(
-      "Esri.OceanBasemap",
-      options = providerTileOptions(
-        variant = "Ocean/World_Ocean_Base",
-        opacity = base_opacity)) |>
-    # add reference: placename labels and borders
-    leaflet::addProviderTiles(
-      "Esri.OceanBasemap",
-      options = providerTileOptions(
-        variant = "Ocean/World_Ocean_Reference",
-        opacity = base_opacity)) |>
+    oh_map() |>
     addTiles(
       urlTemplate=tile_url,
       options = tileOptions(
         opacity = cog_opacity)) |>
     fitBounds(bb[1], bb[2], bb[3], bb[4]) |>
-    leaflet.extras::addFullscreenControl() |>
   addLegend(
     pal    = colorNumeric(lgnd_palette, cog_range[1]:cog_range[2], reverse = lgnd_palette_r),
     values = c(cog_range[1], cog_range[2]),
@@ -119,16 +128,15 @@ oh_map_cog <- function(
 #'
 #' Use offhabr `lyr_key` to pull range from database and render map with `oh_map_cog()`
 #'
-#' @param lyr_key
-#' @param lyr_title
-#' @param con
-#' @param ...
+#' @param lyr_key layer key (in form of `{dataset_key}_{aphia_id}`)
+#' @param lyr_title layer title
+#' @param con database connection
+#' @param ... parameters passed onto `oh_map_cog()`
 #'
-#' @return
-#' @export
+#' @return `leaflet::leaflet()` object
 #' @concept viz
-#'
-#' @examples
+#' @import leaflet
+#' @export
 oh_map_cog_lyr <- function(
     lyr_key,
     lyr_title  = "% Habitat",
@@ -167,21 +175,21 @@ oh_map_cog_lyr <- function(
 #'
 #' Use offhabr `aphia_id` to pull range from database and render map with `oh_map_cog()`
 #'
-#' @param aphia_id
-#' @param lyr_title
-#' @param con
-#' @param ...
+#' @param aphia_id unique taxonomic identifier from [MarineSpecies.org](https://www.marinespecies.org/about.php#what_is_aphia)
+#' @param lyr_title layer title
+#' @param con database connection
+#' @param ... other parameters to `oh_map_cog()`
 #'
-#' @return
+#' @return htmlwidget map as `leaflet::leaflet()`
 #' @export
 #' @concept viz
-#'
-#' @examples
 oh_map_cog_sp <- function(
     aphia_id,
     lyr_title = "% Habitat",
     con   = con,
     ...){
+
+  # aphia_id = 282884
 
   d_lyr <- tbl(con, "lyrs") |>
     filter(
@@ -205,16 +213,25 @@ oh_map_cog_sp <- function(
 #' @param zonal_blocks_csv path to zonal average values of blocks
 #'
 #' @return htmlwidget map as `leaflet::leaflet()` with `attr("zone_name")`
-#' @import dplyr glue htmltools leaflet readr terra
+#' @import dplyr htmltools leaflet readr
+#' @importFrom terra rast mask trim global
+#' @importFrom glue glue
+#' @importFrom readr read_csv
+#' @importFrom sf st_drop_geometry
 #' @export
 #' @concept viz
-#'
-#' @examples
 oh_map_zone_score_dev <- function(
     zone_key,
     stk_web_tif      = "~/My Drive/projects/offhab/data/derived/stack_web.tif",
-    zonal_blocks_csv = "~/Github/ecoquants/offhab-scripts/data/zonal_blocks.csv"){
-  # map zone's deviation from score avg for raster and blocks
+    zonal_blocks_csv = "~/Github/offshorewindhabitat/scripts/data/zonal_blocks.csv"){
+
+  # zone_key <- "wao"
+  # stk_web_tif <- "/Users/bbest/Library/CloudStorage/GoogleDrive-ben@ecoquants.com/.shortcut-targets-by-id/1sdT2ZZLmkgP0Zl8f1Yg0vOsVJR3Pms3Z/offhab/data/derived/stack_web.tif"
+  # zonal_blocks_csv = "~/Github/offshorewindhabitat/scripts/data/zonal_blocks.csv"
+  # devtools::load_all()
+
+  stopifnot(file.exists(stk_web_tif))
+  stopifnot(file.exists(zonal_blocks_csv))
 
   # raster stack with zones and scores
   stk_web <- terra::rast(stk_web_tif)
@@ -250,7 +267,7 @@ oh_map_zone_score_dev <- function(
       score_v1_web_zn = (score_v1_web - score_z_avg) / score_z_sd)
 
   # setup color ramp
-  score_zn_vals <- values(r_score_zn, na.rm=T)
+  score_zn_vals <- terra::values(r_score_zn, na.rm=T)
   score_zn_rng  <- range(score_zn_vals)
   pal <- leaflet::colorNumeric(
     "Spectral", score_zn_rng, na.color = "transparent", reverse = T)
@@ -259,28 +276,15 @@ oh_map_zone_score_dev <- function(
   popups <- with(
     ply_blocks_z, glue::glue(
       "BOEM Block: <b>{protraction_number} {block_number}</b><br>
-     BOAM Plan: <b>{plan_additional_information}</b><br>
-     area_km<sup>2</sup>: <code>{round(area_km2, 2)}</code><br>
-     score: <b><code>{round(score_v1_web,1)}</code></b><br>
-     sd from zone avg score: <b><code>{round(score_v1_web_zn, 2)}</code></b>"))
+       BOEM Plan: <b>{plan_additional_information}</b><br>
+       Area_km<sup>2</sup>: <code>{round(area_km2, 2)}</code><br>
+       Score: <b><code>{round(score_v1_web,1)}</code></b><br>
+       Standard deviation from Zone average Score: <b><code>{round(score_v1_web_zn, 2)}</code></b>"))
   labels <- popups |> lapply(htmltools::HTML)
 
-
-  m <- leaflet::leaflet() |>
-    # add base: blue bathymetry and light brown/green topography
-    leaflet::addProviderTiles(
-      "Esri.OceanBasemap",
-      options = leaflet::providerTileOptions(
-        variant = "Ocean/World_Ocean_Base",
-        opacity = 0.5)) |>
-    # add reference: placename labels and borders
-    leaflet::addProviderTiles(
-      "Esri.OceanBasemap",
-      options = leaflet::providerTileOptions(
-        variant = "Ocean/World_Ocean_Reference",
-        opacity = 0.5)) |>
+  m <- oh_map() |>
     leaflet::addRasterImage(
-      r_score_zn,
+      raster::raster(r_score_zn), project = F,
       colors = pal, opacity = 0.7) |>
     leaflet::addLegend(
       pal = pal, values = score_zn_vals,
@@ -295,8 +299,7 @@ oh_map_zone_score_dev <- function(
       opacity     = 0.9,
       weight      = 0.5,
       popup       = popups,
-      label       = labels) |>
-    leaflet.extras::addFullscreenControl()
+      label       = labels)
 
   # set zone_name for populating header as attribute of output map
   zone_name <- oh_zones_s1k |>
@@ -305,6 +308,20 @@ oh_map_zone_score_dev <- function(
       zone_key == !!zone_key) |>
     dplyr::pull(zone_name)
   attr(m, "zone_name") <- zone_name
+  attr(m, "zone_key") <- zone_key
+
+  # attribute table for reporting
+  attr(m, "block_data") <- ply_blocks_z |>
+    sf::st_drop_geometry() |>
+    mutate(
+      plan           = plan_additional_information,
+      block          = glue::glue("{protraction_number} {block_number}"),
+      score          = score_v1_web,
+      score_clr      = "",
+      score_pct_rank = dplyr::percent_rank(score_v1_web_zn),
+      score_zone_sd  = score_v1_web_zn) |>
+    select(plan, block, score, score_clr, score_pct_rank, score_zone_sd) |>
+    arrange(score)
 
   m
 }
@@ -418,11 +435,9 @@ oh_add_ply <- function(
 #' @param x character vector of names
 #' @param v_colors vector of named characters with colors; defaults to `oh_colors`
 #'
-#' @return
+#' @return hexadecimal colors
 #' @export
 #' @concept viz
-#'
-#' @examples
 get_colors <- function(x, v_colors = oh_colors){
   v_colors[x] |>
     unname()

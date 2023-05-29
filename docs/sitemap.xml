@@ -37,6 +37,15 @@
     <loc>https://ecoquants.github.io/offhabr/reference/create_index.html</loc>
   </url>
   <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/drop_na_lyrs.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/dt_color_fld.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/gcs_to_gee.html</loc>
+  </url>
+  <url>
     <loc>https://ecoquants.github.io/offhabr/reference/get_am_cell_blocks_grd.html</loc>
   </url>
   <url>
@@ -46,25 +55,61 @@
     <loc>https://ecoquants.github.io/offhabr/reference/get_am_cells_grd.html</loc>
   </url>
   <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/get_colors.html</loc>
+  </url>
+  <url>
     <loc>https://ecoquants.github.io/offhabr/reference/hello.html</loc>
   </url>
   <url>
     <loc>https://ecoquants.github.io/offhabr/reference/index.html</loc>
   </url>
   <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/link_caption.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/oa_regions.html</loc>
+  </url>
+  <url>
     <loc>https://ecoquants.github.io/offhabr/reference/oh_add_ply.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/oh_blocks.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/oh_colors.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/oh_con.html</loc>
   </url>
   <url>
     <loc>https://ecoquants.github.io/offhabr/reference/oh_map.html</loc>
   </url>
   <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/oh_map_cog.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/oh_map_cog_lyr.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/oh_map_cog_sp.html</loc>
+  </url>
+  <url>
     <loc>https://ecoquants.github.io/offhabr/reference/oh_map_ply.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/oh_map_zone_score_dev.html</loc>
   </url>
   <url>
     <loc>https://ecoquants.github.io/offhabr/reference/oh_pg_con.html</loc>
   </url>
   <url>
     <loc>https://ecoquants.github.io/offhabr/reference/oh_rast.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/oh_study_v1.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/oh_tbl_zone_score_dev.html</loc>
   </url>
   <url>
     <loc>https://ecoquants.github.io/offhabr/reference/oh_zones.html</loc>
@@ -76,6 +121,9 @@
     <loc>https://ecoquants.github.io/offhabr/reference/rl_pg_con.html</loc>
   </url>
   <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/upload_to_gcs.html</loc>
+  </url>
+  <url>
     <loc>https://ecoquants.github.io/offhabr/reference/wm_add_aphia_id.html</loc>
   </url>
   <url>
@@ -83,5 +131,8 @@
   </url>
   <url>
     <loc>https://ecoquants.github.io/offhabr/reference/wm_rest_params.html</loc>
+  </url>
+  <url>
+    <loc>https://ecoquants.github.io/offhabr/reference/write_rast.html</loc>
   </url>
 </urlset>

@@ -6,12 +6,9 @@
 #' @param gcs_auth_json JSON for authorizing
 #' @param gcs_bucket bucket (i.e. folder) to upload into on Google Cloud Storage
 #'
-#' @return
+#' @return empty, only side effect
 #' @export
-#' @import googleCloudStorageR
 #' @concept gcs
-#'
-#' @examples
 upload_to_gcs <- function(
     file, name =  basename(file), make_public = T,
     gcs_auth_json = "/Users/bbest/My Drive/private/offhab-google-service-account_09e7228ac965.json",
@@ -24,7 +21,7 @@ upload_to_gcs <- function(
   Sys.setenv(
     "GCS_DEFAULT_BUCKET" = gcs_bucket,
     "GCS_AUTH_FILE"      = gcs_auth_json)
-  library(googleCloudStorageR)
+  # librarian::shelf(googleCloudStorageR)
 
   # upload
   m <- googleCloudStorageR::gcs_upload(
@@ -51,8 +48,6 @@ upload_to_gcs <- function(
 #' @return string of `{gee_asset}/{gee_name}` to reference image in GEE
 #' @export
 #' @concept gcs
-#'
-#' @examples
 gcs_to_gee <- function(
     gcs_name,
     gee_name          = fs::path_ext_remove(gcs_name),

@@ -4,10 +4,27 @@
 \alias{oh_map}
 \title{Setup interactive map with OffHab defaults}
 \usage{
-oh_map(base_opacity = 0.5)
+oh_map(
+  base_opacity = 0.5,
+  zoomControl = knitr::is_html_output(),
+  attributionControl = knitr::is_html_output(),
+  fullScreenControl = knitr::is_html_output(),
+  verbose = F
+)
 }
 \arguments{
 \item{base_opacity}{the opacity of the basemap; default is 0.5}
+
+\item{zoomControl}{boolean (TRUE or FALSE) for \code{leaflet::leafletOptions()}
+on whether to include zoom; default: \code{TRUE}}
+
+\item{attributionControl}{boolean (TRUE or FALSE) for \code{leaflet::leafletOptions()}
+on whether to include attribution; default: \code{TRUE}}
+
+\item{fullScreenControl}{boolean (TRUE or FALSE) on whether to include
+\code{leaflet.extras::addFullscreenControl()}; default: \code{TRUE}}
+
+\item{verbose}{boolean (TRUE or FALSE) on whether to show debug information; default: \code{FALSE}}
 }
 \value{
 a \code{leaflet::leaflet()} map

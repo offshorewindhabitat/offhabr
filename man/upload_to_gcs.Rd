@@ -24,6 +24,9 @@ upload_to_gcs(
 
 \item{gcs_bucket}{bucket (i.e. folder) to upload into on Google Cloud Storage}
 }
+\value{
+empty, only side effect
+}
 \description{
 Upload to Google Cloud Storage
 }

@@ -10,8 +10,6 @@
 #' @importFrom dplyr pull
 #' @export
 #' @concept rast
-#'
-#' @examples
 drop_na_lyrs <- function(x){
   d_i <- terra::global(x, fun="min", na.rm=T)
   i <- d_i %>%
@@ -160,8 +158,6 @@ oh_rast <- function(
 #' @importFrom glue glue
 #' @export
 #' @concept rast
-#'
-#' @examples
 write_rast <- function(
     r,
     tif,
@@ -204,8 +200,8 @@ write_rast <- function(
       r <- rast(r)
 
     rng <- range(values(r, na.rm=T))
-    rng_is_integer  <- all(rng_lyr %% 1 == 0)
-    rng_is_positive <- min(rng_lyr) >= 0
+    rng_is_integer  <- all(rng %% 1 == 0)
+    rng_is_positive <- min(rng) >= 0
 
     datatype <- dplyr::case_when(
       rng_is_integer &  rng_is_positive & max(rng) <=        255 ~ "INT1U",
@@ -215,7 +211,7 @@ write_rast <- function(
       rng_is_integer & !rng_is_positive & max(rng) <=      32767 & min(rng) <=      -32767 ~ "INT2S",
       rng_is_integer & !rng_is_positive & max(rng) <= 2147483647 & min(rng) <= -2147483647 ~ "INT4S",
       TRUE ~ "FLT4S")
-    message(glue("  datatype: {datatype}"))
+    message(glue::glue("  datatype: {datatype}"))
   }
 
   if (!datatype %in% names(terra2rio_dtypes))

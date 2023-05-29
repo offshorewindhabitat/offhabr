@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">offhabr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.0</span>
       </span>
     </div>
 
@@ -48,29 +48,58 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="0.13.0" id="offhabr-0130">offhabr 0.13.0<a class="anchor" aria-label="anchor" href="#offhabr-0130"></a></h2>
+<ul><li><p>Added reporting functions (with concept report and new reference header) <code><a href="../reference/oh_tbl_zone_score_dev.html">oh_tbl_zone_score_dev()</a></code>, <code><a href="../reference/dt_color_fld.html">dt_color_fld()</a></code>, <code><a href="../reference/link_caption.html">link_caption()</a></code> for use in generating table outputs in <a href="https://github.com/offshorewindhabitat/report" class="external-link">report source</a>.</p></li>
+<li><p>Modified <code><a href="../reference/oh_map.html">oh_map()</a></code> with additional arguments (defaulting to TRUE|FALSE according to <code><a href="https://rdrr.io/pkg/knitr/man/output_type.html" class="external-link">knitr::is_html_output()</a></code>) for zoomControl, attributionControl and fullScreenControl in case of screenshot captures into static report.docx.</p></li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.12.1" id="offhabr-0121">offhabr 0.12.1<a class="anchor" aria-label="anchor" href="#offhabr-0121"></a></h2>
+<ul><li>more package cleanup for shinyapps.io install</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.12.0" id="offhabr-0120">offhabr 0.12.0<a class="anchor" aria-label="anchor" href="#offhabr-0120"></a></h2>
+<ul><li>Fixed all warnings with package loading and moved packages to Suggests for loading <a href="https://github.com/ecoquants/offhab-scripts/tree/cbce3bd670d49deb571202d617bd64acd09620d6/sp_map" class="external-link">offhab-scripts: sp_map/</a> Shiny app into <a href="https://ShinyApps.io" class="external-link">ShinyApps.io</a>.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.11.0" id="offhabr-0110">offhabr 0.11.0<a class="anchor" aria-label="anchor" href="#offhabr-0110"></a></h2>
+<ul><li>Intersected <code>oh_zones</code> with <code>oa_rgns</code> to further differentiate portions of zones with and without bottom trawl models.</li>
+<li>Updated <code>oh_zones</code> to having two <code>zone_version</code> values for with (<code>2</code>) and without (<code>1</code>) OceanAdapt regions for using and skipping bottom trawl data.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.10.0" id="offhabr-0100">offhabr 0.10.0<a class="anchor" aria-label="anchor" href="#offhabr-0100"></a></h2>
+<ul><li><p>Added <code>oa_regions</code> (<a href="https://www.fisheries.noaa.gov/inport/item/67352" class="external-link">Ocean Adapt regions</a>) to map limits of interpolated bottom trawl model results.</p></li>
+<li>
+<p>Renamed:</p>
+<ul><li>data: <code>boem_blocks</code> -&gt; <code>oh_blocks</code>
+</li>
+<li>table: <code>boem_blocks</code> -&gt; <code>blocks</code>
+</li>
+</ul></li>
+</ul></div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="0.9.0" id="offhabr-090">offhabr 0.9.0<a class="anchor" aria-label="anchor" href="#offhabr-090"></a></h2>
-<ul><li><p>Added <strong>hydrothermal vents</strong> (<a href="https://doi.pangaea.de/10.1594/PANGAEA.917894" class="external-link">InterRidge Global Database of Active Submarine Hydrothermal Vent Fields Version 3.4</a>) with <code>data-raw/ve_models.R</code>, which for US are only in Northern California (n=3) and Washington/Oregon (n=4) with a 12 km radius zone of influence based on splitting the difference between studies showing biogeographic influence out to 100 km^2 (Haymon et al., 1990) and 200 km^2 (Van Dover et al., 2002) [<code>round(sqrt(mean(c(200,100)))) = 12</code>].</p></li>
-<li><p>Added <strong>seamounts</strong> (<a href="http://www.soest.hawaii.edu/PT/SMTS" class="external-link">Global Seamount Database</a>) with <code>data-raw/sm_models.R</code>, which for US are in Central California (n=3), North Atlantic (n=4), Northern California (n=4), Southern California (n=14), and Washington/Oregon (n=18). Created circles of influence based on area (calculated from major and minor axes of ellipse). All summit depths were greater than 800 m, the third class of biogeographic distinction (Clark et al, 2011).</p></li>
-<li><p>Added <strong>productivity</strong> (<a href="http://sites.science.oregonstate.edu/ocean.productivity" class="external-link">Ocean Productivity from Oregon State</a>) with <code>data-raw/vg-model.R</code> for the entire US OffHab study area. Averaged the 12 monthly products using the Vertically Generalized Production Model (VGPM) algorithm (Behrenfeld &amp; Falkowski, 1997a).</p></li>
-<li><p>Fixed missing data from earlier ingestion of <strong>bottom trawl</strong> (<code>data-raw/oa_models.R</code>) when cell_id was not saving raster in format, creating duplicates.</p></li>
+<ul><li><p>Added <strong>hydrothermal vents</strong> (<a href="https://doi.pangaea.de/10.1594/PANGAEA.917894" class="external-link">InterRidge Global Database of Active Submarine Hydrothermal Vent Fields Version 3.4</a>) with <code>data-raw/mdls_ve.R</code>, which for US are only in Northern California (n=3) and Washington/Oregon (n=4) with a 12 km radius zone of influence based on splitting the difference between studies showing biogeographic influence out to 100 km^2 (Haymon et al., 1990) and 200 km^2 (Van Dover et al., 2002) [<code>round(sqrt(mean(c(200,100)))) = 12</code>].</p></li>
+<li><p>Added <strong>seamounts</strong> (<a href="http://www.soest.hawaii.edu/PT/SMTS" class="external-link">Global Seamount Database</a>) with <code>data-raw/mdls_sm.R</code>, which for US are in Central California (n=3), North Atlantic (n=4), Northern California (n=4), Southern California (n=14), and Washington/Oregon (n=18). Created circles of influence based on area (calculated from major and minor axes of ellipse). All summit depths were greater than 800 m, the third class of biogeographic distinction (Clark et al, 2011).</p></li>
+<li><p>Added <strong>productivity</strong> (<a href="http://sites.science.oregonstate.edu/ocean.productivity" class="external-link">Ocean Productivity from Oregon State</a>) with <code>data-raw/mdls_vg.R</code> for the entire US OffHab study area. Averaged the 12 monthly products using the Vertically Generalized Production Model (VGPM) algorithm (Behrenfeld &amp; Falkowski, 1997a).</p></li>
+<li><p>Fixed missing data from earlier ingestion of <strong>bottom trawl</strong> (<code>data-raw/mdls_oa.R</code>) when cell_id was not saving raster in format, creating duplicates.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.8.0" id="offhabr-080">offhabr 0.8.0<a class="anchor" aria-label="anchor" href="#offhabr-080"></a></h2>
-<ul><li>Ported original <a href="https://github.com/ecoquants/offhab-scripts/blob/cd6b2e4ff667cd81d3399b2e9538dcf5494ac9c3/interpolate_bottom-trawl.Rmd?h=1" class="external-link">offhab-scripts: interpolate_bottom-trawl.Rmd</a> into <code>data-raw/oa_models.R</code> with <code>multidplyr</code> parallel processing to speed up raster generation of interpolated biomass survey points. These are the <strong>bottom trawl</strong> models from <a href="https://oceanadapt.rutgers.edu" class="external-link">OceanAdapt</a> that have been ported to <a href="https://apps-st.fisheries.noaa.gov/dismap/DisMAP.html" class="external-link">NOAA Distribution Mapping and Analysis Portal (DisMAP)</a>.</li>
+<ul><li>Ported original <a href="https://github.com/ecoquants/offhab-scripts/blob/cd6b2e4ff667cd81d3399b2e9538dcf5494ac9c3/interpolate_bottom-trawl.Rmd?h=1" class="external-link">offhab-scripts: interpolate_bottom-trawl.Rmd</a> into <code>data-raw/mdls_oa.R</code> with <code>multidplyr</code> parallel processing to speed up raster generation of interpolated biomass survey points. These are the <strong>bottom trawl</strong> models from <a href="https://oceanadapt.rutgers.edu" class="external-link">OceanAdapt</a> that have been ported to <a href="https://apps-st.fisheries.noaa.gov/dismap/DisMAP.html" class="external-link">NOAA Distribution Mapping and Analysis Portal (DisMAP)</a>.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.7.1" id="offhabr-071">offhabr 0.7.1<a class="anchor" aria-label="anchor" href="#offhabr-071"></a></h2>
-<ul><li>Loaded <a href="https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.nodc:256800" class="external-link"><strong>cetacean and sea turtle</strong> spatial density model outputs … in the Gulf of Mexico</a> into database with <code>data-raw/gm_models.R</code>
+<ul><li>Loaded <a href="https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.nodc:256800" class="external-link"><strong>cetacean and sea turtle</strong> spatial density model outputs … in the Gulf of Mexico</a> into database with <code>data-raw/mdls_gm.R</code>
 </li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.7.0" id="offhabr-070">offhabr 0.7.0<a class="anchor" aria-label="anchor" href="#offhabr-070"></a></h2>
 <ul><li><p>Added searching for non-marine taxa with <code><a href="../reference/wm_add_aphia_id.html">wm_add_aphia_id()</a></code> and allowance for extra query parameters with <code><a href="../reference/wm_rest.html">wm_rest()</a></code>, e.g. <code>wm_rest(tbl, fld, operation = "AphiaRecordsByNames", marine_only = F)</code></p></li>
-<li><p>Added <strong>seabird</strong> “NCCOS Assessments Modeling At-Sea Density of Marine Birds” for <a href="https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.nodc:0176682" class="external-link">Atlantic</a> and <a href="https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.nodc:0242882" class="external-link">Pacific</a> with <code>data-raw/nc_density.R</code></p></li>
+<li><p>Added <strong>seabird</strong> “NCCOS Assessments Modeling At-Sea Density of Marine Birds” for <a href="https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.nodc:0176682" class="external-link">Atlantic</a> and <a href="https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.nodc:0242882" class="external-link">Pacific</a> with <code>data-raw/mdls_nc.R</code></p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.6.1" id="offhabr-061">offhabr 0.6.1<a class="anchor" aria-label="anchor" href="#offhabr-061"></a></h2>
-<ul><li><p>Added <a href="https://seamap.env.duke.edu/models/Duke/EC/" class="external-link">Habitat-based <strong>Marine Mammal</strong> Density Models for the U.S. Atlantic: Latest Versions</a> with <code>data-raw/du_density.R</code></p></li>
+<ul><li><p>Added <a href="https://seamap.env.duke.edu/models/Duke/EC/" class="external-link">Habitat-based <strong>Marine Mammal</strong> Density Models for the U.S. Atlantic: Latest Versions</a> with <code>data-raw/mdsl_du.R</code></p></li>
 <li><p>Added <code>operation="AphiaRecordsByVernacular"</code> option to <code><a href="../reference/wm_rest.html">wm_rest()</a></code> for searching common names.</p></li>
 </ul></div>
     <div class="section level2">
@@ -78,8 +107,8 @@
 <ul><li><p>Added <code><a href="../reference/oh_rast.html">oh_rast()</a></code> for fetching OffHab reference raster by <code>cell_id</code>, <code>zone_id</code> or all <code>NA</code> and optionally trimming to <code>zone_id</code></p></li>
 <li><p>Fixed <code><a href="../reference/wm_add_aphia_id.html">wm_add_aphia_id()</a></code> which wasn’t properly including fuzzy matches and updated <code>wm_rest_params</code> with practical values to fetch all data (versus theoretical maxima which bonked when URL of request got too long)</p></li>
 <li><p>Intersected AquaMaps with new OffHab reference raster in <code>data-raw/am_cells_ply.R</code></p></li>
-<li><p>Imported marine <a href="https://www.iucnredlist.org/resources/spatial-data-download" class="external-link">IUCN <strong>range</strong> maps</a> into the OffHab database with <code>data-raw/rl_range.R</code> using new <code><a href="../reference/rl_pg_con.html">rl_pg_con()</a></code> to import the full set of data before clipping to the OffHab zones into the OffHab database (<code><a href="../reference/oh_pg_con.html">oh_pg_con()</a></code>).</p></li>
-<li><p>Imported <a href="https://www.fisheries.noaa.gov/inport/item/64349" class="external-link">Predictive Models of <strong>Cetacean</strong> Densities in the California Current Ecosystem, 2020b | InPort</a> with <code>data-raw/sw_density.R</code></p></li>
+<li><p>Imported marine <a href="https://www.iucnredlist.org/resources/spatial-data-download" class="external-link">IUCN <strong>range</strong> maps</a> into the OffHab database with <code>data-raw/mdls_rl.R</code> using new <code><a href="../reference/rl_pg_con.html">rl_pg_con()</a></code> to import the full set of data before clipping to the OffHab zones into the OffHab database (<code><a href="../reference/oh_pg_con.html">oh_pg_con()</a></code>).</p></li>
+<li><p>Imported <a href="https://www.fisheries.noaa.gov/inport/item/64349" class="external-link">Predictive Models of <strong>Cetacean</strong> Densities in the California Current Ecosystem, 2020b | InPort</a> with <code>data-raw/mdsl_sw.R</code></p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.5.2" id="offhabr-052">offhabr 0.5.2<a class="anchor" aria-label="anchor" href="#offhabr-052"></a></h2>
@@ -92,7 +121,7 @@
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.5.0" id="offhabr-050">offhabr 0.5.0<a class="anchor" aria-label="anchor" href="#offhabr-050"></a></h2>
 <ul><li><p>Added <code><a href="../reference/wm_add_aphia_id.html">wm_add_aphia_id()</a></code> to match and prepend <code>aphia_id</code> from WoRMS REST services using new <code><a href="../reference/wm_rest.html">wm_rest()</a></code> helper function, which uses new dataset <code>wm_rest_params</code></p></li>
-<li><p>Added dataset <code>sw_density</code> table into db (see <code>data-raw/sw_density.R</code> on Github): <a href="https://www.fisheries.noaa.gov/inport/item/64349" class="external-link">Predictive Models of <strong>Cetacean</strong> Densities in the California Current Ecosystem, 2020b | InPort</a>.</p></li>
+<li><p>Added dataset <code>mdls_sw</code> table into db (see <code>data-raw/mdls_sw.R</code> on Github): <a href="https://www.fisheries.noaa.gov/inport/item/64349" class="external-link">Predictive Models of <strong>Cetacean</strong> Densities in the California Current Ecosystem, 2020b | InPort</a>.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.4.2" id="offhabr-042">offhabr 0.4.2<a class="anchor" aria-label="anchor" href="#offhabr-042"></a></h2>
@@ -137,7 +166,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

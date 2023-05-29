@@ -1,3 +1,17 @@
+# offhabr 0.13.0
+
+- Added reporting functions (with concept report and new Report reference header) `oh_tbl_zone_score_dev()`, `dt_color_fld()`, `link_caption()` for use in generating table outputs in [report source](https://github.com/offshorewindhabitat/report).
+
+- Modified `oh_map()` with additional arguments (defaulting to TRUE|FALSE according to `knitr::is_html_output()`) for zoomControl, attributionControl and fullScreenControl in case of screenshot captures into static report.docx.
+
+# offhabr 0.12.1
+
+- more package cleanup for shinyapps.io install
+
+# offhabr 0.12.0
+
+- Fixed all warnings with package loading and moved packages to Suggests for loading [offhab-scripts: sp_map/](https://github.com/ecoquants/offhab-scripts/tree/cbce3bd670d49deb571202d617bd64acd09620d6/sp_map) Shiny app into [ShinyApps.io](https://ShinyApps.io).
+
 # offhabr 0.11.0
 
 - Intersected `oh_zones` with `oa_rgns` to further differentiate portions of zones with and without bottom trawl models.

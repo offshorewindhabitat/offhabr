@@ -491,3 +491,9 @@ r[d$cell_id] <- d$elev
 r <- terra::trim(r)
 mapview(r, maxpixels=ncell(r))
 # plot(r)
+
+
+# simplify raster for size
+r_elev_m <- rast(here("data-raw/oh_elev_m.tif")) |>
+  as.int()
+offhabr::write_rast(r_elev_m, here("inst/oh_elev_m.tif"))

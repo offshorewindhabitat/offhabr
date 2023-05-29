@@ -7,9 +7,9 @@
 #'
 #' @return a `DBI::dbConnect()` object
 #' @import DBI
-#' @importFrom RSQLite SQLite
 #' @importFrom glue glue
 #' @importFrom fs path_ext
+#' @importFrom duckdb duckdb
 #' @export
 #' @concept db
 #'
@@ -45,7 +45,6 @@ oh_con <- function(
 #'
 #' @return a `DBI::dbConnect()` object
 #' @import DBI
-#' @importFrom RPostgres Postgres
 #' @export
 #' @concept db
 #'
