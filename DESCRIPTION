@@ -27,6 +27,7 @@ Imports:
     htmltools,
     httr2,
     leaflet,
+    leaflet.extras,
     purrr,
     readr,
     scales,
