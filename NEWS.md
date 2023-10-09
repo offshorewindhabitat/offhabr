@@ -1,3 +1,7 @@
+# offhabr 0.13.1
+
+- Fixed `oh_blocks` to contain latest BOEM wind _planning_ areas (2023-10-06), whereas previously mistakenly only included BOEM wind _lease_ areas (old: 2022-06-30; new: 2023-09-27) due to bug (incorrectly used `dplyr::bind_rows()` vs correct `sf::rbind()` to combine layers).
+
 # offhabr 0.13.0
 
 - Added reporting functions (with concept report and new Report reference header) `oh_tbl_zone_score_dev()`, `dt_color_fld()`, `link_caption()` for use in generating table outputs in [report source](https://github.com/offshorewindhabitat/report).

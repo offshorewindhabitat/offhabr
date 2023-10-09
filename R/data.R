@@ -72,37 +72,37 @@
 #' \describe{
 #'   \item{block_id}{unique block identifier (integer)}
 #'   \item{block_key}{unique block identifier (character), comprised of
-#'     v\{zone_version\}_\{zone_key\}_\{PROTRACTION_NUMBER\}_\{BLOCK_NUMBER\}}
+#'     v\{zone_version\}_\{zone_key\}_\{PROTRACTION_NUMBER\}_\{BLOCK_NUMBER\}_\{SUB_BLOCK\}}
 #'   \item{block_type}{one of either "lease" or "plan" depending on data source}
 #'   \item{zone_version}{zone version from `oh_zones` containing the block}
 #'   \item{zone_id}{zone id from `oh_zones` containing the block}
 #'   \item{zone_key}{unique zone from `oh_zones` containing the block}
-#'   \item{PROTRACTION_NUMBER}{the BOEM area defined by the roughly
+#'   \item{protraction_number}{the BOEM area defined by the roughly
 #'      2° longitude by 1° latitude containing up to 1,200 blocks.
 #'      Computed using the International UTM Zone Numbering system, e.g.
 #'      NJ is North (N); Lat 36-40° (J); 18 is UTM zone 18; and 02 is the 2nd of
 #'      12 possible maps}
-#'   \item{BLOCK_NUMBER}{Each whole block is approximately 3 nautical miles (nm)
+#'   \item{block_number}{Each whole block is approximately 3 nautical miles (nm)
 #'     by 3 nm. For renewable energy purposes only, blocks can be leased
 #'      down to the 16th of a block.}
-#'   \item{BLOCK_LABEL}{}
-#'   \item{SUB_BLOCK}{}
-#'   \item{lease_LEASE_NUMBER}{}
-#'   \item{lease_LEASE_TYPE}{}
-#'   \item{lease_RESOURCE}{}
-#'   \item{lease_COMPANY}{}
-#'   \item{lease_LEASE_DATE}{}
-#'   \item{lease_LEASE_TERM}{}
-#'   \item{lease_PROJECT_EASEMENT}{}
-#'   \item{lease_STATE}{}
-#'   \item{lease_PROTRACTION_NAME}{}
-#'   \item{lease_LEASE_DOCUMENT1}{}
-#'   \item{lease_LEASE_DOCUMENT2}{}
-#'   \item{plan_ADDITIONAL_INFORMATION}{}
-#'   \item{plan_CATEGORY1}{}
-#'   \item{plan_CATEGORY2}{}
-#'   \item{plan_URL1}{}
-#'   \item{plan_URL2}{}
+#'   \item{block_label}{}
+#'   \item{sub_block}{}
+#'   \item{lease_state}{}
+#'   \item{lease_type}{}
+#'   \item{lease_resource}{}
+#'   \item{lease_company}{}
+#'   \item{lease_term}{}
+#'   \item{lease_date}{}
+#'   \item{lease_number}{}
+#'   \item{lease_project_easement}{}
+#'   \item{lease_protraction_name}{}
+#'   \item{lease_document1}{}
+#'   \item{lease_document2}{}
+#'   \item{plan_additional_information}{}
+#'   \item{plan_url1}{}
+#'   \item{plan_url2}{}
+#'   \item{plan_primary_wpa_category}{}
+#'   \item{plan_secondary_wpa_category}{}
 #'   \item{area_km2}{area of zone in square kilometers}
 #'   \item{geom}{geometry in geographic coordinate system (EPSG: 4326)}
 #' }

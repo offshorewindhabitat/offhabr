@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">offhabr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.1</span>
       </span>
     </div>
 
@@ -48,8 +48,12 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="0.13.1" id="offhabr-0131">offhabr 0.13.1<a class="anchor" aria-label="anchor" href="#offhabr-0131"></a></h2>
+<ul><li>Fixed <code>oh_blocks</code> to contain latest BOEM wind <em>planning</em> areas (2023-10-06), whereas previously mistakenly only included BOEM wind <em>lease</em> areas (old: 2022-06-30; new: 2023-09-27) due to bug (incorrectly used <code><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">dplyr::bind_rows()</a></code> vs correct <code>sf::rbind()</code> to combine layers).</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="0.13.0" id="offhabr-0130">offhabr 0.13.0<a class="anchor" aria-label="anchor" href="#offhabr-0130"></a></h2>
-<ul><li><p>Added reporting functions (with concept report and new reference header) <code><a href="../reference/oh_tbl_zone_score_dev.html">oh_tbl_zone_score_dev()</a></code>, <code><a href="../reference/dt_color_fld.html">dt_color_fld()</a></code>, <code><a href="../reference/link_caption.html">link_caption()</a></code> for use in generating table outputs in <a href="https://github.com/offshorewindhabitat/report" class="external-link">report source</a>.</p></li>
+<ul><li><p>Added reporting functions (with concept report and new Report reference header) <code><a href="../reference/oh_tbl_zone_score_dev.html">oh_tbl_zone_score_dev()</a></code>, <code><a href="../reference/dt_color_fld.html">dt_color_fld()</a></code>, <code><a href="../reference/link_caption.html">link_caption()</a></code> for use in generating table outputs in <a href="https://github.com/offshorewindhabitat/report" class="external-link">report source</a>.</p></li>
 <li><p>Modified <code><a href="../reference/oh_map.html">oh_map()</a></code> with additional arguments (defaulting to TRUE|FALSE according to <code><a href="https://rdrr.io/pkg/knitr/man/output_type.html" class="external-link">knitr::is_html_output()</a></code>) for zoomControl, attributionControl and fullScreenControl in case of screenshot captures into static report.docx.</p></li>
 </ul></div>
     <div class="section level2">

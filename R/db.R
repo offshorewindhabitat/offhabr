@@ -54,8 +54,8 @@ oh_con <- function(
 #' DBI::dbListTables(con)
 #' }
 oh_pg_con <- function(autocommit=T){
-  # brew services start postgresql
-  # brew services stop postgresql
+  # brew services start postgresql@14
+  # brew services stop postgresql@14
 
   opts <- ifelse(autocommit, "", "-c synchronous_commit=off")
 
