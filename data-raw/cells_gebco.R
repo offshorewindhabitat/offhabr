@@ -141,6 +141,8 @@ r_b_v1 <- oh_blocks |>
   filter(zone_version == 1) |>
   rasterize(r_e, field = "block_id")
 names(r_b_v1) <- "block_id_v1"
+# plet(r_b_v1, tiles=leaflet::providers$CartoDB.DarkMatter)
+
 r_b_v2 <- oh_blocks |>
   filter(zone_version == 2) |>
   rasterize(r_e, field = "block_id")
@@ -159,32 +161,34 @@ r_b_v2_web <- oh_blocks |>
 names(r_b_v2_web) <- "block_id_v2_web"
 
 # check that all blocks are included in raster output, geographic ----
+# TODO: Doh! 418 oh_blocks$block_id's are missing in the raster v1
 stopifnot(
-  setdiff(
+  length(setdiff(
     oh_blocks |>
       filter(zone_version == 1) |>
       pull(block_id),
-    unique(values(r_b_v1))) == 0)
+    unique(values(r_b_v1)))) == 0)
 stopifnot(
-  setdiff(
+  length(setdiff(
     oh_blocks |>
       filter(zone_version == 2) |>
       pull(block_id),
-    unique(values(r_b_v2))) == 0)
+    unique(values(r_b_v2)))) == 0)
 
 # check that all blocks are included in raster output, web COG ----
+# TODO: Doh! 423 oh_blocks$block_id's are missing in the web raster v1
 stopifnot(
-  setdiff(
+  length(setdiff(
     oh_blocks |>
       filter(zone_version == 1) |>
       pull(block_id),
-    unique(values(r_b_v1_web))) == 0)
+    unique(values(r_b_v1_web)))) == 0)
 stopifnot(
-  setdiff(
+  length(setdiff(
     oh_blocks |>
       filter(zone_version == 2) |>
       pull(block_id),
-    unique(values(r_b_v2_web))) == 0)
+    unique(values(r_b_v2_web)))) == 0)
 
 # get counts of cells per block in geographic ----
 d_b1 <- tibble(
@@ -195,6 +199,7 @@ d_b1$n |> hist()
 summary(d_b1$n)
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
 # 3.00    8.00    9.00   36.22   12.00  164.00
+# 1.00    8.00    9.00   40.03   12.00 1763.00
 
 d_b2 <- tibble(
   block_id = values(r_b_v2, na.rm=T) |> as.integer()) |>
@@ -213,7 +218,7 @@ d_b1_web <- tibble(
 d_b1_web$n |> hist()
 summary(d_b1_web$n)
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-# 2.00    6.00    6.00   26.21    9.00  121.00
+# 1.00    6.00    6.00   30.42    9.00 1376.00
 
 d_b2_web <- tibble(
   block_id = values(r_b_v2_web, na.rm=T) |> as.integer()) |>
@@ -230,11 +235,13 @@ r_bilinear <- r_e %>%
     leaflet:::epsg3857,
     method = "bilinear")
 r_near <- rast(list(r_c, r_z_v1, r_z_v2, r_b_v1, r_b_v2)) %>%
+# r_near <- rast(list(r_c, r_b_v1)) %>%
   terra::project(
     leaflet:::epsg3857,
     method = "near")
 names(r_near)
 # "cell_id_gcs" "zone_id_v1"  "zone_id_v2"  "block_id_v1" "block_id_v2"
+# "cell_id_gcs" "block_id_v1"
 # plot(r_near["block_id_v1"])
 
 # check that all blocks are included in raster output, mercator ----
@@ -260,6 +267,8 @@ d_b1_m$n |> hist()
 summary(d_b1_m$n)
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
 # 4.00    9.00   12.00   42.35   16.00  222.00
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 1.0     9.0    12.0    49.1    16.0  2255.0
 
 d_b2_m <- tibble(
   block_id = values(r_near["block_id_v2"], na.rm=T) |> as.integer()) |>
@@ -382,11 +391,20 @@ r_z_v2_web %>%
     use_gdal_cog = T)
 file.copy(z_v2_web_tif, oh_zones_v2_web_tif, overwrite = T)
 
+
+# plet(r_b_v1_web, tiles=providers$CartoDB.DarkMatter)
+r_b_v1_web %>%
+  writeRaster(
+    b_v1_web_tif, overwrite = T,
+    datatype = "INT2U")
+file.copy(b_v1_web_tif, oh_blocks_v1_web_tif, overwrite = T)
+# TODO: drop above hack, fix below
 r_b_v1_web |>
   write_rast(
     b_v1_web_tif,
     datatype="INT2U", overwrite=T,
-    use_gdal_cog = T)
+    use_gdal_cog = T,
+    verbose = T)
 file.copy(b_v1_web_tif, oh_blocks_v1_web_tif, overwrite = T)
 
 r_b_v2_web |>

@@ -103,6 +103,10 @@ oh_tbl_zone_score_dev <- function(m){
         th("Rank"),
         th("SD"))) ))
 
+  d <- d |>
+    filter(is.finite(score))
+  # TODO: fix noa blocks with NA: NK19-02 6224M; NK19-03 6058; NK19-03 7103; NK19-06 6356
+
   tbl_html <- d |>
     datatable(
       container = hdr_html,

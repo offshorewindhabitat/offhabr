@@ -239,11 +239,19 @@ oh_map_zone_score_dev <- function(
   # attribute scores for blocks
   d_b <- readr::read_csv(zonal_blocks_csv, show_col_types=F)
 
+  # devtools::install_local("~/Github/offshorewindhabitat/offhabr", force =T)
+  # r_b <- oh_rast("block_id")
+  # terra::plet(r_b, tiles=providers$CartoDB.DarkMatter)
+
   # polygons of block
   ply_blocks <- offhabr::oh_blocks |>
     dplyr::filter(zone_version == 1) |>
     dplyr::left_join(
       d_b, by = c("block_id" = "block_id_v1"))
+
+  # TODO: get score for ply_blocks without a pixel in r_b
+  ply_blocks <- ply_blocks |>
+    filter(!is.na(score_v1_web)) # nrow(is.na(score_v1_web)): 423
 
   # get raster of score for zone, applying mask
   zone_id <- offhabr::oh_zones_s1k |>
