@@ -1,3 +1,7 @@
+# offhabr 0.13.2
+
+- Updated Block map and table functions, `oh_map_zone_score_dev()` and `oh_tbl_zone_score_dev()`, to show block type (Lease; Planning Area) along with relevant information (Lease #, Company and Lease Term, Date; Plan).
+
 # offhabr 0.13.1
 
 - Fixed `oh_blocks` to contain latest BOEM wind _planning_ areas (2023-10-06), whereas previously mistakenly only included BOEM wind _lease_ areas (old: 2022-06-30; new: 2023-09-27) due to bug (incorrectly used `dplyr::bind_rows()` vs correct `sf::rbind()` to combine layers).

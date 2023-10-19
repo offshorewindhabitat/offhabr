@@ -38,6 +38,7 @@ lse <- lse %>%
 # mapView(lse)
 
 pln <- read_sf(gdb, lyrs[5])  # "BOEM_Wind_Planning_Areas_10_06_2023"
+# mapView(pln)
 
 intersect(names(pln), names(lse))
 # [1] "PROTRACTION_NUMBER" "BLOCK_NUMBER"       "BLOCK_LABEL"        "SUB_BLOCK"
@@ -162,8 +163,9 @@ stopifnot(nrow(oh_blocks) == (nrow(lse) + nrow(pln)))
 
 # filter outside zones ----
 # oh_blocks_0 <- oh_blocks
+# mapView(oh_blocks)
 # mapView(oh_zones |> filter(zone_version == 1))
-oh_blocks <- oh_blocks %>%
+oh_blocks <- oh_blocks |>
   filter(
     st_intersects(
       oh_blocks, st_union(filter(oh_zones, zone_version==1)), sparse = F)[,1])
@@ -260,8 +262,10 @@ o$area_km2[1] # 1.438229
 
 # get zone_version for two sets of blocks ----
 pts_oh_blocks <- oh_blocks |>
+  select(block_key) |>
   mutate(
     geom = st_centroid(geom))
+# mapView(pts_oh_blocks)
 
 # * version 1: full regions, not restricting by OceanAdapt bottom trawl areas ----
 pts_oh_blocks_v1 <- pts_oh_blocks |>
@@ -278,6 +282,7 @@ oh_blocks_v1 <- oh_blocks |>
         block_key,
         zone_version, zone_id, zone_key),
     by = "block_key") |>
+  # mapview::mapView(oh_blocks_v1)     # 12,001 × 26
   mutate(
     block_key = glue("v{zone_version}_{zone_key}_{block_key}"),
     area_km2  = st_area(geom) %>%
@@ -285,6 +290,15 @@ oh_blocks_v1 <- oh_blocks |>
       drop_units()) %>%
   arrange(block_key) %>%
   tibble::rowid_to_column("block_id")
+
+# mapview::mapView(oh_blocks)        # 12,001 x 23
+# mapview::mapView(pts_oh_blocks_v1) # 12,001 × 5
+# mapview::mapView(oh_blocks_v1)     # 12,001 × 28
+# table(oh_blocks_v1$zone_key, useNA = "ifany")
+
+# oh_blocks_v1 |>
+#   filter(zone_key == "cec") |>
+#   mapview::mapView()
 
 # * version 2: regions restricted to OceanAdapt bottom trawl areas ----
 # pts_oh_blocks_v2 <- pts_oh_blocks %>%

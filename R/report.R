@@ -96,8 +96,9 @@ oh_tbl_zone_score_dev <- function(m){
     class = "display",
     thead(
       tr(
-        th("Plan"),
+        th("Type"),
         th("Block"),
+        th("Information"),
         th("Score"),
         th(""),
         th("Rank"),
@@ -141,14 +142,14 @@ oh_tbl_zone_score_dev <- function(m){
     fmt_number(
       score_zone_sd, decimals = 4) |>
     cols_label(
-      plan           = "Plan",
-      block          = "Block",
-      score          = "Score",
-      score_clr      = "",
-      score_pct_rank = "Rank",
-      score_zone_sd  = "SD") |>
+      block_type        = "Type",
+      protraction_block = "Block",
+      plan_lease_info   = "Information",
+      score             = "Score",
+      score_clr         = "",
+      score_pct_rank    = "Rank",
+      score_zone_sd     = "SD") |>
     tab_caption(cap_docx)
-  tbl_docx
 
   switch(
     knitr::is_html_output() |> as.character(),

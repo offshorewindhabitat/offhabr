@@ -229,6 +229,9 @@ oh_map_zone_score_dev <- function(
   # stk_web_tif <- "/Users/bbest/Library/CloudStorage/GoogleDrive-ben@ecoquants.com/.shortcut-targets-by-id/1sdT2ZZLmkgP0Zl8f1Yg0vOsVJR3Pms3Z/offhab/data/derived/stack_web.tif"
   # zonal_blocks_csv = "~/Github/offshorewindhabitat/scripts/data/zonal_blocks.csv"
   # devtools::load_all()
+  # zone_key <- "cec"
+  # zone_key <- "soc"
+  # stk_web_tif <- "/Users/bbest/Library/CloudStorage/GoogleDrive-ben@ecoquants.com/.shortcut-targets-by-id/1sdT2ZZLmkgP0Zl8f1Yg0vOsVJR3Pms3Z/offhab/data/derived/stack_web.tif"
 
   stopifnot(file.exists(stk_web_tif))
   stopifnot(file.exists(zonal_blocks_csv))
@@ -282,12 +285,23 @@ oh_map_zone_score_dev <- function(
 
   # setup popups and labels
   popups <- with(
-    ply_blocks_z, glue::glue(
-      "BOEM Block: <b>{protraction_number} {block_number}</b><br>
-       BOEM Plan: <b>{plan_additional_information}</b><br>
-       Area_km<sup>2</sup>: <code>{round(area_km2, 2)}</code><br>
-       Score: <b><code>{round(score_v1_web,1)}</code></b><br>
-       Standard deviation from Zone average Score: <b><code>{round(score_v1_web_zn, 2)}</code></b>"))
+    ply_blocks_z,
+    ifelse (
+      block_type == "lease",
+      glue::glue(
+        "Protraction #, Block #: <b>{protraction_number}, {block_number}</b><br>
+         Lease #, Company: <b>{lease_number}, {lease_company}</b><br>
+         Lease Term, Date: <b>{lease_term}, {lease_date}</b><br>
+         Area_km<sup>2</sup>: <code>{round(area_km2, 2)}</code><br>
+         Score: <b><code>{round(score_v1_web,1)}</code></b><br>
+         Std dev from Zone avg Score: <b><code>{round(score_v1_web_zn, 2)}</code></b>"),
+      # otherwise: block_type == "plan"
+      glue::glue(
+        "Protraction #, Block #: <b>{protraction_number}, {block_number}</b><br>
+         Plan: <b>{plan_additional_information}</b><br>
+         Area_km<sup>2</sup>: <code>{round(area_km2, 2)}</code><br>
+         Score: <b><code>{round(score_v1_web,1)}</code></b><br>
+         Standard deviation from Zone average Score: <b><code>{round(score_v1_web_zn, 2)}</code></b>")))
   labels <- popups |> lapply(htmltools::HTML)
 
   m <- oh_map() |>
@@ -322,13 +336,18 @@ oh_map_zone_score_dev <- function(
   attr(m, "block_data") <- ply_blocks_z |>
     sf::st_drop_geometry() |>
     mutate(
-      plan           = plan_additional_information,
-      block          = glue::glue("{protraction_number} {block_number}"),
-      score          = score_v1_web,
-      score_clr      = "",
-      score_pct_rank = dplyr::percent_rank(score_v1_web_zn),
-      score_zone_sd  = score_v1_web_zn) |>
-    select(plan, block, score, score_clr, score_pct_rank, score_zone_sd) |>
+      block_type        = ifelse(block_type == "lease", "Lease", "Planning Area"),
+      protraction_block = glue::glue("{protraction_number}, {block_number}"),
+      plan_lease_info   = ifelse(
+        block_type == "Lease",
+        glue::glue("{lease_number}, {lease_company}"),
+        plan_additional_information),
+      score             = score_v1_web,
+      score_clr         = "",
+      score_pct_rank    = dplyr::percent_rank(score_v1_web_zn),
+      score_zone_sd     = score_v1_web_zn) |>
+    # select(plan, block, score, score_clr, score_pct_rank, score_zone_sd) |>
+    select(block_type, protraction_block, plan_lease_info, score, score_clr, score_pct_rank, score_zone_sd) |>
     arrange(score)
 
   m
