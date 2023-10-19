@@ -12,7 +12,7 @@
 #' @export
 link_caption <- function(
     txt,
-    txt_link = ". Please also see the [online interactive figure]",
+    txt_link = " Please also see the [online interactive figure]",
     condition_skip = knitr::is_html_output(),
     url_pfx = "https://offshorewindhabitat.info/report"){
   if (condition_skip)

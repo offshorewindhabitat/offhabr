@@ -25,6 +25,10 @@
 #
 # See [Ocean Productivity: Frequently Asked
 # Questions](http://orca.science.oregonstate.edu/faq01.php)
+#
+# For citation, please reference the original vgpm paper by [Behrenfeld and Falkowski, 1997a](http://science.oregonstate.edu/ocean.productivity/references.php#Behrenfeld.1997a)
+# as well as the [Ocean Productivity](http://science.oregonstate.edu/ocean.productivity/index.php) site for the data.
+
 
 librarian::shelf(
   DBI, devtools, fs, glue, R.utils, sf, terra)

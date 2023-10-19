@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">offhabr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.2</span>
       </span>
     </div>
 
@@ -47,6 +47,10 @@
       <small>Source: <a href="https://github.com/ecoquants/offhabr/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.13.2" id="offhabr-0132">offhabr 0.13.2<a class="anchor" aria-label="anchor" href="#offhabr-0132"></a></h2>
+<ul><li>Updated Block map and table functions, <code><a href="../reference/oh_map_zone_score_dev.html">oh_map_zone_score_dev()</a></code> and <code><a href="../reference/oh_tbl_zone_score_dev.html">oh_tbl_zone_score_dev()</a></code>, to show block type (Lease; Planning Area) along with relevant information (Lease #, Company and Lease Term, Date; Plan).</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.13.1" id="offhabr-0131">offhabr 0.13.1<a class="anchor" aria-label="anchor" href="#offhabr-0131"></a></h2>
 <ul><li>Fixed <code>oh_blocks</code> to contain latest BOEM wind <em>planning</em> areas (2023-10-06), whereas previously mistakenly only included BOEM wind <em>lease</em> areas (old: 2022-06-30; new: 2023-09-27) due to bug (incorrectly used <code><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">dplyr::bind_rows()</a></code> vs correct <code>sf::rbind()</code> to combine layers).</li>
